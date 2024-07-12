@@ -1,18 +1,22 @@
-from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Header, MainSection, FooterSection
 from .serializers import HeaderSerializer, MainSectionSerializer, FooterSectionSerializer
 
 
-class HeaderViewSet(viewsets.ModelViewSet):
-    queryset = Header.objects.all()
-    serializer_class = HeaderSerializer
+class PageAPIView(APIView):
 
+    def get(self, request, format=None):
+        header = Header.objects.first()
+        main_sections = MainSection.objects.all()
+        footer_sections = FooterSection.objects.all()
 
-class MainSectionViewSet(viewsets.ModelViewSet):
-    queryset = MainSection.objects.all()
-    serializer_class = MainSectionSerializer
+        header_serializer = HeaderSerializer(header)
+        main_sections_serializer = MainSectionSerializer(main_sections, many=True)
+        footer_sections_serializer = FooterSectionSerializer(footer_sections, many=True)
 
-
-class FooterSectionViewSet(viewsets.ModelViewSet):
-    queryset = FooterSection.objects.all()
-    serializer_class = FooterSectionSerializer
+        return Response({
+            "header": header_serializer.data,
+            "main": {"sections": main_sections_serializer.data},
+            "footer": {"sections": footer_sections_serializer.data}
+        })
