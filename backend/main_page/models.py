@@ -19,8 +19,3 @@ class Header(models.Model):
 class MainSection(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
-
-
-class FooterSection(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()

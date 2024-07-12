@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Header, MainSection, FooterSection
+from .models import Header, MainSection
 
 
 class HeaderAdmin(admin.ModelAdmin):
@@ -16,11 +16,5 @@ class MainSectionAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
 
-class FooterSectionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'content']
-    search_fields = ['title']
-
-
 admin.site.register(Header, HeaderAdmin)
 admin.site.register(MainSection, MainSectionAdmin)
-admin.site.register(FooterSection, FooterSectionAdmin)

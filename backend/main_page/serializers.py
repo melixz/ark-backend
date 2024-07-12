@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, MainSection, FooterSection
+from .models import Header, MainSection
 
 
 class HeaderSerializer(serializers.ModelSerializer):
@@ -15,10 +15,4 @@ class HeaderSerializer(serializers.ModelSerializer):
 class MainSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainSection
-        fields = ['title', 'content']
-
-
-class FooterSectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FooterSection
         fields = ['title', 'content']
