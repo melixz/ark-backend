@@ -1,5 +1,5 @@
 # created by virtualenv automatically
-.venv/Lib
+../.venv/Lib
 # Байт-компилированные / оптимизированные файлы / DLL
 __pycache__/
 *.py[cod]
