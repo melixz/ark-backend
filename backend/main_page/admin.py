@@ -22,11 +22,13 @@ class HeaderAdmin(admin.ModelAdmin):
         "bgr_bottom",
     ]
     search_fields = ["header_title", "header_title_bottom"]
+    list_filter = ["header_title"]
 
 
 class MainContentAdmin(admin.ModelAdmin):
-    list_display = ["name", "bgr_image", "url"]
+    list_display = ["name", "bgr_image", "path"]
     search_fields = ["name"]
+    list_filter = ["name"]
 
 
 class SectionOneAdmin(admin.ModelAdmin):
@@ -40,11 +42,13 @@ class SectionOneAdmin(admin.ModelAdmin):
         "possibilities",
     ]
     search_fields = ["title", "desc"]
+    list_filter = ["title"]
 
 
 class SectionTwoCardAdmin(admin.ModelAdmin):
     list_display = ["icon", "title", "description", "background", "button_text"]
     search_fields = ["title", "description"]
+    list_filter = ["title"]
 
 
 class SectionTwoAdmin(admin.ModelAdmin):
@@ -56,6 +60,7 @@ class SectionTwoAdmin(admin.ModelAdmin):
 class SectionThreeAdmin(admin.ModelAdmin):
     list_display = ["image", "tg_link", "viber_link", "whatsup_link", "bgr_button"]
     search_fields = ["tg_link", "viber_link", "whatsup_link"]
+    list_filter = ["tg_link"]
 
 
 class FooterAdmin(admin.ModelAdmin):
@@ -69,6 +74,7 @@ class FooterAdmin(admin.ModelAdmin):
         "color_text",
     ]
     search_fields = ["phone_number"]
+    list_filter = ["phone_number"]
 
 
 admin.site.register(Header, HeaderAdmin)

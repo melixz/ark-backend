@@ -28,7 +28,7 @@ class HeaderSerializer(serializers.ModelSerializer):
 class MainContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainContent
-        fields = ["name", "bgr_image", "url"]
+        fields = ["name", "bgr_image", "path"]
 
 
 class SectionOneSerializer(serializers.ModelSerializer):

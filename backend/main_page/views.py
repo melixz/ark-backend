@@ -23,7 +23,7 @@ class PageAPIView(APIView):
 
         header_serializer = HeaderSerializer(header)
         main_content_serializer = MainContentSerializer(main_content, many=True)
-        sectionOneserializer = SectionOneSerializer(section1)
+        sectionOne_serializer = SectionOneSerializer(section1)
         sectionTwo_serializer = SectionTwoSerializer(section2)
         sectionThree_serializer = SectionThreeSerializer(section3)
         footer_serializer = FooterSerializer(footer)
@@ -34,9 +34,9 @@ class PageAPIView(APIView):
                 "main": {
                     "content": main_content_serializer.data,
                     "contain": {
-                        "section_1": sectionOne_serializer.data,
-                        "section_2": sectionTwo_serializer.data,
-                        "section_3": sectionThree_serializer.data,
+                        "section_1": SectionOneSerializer.data,
+                        "section_2": SectionTwoSerializer.data,
+                        "section_3": SectionThreeSerializer.data,
                     },
                 },
                 "footer": footer_serializer.data,
