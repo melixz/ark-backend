@@ -2,49 +2,67 @@ from django.db import models
 
 
 class Header(models.Model):
-    logo = models.ImageField(upload_to="logos/", blank=True, null=True)
-    navigation_background_color = models.CharField(max_length=7, blank=True, null=True)
+    logo_icon = models.ImageField(upload_to="logos/", blank=True, null=True)
     phone_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
     phone_number = models.CharField(max_length=255, blank=True, null=True)
-    header_background = models.ImageField(
-        upload_to="backgrounds/", blank=True, null=True
-    )
-    title = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    header_bgr = models.ImageField(upload_to="backgrounds/", blank=True, null=True)
+    header_title = models.CharField(max_length=255, blank=True, null=True)
+    header_title_bottom = models.CharField(max_length=255, blank=True, null=True)
+    nav_bgr = models.ImageField(upload_to="backgrounds/", blank=True, null=True)
+    bgr_bottom = models.ImageField(upload_to="backgrounds/", blank=True, null=True)
 
     def __str__(self):
-        return self.title or "Header"
+        return self.header_title or "Header"
 
 
-class MainSection(models.Model):
+class MainContent(models.Model):
+    name = models.CharField(max_length=255)
+    bgr_image = models.ImageField(upload_to="content/", blank=True, null=True)
+    url = models.URLField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
+class Section1(models.Model):
     title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to="main_sections/", null=True, blank=True)
-    url = models.URLField(max_length=200, null=True, blank=True)
-
-    class Meta:
-        ordering = ["title"]
-
-    def __str__(self):
-        return self.title
+    desc = models.TextField(blank=True, null=True)
+    climate = models.CharField(max_length=255)
+    nature = models.CharField(max_length=255)
+    assessability = models.CharField(max_length=255)
+    infrastructure = models.CharField(max_length=255)
+    possibilities = models.CharField(max_length=255)
 
 
-class Content(models.Model):
-    main_section = models.ForeignKey(
-        MainSection, related_name="contents", on_delete=models.CASCADE
-    )
+class Section2Card(models.Model):
+    icon = models.ImageField(upload_to="icons/")
     title = models.CharField(max_length=255)
-    content = models.TextField()
-    image = models.ImageField(upload_to="main_sections/", null=True, blank=True)
+    description = models.TextField()
+    background = models.ImageField(upload_to="backgrounds/")
+    button_text = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.title
+
+class Section2(models.Model):
+    title = models.CharField(max_length=255)
+    cards = models.ManyToManyField(Section2Card)
+
+
+class Section3(models.Model):
+    image = models.ImageField(upload_to="backgrounds/")
+    tg_link = models.URLField(max_length=200)
+    viber_link = models.URLField(max_length=200)
+    whatsup_link = models.URLField(max_length=200)
+    bgr_button = models.ImageField(upload_to="backgrounds/")
 
 
 class Footer(models.Model):
     telegram_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
     whatsapp_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
     viber_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
+    youtube_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
     vk_icon = models.ImageField(upload_to="icons/", blank=True, null=True)
+    phone_number = models.CharField(max_length=255, blank=True, null=True)
+    color_text = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.title or "Footer"
+        return self.phone_number or "Footer"

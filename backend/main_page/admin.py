@@ -1,44 +1,80 @@
 from django.contrib import admin
-from .models import Header, MainSection, Footer, Content
+from .models import (
+    Header,
+    MainContent,
+    Section1,
+    Section2,
+    Section2Card,
+    Section3,
+    Footer,
+)
 
 
 class HeaderAdmin(admin.ModelAdmin):
     list_display = [
-        "id",
-        "logo",
-        "navigation_background_color",
+        "logo_icon",
         "phone_icon",
-        "header_background",
-        "title",
-        "description",
+        "phone_number",
+        "header_bgr",
+        "header_title",
+        "header_title_bottom",
+        "nav_bgr",
+        "bgr_bottom",
     ]
+    search_fields = ["header_title", "header_title_bottom"]
+
+
+class MainContentAdmin(admin.ModelAdmin):
+    list_display = ["name", "bgr_image", "url"]
+    search_fields = ["name"]
+
+
+class Section1Admin(admin.ModelAdmin):
+    list_display = [
+        "title",
+        "desc",
+        "climate",
+        "nature",
+        "assessability",
+        "infrastructure",
+        "possibilities",
+    ]
+    search_fields = ["title", "desc"]
+
+
+class Section2CardAdmin(admin.ModelAdmin):
+    list_display = ["icon", "title", "description", "background", "button_text"]
     search_fields = ["title", "description"]
-    list_filter = ["navigation_background_color"]
 
 
-class ContentInline(admin.TabularInline):
-    model = Content
-    extra = 1
-
-
-class MainSectionAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "image", "url", "content_list"]
+class Section2Admin(admin.ModelAdmin):
+    list_display = ["title"]
     search_fields = ["title"]
-    list_filter = ["title"]
-    inlines = [ContentInline]
+    filter_horizontal = ["cards"]
 
-    def content_list(self, obj):
-        return ", ".join([content.content for content in obj.contents.all()])
 
-    content_list.short_description = "Content List"
+class Section3Admin(admin.ModelAdmin):
+    list_display = ["image", "tg_link", "viber_link", "whatsup_link", "bgr_button"]
+    search_fields = ["tg_link", "viber_link", "whatsup_link"]
 
 
 class FooterAdmin(admin.ModelAdmin):
-    list_display = ["id", "telegram_icon", "whatsapp_icon", "viber_icon", "vk_icon"]
-    search_fields = ["telegram_icon", "whatsapp_icon", "viber_icon", "vk_icon"]
-    list_filter = ["telegram_icon", "whatsapp_icon", "viber_icon", "vk_icon"]
+    list_display = [
+        "telegram_icon",
+        "whatsapp_icon",
+        "viber_icon",
+        "youtube_icon",
+        "vk_icon",
+        "phone_number",
+        "color_text",
+    ]
+    search_fields = ["phone_number"]
 
 
 admin.site.register(Header, HeaderAdmin)
-admin.site.register(MainSection, MainSectionAdmin)
+admin.site.register(MainContent, MainContentAdmin)
+admin.site.register(Section1, Section1Admin)
+admin.site.register(Section2Card, Section2CardAdmin)
+admin.site.register(Section2, Section2Admin)
+admin.site.register(Section3, Section3Admin)
 admin.site.register(Footer, FooterAdmin)
