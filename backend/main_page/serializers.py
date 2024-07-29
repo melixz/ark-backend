@@ -1,18 +1,27 @@
 from rest_framework import serializers
-from .models import Header, MainSection
+from .models import Header, MainSection, Footer
 
 
 class HeaderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Header
         fields = [
-            'logo', 'navigation_background_color', 'telegram_icon',
-            'whatsapp_icon', 'viber_icon', 'phone_icon', 'header_background',
-            'title', 'description'
+            "logo",
+            "navigation_background_color",
+            "phone_icon",
+            "header_background",
+            "title",
+            "description",
         ]
 
 
 class MainSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainSection
-        fields = ['title', 'content']
+        fields = ["title", "content", "image", "url"]
+
+
+class FooterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Footer
+        fields = ["telegram_icon", "whatsapp_icon", "viber_icon", "vk_icon"]

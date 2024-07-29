@@ -7,31 +7,64 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Header',
+            name="Header",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('logo', models.ImageField(blank=True, null=True, upload_to='logos/')),
-                ('navigation_background_color', models.CharField(blank=True, max_length=7, null=True)),
-                ('telegram_icon', models.ImageField(blank=True, null=True, upload_to='icons/')),
-                ('whatsapp_icon', models.ImageField(blank=True, null=True, upload_to='icons/')),
-                ('viber_icon', models.ImageField(blank=True, null=True, upload_to='icons/')),
-                ('phone_icon', models.ImageField(blank=True, null=True, upload_to='icons/')),
-                ('header_background', models.ImageField(blank=True, null=True, upload_to='backgrounds/')),
-                ('title', models.CharField(blank=True, max_length=255, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("logo", models.ImageField(blank=True, null=True, upload_to="logos/")),
+                (
+                    "navigation_background_color",
+                    models.CharField(blank=True, max_length=7, null=True),
+                ),
+                (
+                    "telegram_icon",
+                    models.ImageField(blank=True, null=True, upload_to="icons/"),
+                ),
+                (
+                    "whatsapp_icon",
+                    models.ImageField(blank=True, null=True, upload_to="icons/"),
+                ),
+                (
+                    "viber_icon",
+                    models.ImageField(blank=True, null=True, upload_to="icons/"),
+                ),
+                (
+                    "phone_icon",
+                    models.ImageField(blank=True, null=True, upload_to="icons/"),
+                ),
+                (
+                    "header_background",
+                    models.ImageField(blank=True, null=True, upload_to="backgrounds/"),
+                ),
+                ("title", models.CharField(blank=True, max_length=255, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='MainSection',
+            name="MainSection",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('content', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("content", models.TextField()),
             ],
         ),
     ]
