@@ -9,6 +9,7 @@ class HeaderSerializer(serializers.ModelSerializer):
             "logo",
             "navigation_background_color",
             "phone_icon",
+            "phone_number",
             "header_background",
             "title",
             "description",
