@@ -2,10 +2,10 @@ from rest_framework import serializers
 from .models import (
     Header,
     MainContent,
-    Section1,
-    Section2,
-    Section2Card,
-    Section3,
+    SectionOne,
+    SectionTwo,
+    SectionTwoCard,
+    SectionThree,
     Footer,
 )
 
@@ -31,37 +31,37 @@ class MainContentSerializer(serializers.ModelSerializer):
         fields = ["name", "bgr_image", "url"]
 
 
-class Section1Serializer(serializers.ModelSerializer):
+class SectionOneSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Section1
+        model = SectionOne
         fields = [
             "title",
             "desc",
             "climate",
             "nature",
-            "assessability",
+            "accessibility",
             "infrastructure",
             "possibilities",
         ]
 
 
-class Section2CardSerializer(serializers.ModelSerializer):
+class SectionTwoCardSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Section2Card
+        model = SectionTwoCard
         fields = ["icon", "title", "description", "background", "button_text"]
 
 
-class Section2Serializer(serializers.ModelSerializer):
-    cards = Section2CardSerializer(many=True, read_only=True)
+class SectionTwoSerializer(serializers.ModelSerializer):
+    cards = SectionTwoCardSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Section2
+        model = SectionTwo
         fields = ["title", "cards"]
 
 
-class Section3Serializer(serializers.ModelSerializer):
+class SectionThreeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Section3
+        model = SectionThree
         fields = ["image", "tg_link", "viber_link", "whatsup_link", "bgr_button"]
 
 

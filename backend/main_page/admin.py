@@ -2,10 +2,10 @@ from django.contrib import admin
 from .models import (
     Header,
     MainContent,
-    Section1,
-    Section2,
-    Section2Card,
-    Section3,
+    SectionOne,
+    SectionTwo,
+    SectionTwoCard,
+    SectionThree,
     Footer,
 )
 
@@ -29,31 +29,31 @@ class MainContentAdmin(admin.ModelAdmin):
     search_fields = ["name"]
 
 
-class Section1Admin(admin.ModelAdmin):
+class SectionOneAdmin(admin.ModelAdmin):
     list_display = [
         "title",
         "desc",
         "climate",
         "nature",
-        "assessability",
+        "accessibility",
         "infrastructure",
         "possibilities",
     ]
     search_fields = ["title", "desc"]
 
 
-class Section2CardAdmin(admin.ModelAdmin):
+class SectionTwoCardAdmin(admin.ModelAdmin):
     list_display = ["icon", "title", "description", "background", "button_text"]
     search_fields = ["title", "description"]
 
 
-class Section2Admin(admin.ModelAdmin):
+class SectionTwoAdmin(admin.ModelAdmin):
     list_display = ["title"]
     search_fields = ["title"]
     filter_horizontal = ["cards"]
 
 
-class Section3Admin(admin.ModelAdmin):
+class SectionThreeAdmin(admin.ModelAdmin):
     list_display = ["image", "tg_link", "viber_link", "whatsup_link", "bgr_button"]
     search_fields = ["tg_link", "viber_link", "whatsup_link"]
 
@@ -73,8 +73,8 @@ class FooterAdmin(admin.ModelAdmin):
 
 admin.site.register(Header, HeaderAdmin)
 admin.site.register(MainContent, MainContentAdmin)
-admin.site.register(Section1, Section1Admin)
-admin.site.register(Section2Card, Section2CardAdmin)
-admin.site.register(Section2, Section2Admin)
-admin.site.register(Section3, Section3Admin)
+admin.site.register(SectionOne, SectionOneAdmin)
+admin.site.register(SectionTwoCard, SectionTwoCardAdmin)
+admin.site.register(SectionTwo, SectionTwoAdmin)
+admin.site.register(SectionThree, SectionThreeAdmin)
 admin.site.register(Footer, FooterAdmin)

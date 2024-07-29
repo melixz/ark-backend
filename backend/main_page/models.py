@@ -24,17 +24,17 @@ class MainContent(models.Model):
         return self.name
 
 
-class Section1(models.Model):
+class SectionOne(models.Model):
     title = models.CharField(max_length=255)
     desc = models.TextField(blank=True, null=True)
     climate = models.CharField(max_length=255)
     nature = models.CharField(max_length=255)
-    assessability = models.CharField(max_length=255)
+    accessibility = models.CharField(max_length=255)
     infrastructure = models.CharField(max_length=255)
     possibilities = models.CharField(max_length=255)
 
 
-class Section2Card(models.Model):
+class SectionTwoCard(models.Model):
     icon = models.ImageField(upload_to="icons/")
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -42,12 +42,12 @@ class Section2Card(models.Model):
     button_text = models.CharField(max_length=255)
 
 
-class Section2(models.Model):
+class SectionTwo(models.Model):
     title = models.CharField(max_length=255)
-    cards = models.ManyToManyField(Section2Card)
+    cards = models.ManyToManyField(SectionTwoCard)
 
 
-class Section3(models.Model):
+class SectionThree(models.Model):
     image = models.ImageField(upload_to="backgrounds/")
     tg_link = models.URLField(max_length=200)
     viber_link = models.URLField(max_length=200)
