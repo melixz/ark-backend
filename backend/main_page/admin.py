@@ -27,7 +27,7 @@ class HeaderAdmin(admin.ModelAdmin):
 
 
 class MainContentAdmin(admin.ModelAdmin):
-    form = MainContentForm  # Указываем форму для модели
+    form = MainContentForm
     list_display = ["name", "bgr_image", "path"]
     search_fields = ["name"]
     list_filter = ["name"]
