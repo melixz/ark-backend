@@ -8,6 +8,7 @@ from .models import (
     SectionThree,
     Footer,
 )
+from .forms import MainContentForm
 
 
 class HeaderAdmin(admin.ModelAdmin):
@@ -26,6 +27,7 @@ class HeaderAdmin(admin.ModelAdmin):
 
 
 class MainContentAdmin(admin.ModelAdmin):
+    form = MainContentForm  # Указываем форму для модели
     list_display = ["name", "bgr_image", "path"]
     search_fields = ["name"]
     list_filter = ["name"]

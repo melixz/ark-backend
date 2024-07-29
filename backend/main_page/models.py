@@ -59,6 +59,9 @@ class SectionOne(models.Model):
     infrastructure = models.CharField(max_length=255, verbose_name="Инфраструктура")
     possibilities = models.CharField(max_length=255, verbose_name="Возможности")
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         verbose_name = "Раздел 1"
         verbose_name_plural = "Разделы 1"
@@ -71,6 +74,9 @@ class SectionTwoCard(models.Model):
     background = models.ImageField(upload_to="backgrounds/", verbose_name="Фон")
     button_text = models.CharField(max_length=255, verbose_name="Текст кнопки")
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         verbose_name = "Карточка раздела 2"
         verbose_name_plural = "Карточки раздела 2"
@@ -79,6 +85,9 @@ class SectionTwoCard(models.Model):
 class SectionTwo(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название")
     cards = models.ManyToManyField(SectionTwoCard, verbose_name="Карточки")
+
+    def __str__(self):
+        return self.title
 
     class Meta:
         verbose_name = "Раздел 2"
@@ -91,6 +100,9 @@ class SectionThree(models.Model):
     viber_link = models.URLField(max_length=200, verbose_name="Ссылка Viber")
     whatsup_link = models.URLField(max_length=200, verbose_name="Ссылка WhatsApp")
     bgr_button = models.ImageField(upload_to="backgrounds/", verbose_name="Фон кнопки")
+
+    def __str__(self):
+        return "Раздел 3"
 
     class Meta:
         verbose_name = "Раздел 3"
