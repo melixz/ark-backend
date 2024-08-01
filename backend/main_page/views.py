@@ -10,6 +10,7 @@ from .serializers import (
     FooterSerializer,
 )
 
+
 class PageAPIView(APIView):
 
     def get(self, request, format=None):
@@ -20,12 +21,20 @@ class PageAPIView(APIView):
         section3 = SectionThree.objects.first()
         footer = Footer.objects.first()
 
-        header_serializer = HeaderSerializer(header, context={'request': request})
-        main_content_serializer = MainContentSerializer(main_content, many=True, context={'request': request})
-        section_one_serializer = SectionOneSerializer(section1, context={'request': request})
-        section_two_serializer = SectionTwoSerializer(section2, context={'request': request})
-        section_three_serializer = SectionThreeSerializer(section3, context={'request': request})
-        footer_serializer = FooterSerializer(footer, context={'request': request})
+        header_serializer = HeaderSerializer(header, context={"request": request})
+        main_content_serializer = MainContentSerializer(
+            main_content, many=True, context={"request": request}
+        )
+        section_one_serializer = SectionOneSerializer(
+            section1, context={"request": request}
+        )
+        section_two_serializer = SectionTwoSerializer(
+            section2, context={"request": request}
+        )
+        section_three_serializer = SectionThreeSerializer(
+            section3, context={"request": request}
+        )
+        footer_serializer = FooterSerializer(footer, context={"request": request})
 
         return Response(
             {

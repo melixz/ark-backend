@@ -41,6 +41,9 @@ class MainContent(models.Model):
         upload_to="content/", blank=True, null=True, verbose_name="Фоновое изображение"
     )
     path = models.TextField(verbose_name="Путь")
+    class_name = models.CharField(
+        max_length=100, verbose_name="Класс контента", default=""
+    )
 
     def __str__(self):
         return self.name
