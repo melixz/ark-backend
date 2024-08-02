@@ -22,7 +22,7 @@ class NewBuildingsAPIView(APIView):
                     "content": serializer.data,
                     "contain": {
                         "section_1": {
-                            "title": "",
+                            "title": "Работает",
                             "desc": "",
                             "climate": "",
                             "nature": "",
