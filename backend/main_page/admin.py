@@ -28,7 +28,7 @@ class HeaderAdmin(admin.ModelAdmin):
 
 class MainContentAdmin(admin.ModelAdmin):
     form = MainContentForm
-    list_display = ["name", "bgr_image", "path"]
+    list_display = ["name", "bgr_image", "path", "class_name"]
     search_fields = ["name"]
     list_filter = ["name"]
 
