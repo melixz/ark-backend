@@ -13,11 +13,11 @@ class NewBuildingsAPIView(APIView):
         )
         return Response(
             {
-                "header": {
-                    "phone_number": "",
-                    "header_title": "",
-                    "header_title_bottom": "",
-                },
+                # "header": {
+                #     "phone_number": "",
+                #     "header_title": "",
+                #     "header_title_bottom": ""
+                # },
                 "main": {
                     "content": serializer.data,
                     "contain": {
@@ -38,6 +38,9 @@ class NewBuildingsAPIView(APIView):
                         },
                     },
                 },
-                "footer": {"phone_number": "", "color_text": ""},
+                # "footer": {
+                #     "phone_number": "",
+                #     "color_text": ""
+                # }
             }
         )
