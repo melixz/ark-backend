@@ -17,7 +17,7 @@ class PageAPIView(APIView):
         header = Header.objects.first()
         main_content = MainContent.objects.all()
         section1 = SectionOne.objects.first()
-        section2 = SectionTwo.objects.first()
+        section2 = SectionTwo.objects.prefetch_related("cards").first()
         section3 = SectionThree.objects.first()
         footer = Footer.objects.first()
 

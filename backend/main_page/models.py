@@ -48,6 +48,15 @@ class MainContent(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def routes(self):
+        return [
+            {
+                "path": f"{self.path}/details",
+                "element": f"<{self.name.replace(' ', '')}DetailsPage />",
+            }
+        ]
+
     class Meta:
         verbose_name = "Основное содержание"
         verbose_name_plural = "Основные содержания"

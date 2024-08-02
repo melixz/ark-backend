@@ -18,13 +18,18 @@ class HeaderSerializer(serializers.ModelSerializer):
 
 class MainContentSerializer(serializers.ModelSerializer):
     bgr_image = serializers.SerializerMethodField()
+    routes = serializers.SerializerMethodField()
 
     class Meta:
         model = MainContent
-        fields = ["name", "bgr_image", "path", "class_name"]
+        fields = ["name", "bgr_image", "path", "class_name", "routes"]
 
     def get_bgr_image(self, obj):
-        return self.context["request"].build_absolute_uri(obj.bgr_image.url)
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.bgr_image.url) if obj.bgr_image else None
+
+    def get_routes(self, obj):
+        return obj.routes
 
 
 class SectionOneSerializer(serializers.ModelSerializer):
@@ -57,7 +62,7 @@ class SectionTwoCardSerializer(serializers.ModelSerializer):
 
 
 class SectionTwoSerializer(serializers.ModelSerializer):
-    cards = SectionTwoCardSerializer(many=True, read_only=True)
+    cards = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = SectionTwo
