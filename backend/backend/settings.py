@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "main_page",
     "corsheaders",
+    "new_buildings",
 ]
 
 MIDDLEWARE = [
