@@ -1,48 +1,52 @@
 from django.db import models
+from django.utils.translation import gettext as _
 
 
 class Header(models.Model):
     logo_icon = models.ImageField(
-        upload_to="logos/", blank=True, null=True, verbose_name="Логотип"
+        upload_to="logos/", blank=True, null=True, verbose_name=_("Логотип")
     )
     phone_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка телефона"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка телефона")
     )
     phone_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Номер телефона"
+        max_length=255, blank=True, null=True, verbose_name=_("Номер телефона")
     )
     header_bgr = models.ImageField(
-        upload_to="backgrounds/", blank=True, null=True, verbose_name="Фон заголовка"
+        upload_to="backgrounds/", blank=True, null=True, verbose_name=_("Фон заголовка")
     )
     header_title = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Заголовок"
+        max_length=255, blank=True, null=True, verbose_name=_("Заголовок")
     )
     header_title_bottom = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Подзаголовок"
+        max_length=255, blank=True, null=True, verbose_name=_("Подзаголовок")
     )
     nav_bgr = models.ImageField(
-        upload_to="backgrounds/", blank=True, null=True, verbose_name="Фон навигации"
+        upload_to="backgrounds/", blank=True, null=True, verbose_name=_("Фон навигации")
     )
     bgr_bottom = models.ImageField(
-        upload_to="backgrounds/", blank=True, null=True, verbose_name="Нижний фон"
+        upload_to="backgrounds/", blank=True, null=True, verbose_name=_("Нижний фон")
     )
 
     def __str__(self):
-        return self.header_title or "Header"
+        return self.header_title or _("Header")
 
     class Meta:
-        verbose_name = "Заголовок"
-        verbose_name_plural = "Заголовки"
+        verbose_name = _("Заголовок")
+        verbose_name_plural = _("Заголовки")
 
 
 class MainContent(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Название")
+    name = models.CharField(max_length=255, verbose_name=_("Название"))
     bgr_image = models.ImageField(
-        upload_to="content/", blank=True, null=True, verbose_name="Фоновое изображение"
+        upload_to="content/",
+        blank=True,
+        null=True,
+        verbose_name=_("Фоновое изображение"),
     )
-    path = models.TextField(verbose_name="Путь")
+    path = models.TextField(verbose_name=_("Путь"))
     class_name = models.CharField(
-        max_length=100, verbose_name="Класс контента", default=""
+        max_length=100, verbose_name=_("Класс контента"), default=""
     )
 
     def __str__(self):
@@ -58,67 +62,67 @@ class MainContent(models.Model):
         ]
 
     class Meta:
-        verbose_name = "Основное содержание"
-        verbose_name_plural = "Основные содержания"
+        verbose_name = _("Основное содержание")
+        verbose_name_plural = _("Основные содержания")
 
 
 class SectionOne(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Название")
-    desc = models.TextField(blank=True, null=True, verbose_name="Описание")
-    climate = models.CharField(max_length=255, verbose_name="Климат")
-    nature = models.CharField(max_length=255, verbose_name="Природа")
-    accessibility = models.CharField(max_length=255, verbose_name="Доступность")
-    infrastructure = models.CharField(max_length=255, verbose_name="Инфраструктура")
-    possibilities = models.CharField(max_length=255, verbose_name="Возможности")
+    title = models.CharField(max_length=255, verbose_name=_("Название"))
+    desc = models.TextField(blank=True, null=True, verbose_name=_("Описание"))
+    climate = models.CharField(max_length=255, verbose_name=_("Климат"))
+    nature = models.CharField(max_length=255, verbose_name=_("Природа"))
+    accessibility = models.CharField(max_length=255, verbose_name=_("Доступность"))
+    infrastructure = models.CharField(max_length=255, verbose_name=_("Инфраструктура"))
+    possibilities = models.CharField(max_length=255, verbose_name=_("Возможности"))
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = "Раздел 1"
-        verbose_name_plural = "Разделы 1"
+        verbose_name = _("Раздел 1")
+        verbose_name_plural = _("Разделы 1")
 
 
 class Card(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Заголовок")
-    description = models.TextField(verbose_name="Описание")
-    link = models.URLField(max_length=200, verbose_name="Ссылка")
-    image = models.ImageField(upload_to="cards/", verbose_name="Изображение")
+    title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
+    description = models.TextField(verbose_name=_("Описание"))
+    path = models.TextField(verbose_name=_("Путь"))
+    image = models.ImageField(upload_to="cards/", verbose_name=_("Изображение"))
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = "Карточка"
-        verbose_name_plural = "Карточки"
+        verbose_name = _("Карточка")
+        verbose_name_plural = _("Карточки")
 
 
 class Footer(models.Model):
     telegram_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка Telegram"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка Telegram")
     )
     whatsapp_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка WhatsApp"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка WhatsApp")
     )
     viber_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка Viber"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка Viber")
     )
     youtube_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка YouTube"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка YouTube")
     )
     vk_icon = models.ImageField(
-        upload_to="icons/", blank=True, null=True, verbose_name="Иконка VK"
+        upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка VK")
     )
     phone_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Номер телефона"
+        max_length=255, blank=True, null=True, verbose_name=_("Номер телефона")
     )
     color_text = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="Цвет текста"
+        max_length=255, blank=True, null=True, verbose_name=_("Цвет текста")
     )
 
     def __str__(self):
-        return self.phone_number or "Footer"
+        return self.phone_number or _("Footer")
 
     class Meta:
-        verbose_name = "Футер"
-        verbose_name_plural = "Футеры"
+        verbose_name = _("Футер")
+        verbose_name_plural = _("Футеры")

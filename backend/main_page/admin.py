@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Header, MainContent, SectionOne, Card, Footer
+from .forms import CardForm
 
 
 @admin.register(Header)
@@ -42,7 +43,8 @@ class SectionOneAdmin(admin.ModelAdmin):
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ["title", "description", "link", "image"]
+    form = CardForm
+    list_display = ["title", "description", "path", "image"]
     search_fields = ["title", "description"]
     list_filter = ["title"]
 

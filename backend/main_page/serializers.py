@@ -43,7 +43,7 @@ class CardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ["title", "description", "link", "image"]
+        fields = ["title", "description", "path", "image"]
 
     def get_image(self, obj):
         request = self.context.get("request")
