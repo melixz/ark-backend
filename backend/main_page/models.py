@@ -79,46 +79,18 @@ class SectionOne(models.Model):
         verbose_name_plural = "Разделы 1"
 
 
-class SectionTwoCard(models.Model):
-    icon = models.ImageField(upload_to="icons/", verbose_name="Иконка")
+class Card(models.Model):
     title = models.CharField(max_length=255, verbose_name="Заголовок")
     description = models.TextField(verbose_name="Описание")
-    background = models.ImageField(upload_to="backgrounds/", verbose_name="Фон")
-    button_text = models.CharField(max_length=255, verbose_name="Текст кнопки")
+    link = models.URLField(max_length=200, verbose_name="Ссылка")
+    image = models.ImageField(upload_to="cards/", verbose_name="Изображение")
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = "Карточка раздела 2"
-        verbose_name_plural = "Карточки раздела 2"
-
-
-class SectionTwo(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Название")
-    cards = models.ManyToManyField(SectionTwoCard, verbose_name="Карточки")
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Раздел 2"
-        verbose_name_plural = "Разделы 2"
-
-
-class SectionThree(models.Model):
-    image = models.ImageField(upload_to="backgrounds/", verbose_name="Изображение")
-    tg_link = models.URLField(max_length=200, verbose_name="Ссылка Telegram")
-    viber_link = models.URLField(max_length=200, verbose_name="Ссылка Viber")
-    whatsup_link = models.URLField(max_length=200, verbose_name="Ссылка WhatsApp")
-    bgr_button = models.ImageField(upload_to="backgrounds/", verbose_name="Фон кнопки")
-
-    def __str__(self):
-        return "Раздел 3"
-
-    class Meta:
-        verbose_name = "Раздел 3"
-        verbose_name_plural = "Разделы 3"
+        verbose_name = "Карточка"
+        verbose_name_plural = "Карточки"
 
 
 class Footer(models.Model):

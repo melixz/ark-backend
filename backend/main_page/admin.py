@@ -1,16 +1,8 @@
 from django.contrib import admin
-from .models import (
-    Header,
-    MainContent,
-    SectionOne,
-    SectionTwo,
-    SectionTwoCard,
-    SectionThree,
-    Footer,
-)
-from .forms import MainContentForm
+from .models import Header, MainContent, SectionOne, Card, Footer
 
 
+@admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
     list_display = [
         "logo_icon",
@@ -26,13 +18,14 @@ class HeaderAdmin(admin.ModelAdmin):
     list_filter = ["header_title"]
 
 
+@admin.register(MainContent)
 class MainContentAdmin(admin.ModelAdmin):
-    form = MainContentForm
     list_display = ["name", "bgr_image", "path", "class_name"]
     search_fields = ["name"]
     list_filter = ["name"]
 
 
+@admin.register(SectionOne)
 class SectionOneAdmin(admin.ModelAdmin):
     list_display = [
         "title",
@@ -47,24 +40,14 @@ class SectionOneAdmin(admin.ModelAdmin):
     list_filter = ["title"]
 
 
-class SectionTwoCardAdmin(admin.ModelAdmin):
-    list_display = ["icon", "title", "description", "background", "button_text"]
+@admin.register(Card)
+class CardAdmin(admin.ModelAdmin):
+    list_display = ["title", "description", "link", "image"]
     search_fields = ["title", "description"]
     list_filter = ["title"]
 
 
-class SectionTwoAdmin(admin.ModelAdmin):
-    list_display = ["title"]
-    search_fields = ["title"]
-    filter_horizontal = ["cards"]
-
-
-class SectionThreeAdmin(admin.ModelAdmin):
-    list_display = ["image", "tg_link", "viber_link", "whatsup_link", "bgr_button"]
-    search_fields = ["tg_link", "viber_link", "whatsup_link"]
-    list_filter = ["tg_link"]
-
-
+@admin.register(Footer)
 class FooterAdmin(admin.ModelAdmin):
     list_display = [
         "telegram_icon",
@@ -77,12 +60,3 @@ class FooterAdmin(admin.ModelAdmin):
     ]
     search_fields = ["phone_number"]
     list_filter = ["phone_number"]
-
-
-admin.site.register(Header, HeaderAdmin)
-admin.site.register(MainContent, MainContentAdmin)
-admin.site.register(SectionOne, SectionOneAdmin)
-admin.site.register(SectionTwoCard, SectionTwoCardAdmin)
-admin.site.register(SectionTwo, SectionTwoAdmin)
-admin.site.register(SectionThree, SectionThreeAdmin)
-admin.site.register(Footer, FooterAdmin)
