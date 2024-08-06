@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Header, MainContent, SectionOne, Card, Footer
+from .models import Header, MainContent, Advantages, Card, Footer
 from .forms import CardForm
 
 
@@ -26,8 +26,8 @@ class MainContentAdmin(admin.ModelAdmin):
     list_filter = ["name"]
 
 
-@admin.register(SectionOne)
-class SectionOneAdmin(admin.ModelAdmin):
+@admin.register(Advantages)
+class AdvantagesAdmin(admin.ModelAdmin):
     list_display = [
         "title",
         "desc",

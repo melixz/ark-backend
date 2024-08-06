@@ -15,3 +15,5 @@ uritemplate==4.1.1
 setuptools
 psycopg2-binary==2.9.9
 django-cors-headers==4.4.0
+django-clearcache==1.2.1
+django-modeladmin-reorder==0.3.1

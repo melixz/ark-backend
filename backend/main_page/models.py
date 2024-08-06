@@ -34,6 +34,7 @@ class Header(models.Model):
     class Meta:
         verbose_name = _("Заголовок")
         verbose_name_plural = _("Заголовки")
+        ordering = ["header_title"]
 
 
 class MainContent(models.Model):
@@ -63,10 +64,11 @@ class MainContent(models.Model):
 
     class Meta:
         verbose_name = _("Основное содержание")
-        verbose_name_plural = _("Основные содержания")
+        verbose_name_plural = _("Основное содержание")
+        ordering = ["name"]
 
 
-class SectionOne(models.Model):
+class Advantages(models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Название"))
     desc = models.TextField(blank=True, null=True, verbose_name=_("Описание"))
     climate = models.CharField(max_length=255, verbose_name=_("Климат"))
@@ -79,8 +81,9 @@ class SectionOne(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = _("Раздел 1")
-        verbose_name_plural = _("Разделы 1")
+        verbose_name = _("Преимущества")
+        verbose_name_plural = _("Преимущества")
+        ordering = ["title"]
 
 
 class Card(models.Model):
@@ -95,6 +98,7 @@ class Card(models.Model):
     class Meta:
         verbose_name = _("Карточка")
         verbose_name_plural = _("Карточки")
+        ordering = ["title"]
 
 
 class Footer(models.Model):
@@ -126,3 +130,4 @@ class Footer(models.Model):
     class Meta:
         verbose_name = _("Футер")
         verbose_name_plural = _("Футеры")
+        ordering = ["phone_number"]

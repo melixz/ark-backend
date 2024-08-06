@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, MainContent, SectionOne, Card, Footer
+from .models import Header, MainContent, Advantages, Card, Footer
 
 
 class HeaderSerializer(serializers.ModelSerializer):
@@ -24,9 +24,9 @@ class MainContentSerializer(serializers.ModelSerializer):
         return obj.routes
 
 
-class SectionOneSerializer(serializers.ModelSerializer):
+class AdvantagesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SectionOne
+        model = Advantages
         fields = [
             "title",
             "desc",

@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Header, MainContent, SectionOne, Card, Footer
+from .models import Header, MainContent, Advantages, Card, Footer
 from .serializers import (
     HeaderSerializer,
     MainContentSerializer,
-    SectionOneSerializer,
+    AdvantagesSerializer,
     CardSerializer,
     FooterSerializer,
 )
@@ -14,7 +14,7 @@ class PageAPIView(APIView):
     def get(self, request, format=None):
         header = Header.objects.first()
         main_content = MainContent.objects.all()
-        section1 = SectionOne.objects.first()
+        advantages = Advantages.objects.first()
         cards = Card.objects.all()
         footer = Footer.objects.first()
 
@@ -22,8 +22,8 @@ class PageAPIView(APIView):
         main_content_serializer = MainContentSerializer(
             main_content, many=True, context={"request": request}
         )
-        section_one_serializer = SectionOneSerializer(
-            section1, context={"request": request}
+        advantages_serializer = AdvantagesSerializer(
+            advantages, context={"request": request}
         )
         cards_serializer = CardSerializer(
             cards, many=True, context={"request": request}
@@ -36,7 +36,7 @@ class PageAPIView(APIView):
                 "main": {
                     "content": main_content_serializer.data,
                     "contain": {
-                        "section_1": section_one_serializer.data,
+                        "advantages": advantages_serializer.data,
                         "cards": cards_serializer.data,
                     },
                 },

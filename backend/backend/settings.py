@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "main_page",
     "corsheaders",
     "new_buildings",
+    "clearcache",
+    "admin_reorder",
 ]
 
 MIDDLEWARE = [
@@ -54,6 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "admin_reorder.middleware.ModelAdminReorder",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -349,3 +352,33 @@ JAZZMIN_UI_TWEAKS = {
     },
     "actions_sticky_top": True,
 }
+
+
+# backend/settings.py
+
+# backend/settings.py
+
+ADMIN_REORDER = (
+    {
+        "app": "main_page",
+        "models": (
+            "main_page.Header",
+            "main_page.Advantages",
+            "main_page.MainContent",
+            "main_page.Card",
+            "main_page.Footer",
+        ),
+    },
+    {
+        "app": "new_buildings",
+        "models": ("new_buildings.ModelName",),  # замените на имя вашей модели
+    },
+    {
+        "app": "auth",
+        "models": (
+            "auth.User",
+            "auth.Group",
+        ),
+    },
+    "sites",  # Сайты
+)
