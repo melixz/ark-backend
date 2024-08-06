@@ -27,5 +27,5 @@ class NewBuilding(models.Model):
         ]
 
     class Meta:
-        verbose_name = "Новостройка"
+        verbose_name = "Новостройки"
         verbose_name_plural = "Новостройки"
