@@ -98,7 +98,7 @@ class Card(models.Model):
     class Meta:
         verbose_name = _("Карточка")
         verbose_name_plural = _("Карточки")
-        ordering = ["title"]
+        ordering = ["id"]
 
 
 class Footer(models.Model):
