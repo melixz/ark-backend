@@ -101,6 +101,24 @@ class Card(models.Model):
         ordering = ["id"]
 
 
+class ContactForm(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_("Имя, фамилия"))
+    email = models.EmailField(verbose_name=_("Адрес эл. почты"))
+    phone = models.CharField(max_length=20, verbose_name=_("Телефон"))
+    message = models.TextField(verbose_name=_("Сообщение"))
+    consent = models.BooleanField(
+        default=False, verbose_name=_("Согласие на обработку персональных данных")
+    )
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"
+
+    class Meta:
+        verbose_name = _("Контактная форма")
+        verbose_name_plural = _("Контактные формы")
+        ordering = ["name"]
+
+
 class Footer(models.Model):
     telegram_icon = models.ImageField(
         upload_to="icons/", blank=True, null=True, verbose_name=_("Иконка Telegram")

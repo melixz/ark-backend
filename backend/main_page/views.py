@@ -1,12 +1,14 @@
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Header, MainContent, Advantages, Card, Footer
+from .models import Header, MainContent, Advantages, Card, Footer, ContactForm
 from .serializers import (
     HeaderSerializer,
     MainContentSerializer,
     AdvantagesSerializer,
     CardSerializer,
     FooterSerializer,
+    ContactFormSerializer,
 )
 
 
@@ -43,3 +45,12 @@ class PageAPIView(APIView):
                 "footer": footer_serializer.data,
             }
         )
+
+    def post(self, request, format=None):
+        serializer = ContactFormSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Форма успешно отправлена!"}, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

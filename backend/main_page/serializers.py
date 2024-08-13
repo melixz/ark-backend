@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Header, MainContent, Advantages, Card, Footer
+from .models import Header, MainContent, Advantages, Card, ContactForm, Footer
 
 
 class HeaderSerializer(serializers.ModelSerializer):
@@ -50,6 +50,12 @@ class CardSerializer(serializers.ModelSerializer):
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
         return None
+
+
+class ContactFormSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactForm
+        fields = ["name", "email", "phone", "message", "consent"]
 
 
 class FooterSerializer(serializers.ModelSerializer):

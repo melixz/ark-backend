@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Header, MainContent, Advantages, Card, Footer
+from .models import Header, MainContent, Advantages, Card, ContactForm, Footer
 from .forms import CardForm
 
 
@@ -47,6 +47,13 @@ class CardAdmin(admin.ModelAdmin):
     list_display = ["title", "description", "path", "image"]
     search_fields = ["title", "description"]
     list_filter = ["title"]
+
+
+@admin.register(ContactForm)
+class ContactFormAdmin(admin.ModelAdmin):
+    list_display = ["name", "email", "phone", "consent"]
+    search_fields = ["name", "email", "phone"]
+    list_filter = ["consent"]
 
 
 @admin.register(Footer)
