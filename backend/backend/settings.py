@@ -256,9 +256,9 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
+        "success": "btn-success",
     },
-    "actions_sticky_top": False
+    "actions_sticky_top": False,
 }
 
 ADMIN_REORDER = (
