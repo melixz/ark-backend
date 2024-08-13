@@ -198,6 +198,8 @@ JAZZMIN_SETTINGS = {
         "main_page.Card",
         "main_page.Footer",
         "new_buildings",
+        "plot_buildings",  # Добавляем ваше приложение
+        "plot_buildings.Plot",  # Добавляем модель "Участки под застройку"
         "auth",
         "auth.User",
         "auth.Group",
@@ -212,12 +214,12 @@ JAZZMIN_SETTINGS = {
         "main_page.MainContent": "fas fa-file-alt",
         "main_page.Advantages": "fas fa-thumbs-up",
         "main_page.Footer": "fas fa-footer",
-        "new_buildings.ModelName": "fas fa-building",
+        "new_buildings.NewBuilding": "fas fa-building",
+        "plot_buildings.Plot": "fas fa-map",  # Добавляем иконку для модели "Участки под застройку"
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": True,
-    # "custom_css": "static/jazzmin/css/custom.css",
     "custom_js": None,
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
@@ -276,6 +278,10 @@ ADMIN_REORDER = (
     {
         "app": "new_buildings",
         "models": ("new_buildings.NewBuilding",),
+    },
+    {
+        "app": "plot_buildings",  # Добавляем приложение для "Участков под застройку"
+        "models": ("plot_buildings.Plot",),  # Указываем модель "Участки под застройку"
     },
     {
         "app": "auth",
