@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "new_buildings",
     "clearcache",
     "admin_reorder",
+    "plot_buildings",
 ]
 
 MIDDLEWARE = [

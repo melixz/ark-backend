@@ -1,7 +1,9 @@
 from django.apps import AppConfig
 
 
-class ForDevelopmentConfig(AppConfig):
+class PlotBuildingsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "for_development"
-    verbose_name = "Под застройку"
+    name = "plot_buildings"
+
+    verbose_name = "Участки под застройку"
+    verbose_name_plural = "Участки под застройку"
