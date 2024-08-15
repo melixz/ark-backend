@@ -1,18 +1,31 @@
 from django.db import models
 
 
-class Plot(models.Model):
+class PlotBuilding(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название")
-    image = models.ImageField(upload_to="plots/", verbose_name="Изображение")
-    location = models.CharField(max_length=255, verbose_name="Местоположение")
-    area = models.CharField(max_length=100, verbose_name="Площадь")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    description = models.TextField(verbose_name="Описание")
+    bgr_image = models.ImageField(
+        upload_to="plot_buildings/",
+        blank=True,
+        null=True,
+        verbose_name="Фоновое изображение",
+    )
     path = models.TextField(verbose_name="Путь")
+    class_name = models.CharField(
+        max_length=100, verbose_name="Класс контента", default=""
+    )
 
     def __str__(self):
         return self.name
 
+    @property
+    def routes(self):
+        return [
+            {
+                "path": f"{self.path}/details",
+                "element": f"<{self.name.replace(' ', '')}DetailsPage />",
+            }
+        ]
+
     class Meta:
-        verbose_name = "Участок под застройку"
-        verbose_name_plural = "Участки под застройку"
+        verbose_name = "Участки застройки"
+        verbose_name_plural = "Участки застройки"

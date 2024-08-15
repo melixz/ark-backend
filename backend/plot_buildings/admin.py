@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Plot
+from .models import PlotBuilding
 
 
-@admin.register(Plot)
-class PlotAdmin(admin.ModelAdmin):
-    list_display = ["name", "location", "area", "price", "image"]
-    search_fields = ["name", "location"]
-    list_filter = ["location"]
+@admin.register(PlotBuilding)
+class PlotBuildingAdmin(admin.ModelAdmin):
+    list_display = ["name", "bgr_image", "path", "class_name"]
+    search_fields = ["name", "path"]
+    list_filter = ["class_name"]

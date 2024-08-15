@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import PlotAPIView
+from .views import PlotBuildingAPIView
 
 urlpatterns = [
-    path("page/plots/", PlotAPIView.as_view(), name="plots-api"),
+    path("page/plots/", PlotBuildingAPIView.as_view(), name="plots-api"),
 ]

@@ -1,13 +1,12 @@
 from rest_framework import serializers
 from .models import NewBuilding
-from main_page.models import ContactForm
 from main_page.serializers import ContactFormSerializer
 
 
 class NewBuildingSerializer(serializers.ModelSerializer):
     bgr_image = serializers.SerializerMethodField()
     routes = serializers.SerializerMethodField()
-    contact_form = ContactFormSerializer()  # Добавляем форму
+    contact_form = ContactFormSerializer()
 
     class Meta:
         model = NewBuilding
