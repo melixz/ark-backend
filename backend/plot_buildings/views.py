@@ -4,12 +4,7 @@ from rest_framework import status
 from .models import PlotBuilding
 from .serializers import PlotBuildingSerializer
 from main_page.models import Header, Footer, ContactForm
-from main_page.serializers import (
-    HeaderSerializer,
-    FooterSerializer,
-    ContactFormSerializer,
-)
-
+from main_page.serializers import HeaderSerializer, FooterSerializer, ContactFormSerializer
 
 class PlotBuildingAPIView(APIView):
 
