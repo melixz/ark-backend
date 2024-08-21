@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "clearcache",
     "admin_reorder",
     "plot_buildings",
+    "developers",
 ]
 
 MIDDLEWARE = [
@@ -198,8 +199,8 @@ JAZZMIN_SETTINGS = {
         "main_page.Card",
         "main_page.Footer",
         "new_buildings",
-        "plot_buildings",  # Ваше приложение
-        "plot_buildings.PlotBuilding",  # Модель Участков под застройку
+        "plot_buildings",
+        "developers",  # Ваше новое приложение
         "auth",
         "auth.User",
         "auth.Group",
@@ -215,7 +216,8 @@ JAZZMIN_SETTINGS = {
         "main_page.Advantages": "fas fa-thumbs-up",
         "main_page.Footer": "fas fa-footer",
         "new_buildings.NewBuilding": "fas fa-building",
-        "plot_buildings.PlotBuilding": "fas fa-map",  # Иконка для модели Участков под застройку
+        "plot_buildings.PlotBuilding": "fas fa-map",
+        "developers.Developer": "fas fa-briefcase",  # Иконка для застройщиков
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
@@ -282,6 +284,10 @@ ADMIN_REORDER = (
     {
         "app": "plot_buildings",  # Приложение для Участков под застройку
         "models": ("plot_buildings.PlotBuilding",),  # Модель Участков под застройку
+    },
+    {
+        "app": "developers",  # Приложение для застройщиков
+        "models": ("developers.Developer",),  # Модель застройщиков
     },
     {
         "app": "auth",
