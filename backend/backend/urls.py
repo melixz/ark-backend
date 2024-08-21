@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("main_page.urls")),
-    path("page/new/", include("new_buildings.urls")),
-    path("page/plots/", include("plot_buildings.urls")),
+    path("api/page/", include("main_page.urls")),
+    path("api/page/new/", include("new_buildings.urls")),
+    path("api/page/plots/", include("plot_buildings.urls")),
 ]
 
 if settings.DEBUG:
