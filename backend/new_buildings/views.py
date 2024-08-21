@@ -3,9 +3,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import NewBuilding
 from .serializers import NewBuildingSerializer
-from main_page.models import Header, Footer, ContactForm
+from main_page.models import Header, MainContent, Footer, ContactForm
 from main_page.serializers import (
     HeaderSerializer,
+    MainContentSerializer,
     FooterSerializer,
     ContactFormSerializer,
 )
@@ -20,11 +21,18 @@ class NewBuildingsAPIView(APIView):
             buildings, many=True, context={"request": request}
         )
 
-        # Получаем данные для Header, Footer и формы из main_page
+        # Фильтруем записи MainContent для новостроек
+        main_content = MainContent.objects.filter(path__startswith="/new")
+        main_content_serializer = MainContentSerializer(
+            main_content, many=True, context={"request": request}
+        )
+
+        # Получаем данные для Header и Footer
         header = Header.objects.first()
         footer = Footer.objects.first()
         contact_form = ContactForm()  # Создаем пустую форму
 
+        # Сериализация данных
         header_serializer = HeaderSerializer(header, context={"request": request})
         footer_serializer = FooterSerializer(footer, context={"request": request})
         contact_form_serializer = ContactFormSerializer(contact_form)
@@ -34,7 +42,8 @@ class NewBuildingsAPIView(APIView):
             "header": header_serializer.data,
             "main": {
                 "content": buildings_serializer.data,
-                "contact_form": contact_form_serializer.data,  # Добавляем форму в ответ
+                "main_page_content": main_content_serializer.data,  # Добавляем только записи для новостроек
+                "contact_form": contact_form_serializer.data,
             },
             "footer": footer_serializer.data,
         }
