@@ -39,13 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_yasg",
-    "main_page",
     "corsheaders",
-    "new_buildings",
     "clearcache",
     "admin_reorder",
-    "plot_buildings",
-    "developers",
+    "arc"
 ]
 
 MIDDLEWARE = [
@@ -192,15 +189,11 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": True,
     "order_with_respect_to": [
-        "main_page",
-        "main_page.Header",
-        "main_page.Advantages",
-        "main_page.MainContent",
-        "main_page.Card",
-        "main_page.Footer",
-        "new_buildings",
-        "plot_buildings",
-        "developers",  # Ваше новое приложение
+        "real_estate_app",  # Ваше приложение
+        "real_estate_app.City",  # Модель Город
+        "real_estate_app.Developer",  # Модель Застройщик
+        "real_estate_app.Complex",  # Модель Комплекс
+        "real_estate_app.Apartment",  # Модель Квартира
         "auth",
         "auth.User",
         "auth.Group",
@@ -210,14 +203,10 @@ JAZZMIN_SETTINGS = {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "main_page.Header": "fas fa-header",
-        "main_page.Card": "fas fa-id-card",
-        "main_page.MainContent": "fas fa-file-alt",
-        "main_page.Advantages": "fas fa-thumbs-up",
-        "main_page.Footer": "fas fa-footer",
-        "new_buildings.NewBuilding": "fas fa-building",
-        "plot_buildings.PlotBuilding": "fas fa-map",
-        "developers.Developer": "fas fa-briefcase",  # Иконка для застройщиков
+        "real_estate_app.City": "fas fa-city",
+        "real_estate_app.Developer": "fas fa-briefcase",
+        "real_estate_app.Complex": "fas fa-building",
+        "real_estate_app.Apartment": "fas fa-home",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
@@ -268,26 +257,13 @@ JAZZMIN_UI_TWEAKS = {
 
 ADMIN_REORDER = (
     {
-        "app": "main_page",
+        "app": "real_estate_app",  # Ваше приложение
         "models": (
-            "main_page.Header",
-            "main_page.Advantages",
-            "main_page.MainContent",
-            "main_page.Card",
-            "main_page.Footer",
+            "real_estate_app.City",
+            "real_estate_app.Developer",
+            "real_estate_app.Complex",
+            "real_estate_app.Apartment",
         ),
-    },
-    {
-        "app": "new_buildings",
-        "models": ("new_buildings.NewBuilding",),
-    },
-    {
-        "app": "plot_buildings",  # Приложение для Участков под застройку
-        "models": ("plot_buildings.PlotBuilding",),  # Модель Участков под застройку
-    },
-    {
-        "app": "developers",  # Приложение для застройщиков
-        "models": ("developers.Developer",),  # Модель застройщиков
     },
     {
         "app": "auth",
