@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "corsheaders",
     "clearcache",
-    "admin_reorder",
+    # "admin_reorder",
     "arc"
 ]
 
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "admin_reorder.middleware.ModelAdminReorder",
+    # "admin_reorder.middleware.ModelAdminReorder",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -105,26 +105,26 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "verceldb",
-        "USER": "default",
-        "PASSWORD": "bMUxSJ65kmYh",
-        "HOST": "ep-curly-mouse-a2n5eg3c-pooler.eu-central-1.aws.neon.tech",
-        "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "verceldb",
+#         "USER": "default",
+#         "PASSWORD": "bMUxSJ65kmYh",
+#         "HOST": "ep-curly-mouse-a2n5eg3c-pooler.eu-central-1.aws.neon.tech",
+#         "PORT": "5432",
+#         "OPTIONS": {
+#             "sslmode": "require",
+#         },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -191,7 +191,6 @@ JAZZMIN_SETTINGS = {
     "order_with_respect_to": [
         "real_estate_app",  # Ваше приложение
         "real_estate_app.City",  # Модель Город
-        "real_estate_app.Developer",  # Модель Застройщик
         "real_estate_app.Complex",  # Модель Комплекс
         "real_estate_app.Apartment",  # Модель Квартира
         "auth",
@@ -221,6 +220,7 @@ JAZZMIN_SETTINGS = {
     },
     "language_chooser": False,
 }
+
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
@@ -255,22 +255,22 @@ JAZZMIN_UI_TWEAKS = {
     "actions_sticky_top": False,
 }
 
-ADMIN_REORDER = (
-    {
-        "app": "real_estate_app",  # Ваше приложение
-        "models": (
-            "real_estate_app.City",
-            "real_estate_app.Developer",
-            "real_estate_app.Complex",
-            "real_estate_app.Apartment",
-        ),
-    },
-    {
-        "app": "auth",
-        "models": (
-            "auth.User",
-            "auth.Group",
-        ),
-    },
-    "sites",
-)
+# ADMIN_REORDER = (
+#     {
+#         "app": "real_estate_app",  # Ваше приложение
+#         "models": (
+#             "real_estate_app.City",
+#             "real_estate_app.Developer",
+#             "real_estate_app.Complex",
+#             "real_estate_app.Apartment",
+#         ),
+#     },
+#     {
+#         "app": "auth",
+#         "models": (
+#             "auth.User",
+#             "auth.Group",
+#         ),
+#     },
+#     "sites",
+# )
