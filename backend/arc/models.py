@@ -34,7 +34,7 @@ class Complex(models.Model):
 
 
 class Section(models.Model):
-    complex = models.ForeignKey(Complex, on_delete=models.CASCADE, related_name="sections", verbose_name="Комплекс")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="sections", verbose_name="Город")
     title = models.CharField(max_length=255, verbose_name="Заголовок", blank=True, null=True)
     desc = models.TextField(verbose_name="Описание", blank=True, null=True)
     image_1 = models.ImageField(upload_to="sections/", verbose_name="Изображение 1", blank=True, null=True)
@@ -47,4 +47,4 @@ class Section(models.Model):
         verbose_name_plural = "Секции"
 
     def __str__(self):
-        return self.title or self.complex.name
+        return self.title or f"{self.city.name} - {self.loc}"

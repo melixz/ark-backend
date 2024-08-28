@@ -9,17 +9,16 @@ class SectionSerializer(serializers.ModelSerializer):
 
 
 class ComplexSerializer(serializers.ModelSerializer):
-    sections = SectionSerializer(many=True, read_only=True)
-
     class Meta:
         model = Complex
-        fields = ['name', 'path', 'studia', 'one', 'two', 'three', 'sections']
+        fields = ['name', 'path', 'studia', 'one', 'two', 'three']
 
 
 class CitySerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='name')
     complexes = ComplexSerializer(many=True, read_only=True)
+    sections = SectionSerializer(many=True, read_only=True)
 
     class Meta:
         model = City
-        fields = ['city', 'image', 'path', 'title', 'desc', 'complexes']
+        fields = ['city', 'image', 'path', 'title', 'desc', 'complexes', 'sections']

@@ -16,17 +16,16 @@ class ComplexInline(admin.TabularInline):
 class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'path')
     search_fields = ('name',)
-    inlines = [ComplexInline]
+    inlines = [ComplexInline, SectionInline]
 
 
 @admin.register(Complex)
 class ComplexAdmin(admin.ModelAdmin):
     list_display = ('name', 'city')
     search_fields = ('name', 'city__name')
-    inlines = [SectionInline]
 
 
 @admin.register(Section)
 class SectionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'complex')
-    search_fields = ('title', 'complex__name')
+    list_display = ('title', 'city', 'loc')
+    search_fields = ('title', 'city__name', 'loc')
