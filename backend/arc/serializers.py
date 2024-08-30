@@ -1,5 +1,17 @@
 from rest_framework import serializers
-from .models import City, Complex, Section
+from .models import City, Complex, Plot, Section
+
+
+class ComplexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Complex
+        fields = ['name', 'path', 'studia', 'one', 'two', 'three']
+
+
+class PlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plot
+        fields = ['name', 'path', 'field_1', 'field_2', 'field_3', 'field_4']
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -24,22 +36,23 @@ class SectionSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
 
 
-class ComplexSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Complex
-        fields = ['name', 'path', 'studia', 'one', 'two', 'three']
-
-
-class CitySerializer(serializers.ModelSerializer):
+class CityDataSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='name')
     image = serializers.SerializerMethodField()
     complexes = ComplexSerializer(many=True, read_only=True)
-    sections = SectionSerializer(many=True, read_only=True)
+    plots = PlotSerializer(many=True, read_only=True)
+    section_1 = SectionSerializer(many=True, source='sections', read_only=True)
+    section_2 = SectionSerializer(many=True, source='sections', read_only=True)
 
     class Meta:
         model = City
-        fields = ['city', 'image', 'path', 'title', 'desc', 'complexes', 'sections']
+        fields = ['city', 'title', 'desc', 'image', 'path', 'complexes', 'plots', 'section_1', 'section_2']
 
     def get_image(self, obj):
         request = self.context.get('request')
         return request.build_absolute_uri(obj.image.url) if obj.image else None
+
+
+class FullResponseSerializer(serializers.Serializer):
+    new = CityDataSerializer(many=True)
+    plots = CityDataSerializer(many=True)

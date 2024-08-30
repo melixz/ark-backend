@@ -33,6 +33,31 @@ class Complex(models.Model):
         return self.name
 
 
+from django.db import models
+
+
+class Plot(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="plots", verbose_name="Город")
+    district = models.CharField(max_length=200, verbose_name="Район", blank=True)
+    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    field_1 = models.TextField(verbose_name="Field 1", blank=True, null=True)
+    field_2 = models.TextField(verbose_name="Field 2", blank=True, null=True)
+    field_3 = models.TextField(verbose_name="Field 3", blank=True, null=True)
+    field_4 = models.TextField(verbose_name="Field 4", blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Застройка"
+        verbose_name_plural = "Застройки"
+
+    def save(self, *args, **kwargs):
+        if self.district and not self.district.startswith('Район -'):
+            self.district = f'Район - {self.district}'
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.district
+
+
 class Section(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="sections", verbose_name="Город")
     title = models.CharField(max_length=255, verbose_name="Заголовок", blank=True, null=True)
