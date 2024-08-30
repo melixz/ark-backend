@@ -1,16 +1,26 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class City(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название города")
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
     image = models.ImageField(upload_to="cities/", verbose_name="Изображение", blank=True, null=True)
-    title = models.CharField(max_length=255, verbose_name="Заголовок", default="", blank=True)
-    desc = models.TextField(verbose_name="Описание", blank=True, null=True)
+
+    new_title = models.CharField(max_length=255, verbose_name="Заголовок для новостройки", blank=True, null=True)
+    new_desc = models.TextField(verbose_name="Описание для новостройки", blank=True, null=True)
+
+    plot_title = models.CharField(max_length=255, verbose_name="Заголовок для застройки", blank=True, null=True)
+    plot_desc = models.TextField(verbose_name="Описание для застройки", blank=True, null=True)
 
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города"
+
+    def clean(self):
+        if not (self.new_title and self.new_desc) and not (self.plot_title and self.plot_desc):
+            raise ValidationError(
+                "Вы должны заполнить либо 'Заголовок для новостройки' и 'Описание для новостройки', либо 'Заголовок для застройки' и 'Описание для застройки'.")
 
     def __str__(self):
         return self.name
@@ -31,9 +41,6 @@ class Complex(models.Model):
 
     def __str__(self):
         return self.name
-
-
-from django.db import models
 
 
 class Plot(models.Model):

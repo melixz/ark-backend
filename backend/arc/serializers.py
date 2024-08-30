@@ -44,13 +44,29 @@ class CityDataSerializer(serializers.ModelSerializer):
     section_1 = SectionSerializer(many=True, source='sections', read_only=True)
     section_2 = SectionSerializer(many=True, source='sections', read_only=True)
 
+    # Поля title и desc
+    title = serializers.SerializerMethodField()
+    desc = serializers.SerializerMethodField()
+
     class Meta:
         model = City
         fields = ['city', 'title', 'desc', 'image', 'path', 'complexes', 'plots', 'section_1', 'section_2']
 
-    def get_image(self, obj):
+    def get_title(self, obj):
         request = self.context.get('request')
-        return request.build_absolute_uri(obj.image.url) if obj.image else None
+        if request.resolver_match.url_name == 'new_endpoint_name':
+            return obj.new_title
+        elif request.resolver_match.url_name == 'plots_endpoint_name':
+            return obj.plot_title
+        return None
+
+    def get_desc(self, obj):
+        request = self.context.get('request')
+        if request.resolver_match.url_name == 'new_endpoint_name':
+            return obj.new_desc
+        elif request.resolver_match.url_name == 'plots_endpoint_name':
+            return obj.plot_desc
+        return None
 
 
 class FullResponseSerializer(serializers.Serializer):
