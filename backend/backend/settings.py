@@ -189,10 +189,11 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": True,
     "order_with_respect_to": [
-        "real_estate_app",  # Ваше приложение
-        "real_estate_app.City",  # Модель Город
-        "real_estate_app.Complex",  # Модель Комплекс
-        "real_estate_app.Apartment",  # Модель Квартира
+        "real_estate_app.City",  # Города
+        "real_estate_app.Complex",  # Комплексы
+        "real_estate_app.Apartment",  # Квартиры
+        "real_estate_app.Plot",  # Застройки
+        "real_estate_app.Section",  # Секции
         "auth",
         "auth.User",
         "auth.Group",
@@ -203,9 +204,10 @@ JAZZMIN_SETTINGS = {
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
         "real_estate_app.City": "fas fa-city",
-        "real_estate_app.Developer": "fas fa-briefcase",
         "real_estate_app.Complex": "fas fa-building",
         "real_estate_app.Apartment": "fas fa-home",
+        "real_estate_app.Plot": "fas fa-map",
+        "real_estate_app.Section": "fas fa-layer-group",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
@@ -220,7 +222,6 @@ JAZZMIN_SETTINGS = {
     },
     "language_chooser": False,
 }
-
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
