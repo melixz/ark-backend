@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "clearcache",
     # "admin_reorder",
-    "arc"
+    "arc",
 ]
 
 MIDDLEWARE = [

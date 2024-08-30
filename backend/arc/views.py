@@ -1,7 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import City
-from .serializers import FullResponseSerializer
+from .serializers import (
+    FullResponseSerializer,
+    NewCityDataSerializer,
+    PlotsCityDataSerializer,
+)
 
 
 class FullDataAPIView(APIView):
@@ -12,4 +16,6 @@ class FullDataAPIView(APIView):
             "plots": cities,
         }
 
-        return Response(FullResponseSerializer(response_data, context={'request': request}).data)
+        return Response(
+            FullResponseSerializer(response_data, context={"request": request}).data
+        )
