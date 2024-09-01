@@ -48,21 +48,13 @@ class PlotSectionInline(admin.StackedInline):
 class CityAdmin(admin.ModelAdmin):
     list_display = ("name", "path", "complex_card_bg", "complex_bg", "plot_card_bg", "plot_bg")
     search_fields = ("name",)
-    fieldsets = (
-        (None, {
-            'fields': (
-                'name', 'path', 'complex_card_bg', 'complex_bg', 'plot_card_bg', 'plot_bg',
-                'new_title', 'new_desc', 'plot_title', 'plot_desc'
-            )
-        }),
-    )
     inlines = [ComplexInline, PlotInline, NewSectionInline, PlotSectionInline]
 
 
 # Отдельные админки для других моделей (если нужно редактировать их отдельно)
 @admin.register(Complex)
 class ComplexAdmin(admin.ModelAdmin):
-    list_display = ("name", "city", "bg")
+    list_display = ("name", "city", "path", "card_bg")  # Убедитесь, что 'card_bg' правильно соответствует вашему полю
     search_fields = ("name", "city__name")
     inlines = [ApartmentInline]
 
@@ -81,7 +73,8 @@ class ApartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Plot)
 class PlotAdmin(admin.ModelAdmin):
-    list_display = ("district", "city", "path", "card_bg", "bg")
+    list_display = (
+    "district", "city", "path", "card_bg")  # Убедитесь, что 'card_bg' правильно соответствует вашему полю
     search_fields = ("district", "city__name")
     inlines = [PlotLandInline]
 

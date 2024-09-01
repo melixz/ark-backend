@@ -45,20 +45,15 @@ class PlotLandSerializer(serializers.ModelSerializer):
 
 class PlotSerializer(serializers.ModelSerializer):
     card_bg = serializers.SerializerMethodField()
-    bg = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
 
     class Meta:
         model = Plot
-        fields = ["district", "path", "card_bg", "bg", "lands"]
+        fields = ["district", "path", "card_bg", "lands"]
 
     def get_card_bg(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.card_bg.url) if obj.card_bg else None
-
-    def get_bg(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.bg.url) if obj.bg else None
 
 
 class NewSectionSerializer(serializers.ModelSerializer):

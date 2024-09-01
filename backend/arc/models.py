@@ -11,11 +11,12 @@ class City(models.Model):
     new_desc = models.TextField(verbose_name="Описание для новостройки", blank=True, null=True)
     plot_title = models.CharField(max_length=255, verbose_name="Заголовок для застройки", blank=True, null=True)
     plot_desc = models.TextField(verbose_name="Описание для застройки", blank=True, null=True)
-    complex_card_bg = models.ImageField(upload_to="cities/complexes/cards/", verbose_name="Фон карточки для комплексов",
+    complex_card_bg = models.ImageField(upload_to="cities/complexes/cards/",
+                                        verbose_name="Фон карточки города для комплексов",
                                         blank=True, null=True)
     complex_bg = models.ImageField(upload_to="cities/complexes/bg/", verbose_name="Фон для комплексов", blank=True,
                                    null=True)
-    plot_card_bg = models.ImageField(upload_to="cities/plots/cards/", verbose_name="Фон карточки для застроек",
+    plot_card_bg = models.ImageField(upload_to="cities/plots/cards/", verbose_name="Фон карточки города для застроек",
                                      blank=True, null=True)
     plot_bg = models.ImageField(upload_to="cities/plots/bg/", verbose_name="Фон для застроек", blank=True, null=True)
 
@@ -37,11 +38,12 @@ class Complex(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="complexes", verbose_name="Город")
     name = models.CharField(max_length=200, verbose_name="Название комплекса")
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    card_bg = models.ImageField(upload_to="complexes/cards/", verbose_name="Фон карточки слайдера", blank=True,
+                                null=True)
     studia = models.PositiveIntegerField(verbose_name="Количество студий", default=0)
     one = models.PositiveIntegerField(verbose_name="Количество 1-комнатных квартир", default=0)
     two = models.PositiveIntegerField(verbose_name="Количество 2-комнатных квартир", default=0)
     three = models.PositiveIntegerField(verbose_name="Количество 3-комнатных квартир", default=0)
-    bg = models.ImageField(upload_to="complexes/bg/", verbose_name="Фон на странице ЖК", blank=True, null=True)
 
     class Meta:
         verbose_name = "Комплекс"
@@ -61,7 +63,6 @@ class Plot(models.Model):
     district = models.CharField(max_length=200, verbose_name="Район", blank=True)
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
     card_bg = models.ImageField(upload_to="plots/cards/", verbose_name="Фон карточки в слайдере", blank=True, null=True)
-    bg = models.ImageField(upload_to="plots/bg/", verbose_name="Фон на странице застройки", blank=True, null=True)
     size_6 = models.PositiveIntegerField(verbose_name="6 соток", default=0)
     size_8 = models.PositiveIntegerField(verbose_name="8 соток", default=0)
     size_10 = models.PositiveIntegerField(verbose_name="10 соток", default=0)
@@ -156,7 +157,7 @@ class ApartmentImage(models.Model):
         verbose_name_plural = "Изображения"
 
     def save(self, *args, **kwargs):
-        if self.pk is None:  # Объект новый, проверка на количество изображений
+        if self.pk is None:
             if self.image_type == "floor_plan" and ApartmentImage.objects.filter(apartment=self.apartment,
                                                                                  image_type="floor_plan").count() >= 10:
                 raise ValidationError("Для категории 'Схема квартиры' можно загрузить только 10 изображений.")
