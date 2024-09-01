@@ -49,7 +49,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = ["title", "desc", "image_1", "image_2", "image_3", "image_4", "loc"]
+        fields = ["title", "desc", "image_1", "image_2", "image_3", "image_4", "loc", "desc_1", "desc_2"]
 
     def get_image_1(self, obj):
         request = self.context.get("request")
@@ -69,10 +69,8 @@ class SectionSerializer(serializers.ModelSerializer):
 
 
 class NewCityDataSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
     complexes = ComplexSerializer(many=True, read_only=True)
     section_1 = SectionSerializer(many=True, source="sections", read_only=True)
-    section_2 = SectionSerializer(many=True, source="sections", read_only=True)
     title = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
     card_bg = serializers.SerializerMethodField()
@@ -84,13 +82,11 @@ class NewCityDataSerializer(serializers.ModelSerializer):
             "name",
             "title",
             "desc",
-            "image",
             "card_bg",
             "bg",
             "path",
             "complexes",
             "section_1",
-            "section_2",
         ]
 
     def get_title(self, obj):
@@ -98,10 +94,6 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
     def get_desc(self, obj):
         return obj.new_desc
-
-    def get_image(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image.url) if obj.image else None
 
     def get_card_bg(self, obj):
         request = self.context.get("request")
@@ -113,7 +105,6 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
 
 class PlotsCityDataSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
     plots = PlotSerializer(many=True, read_only=True)
 
     title = serializers.SerializerMethodField()
@@ -121,17 +112,13 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ["name", "title", "desc", "image", "path", "plots"]
+        fields = ["name", "title", "desc", "path", "plots"]
 
     def get_title(self, obj):
         return obj.plot_title
 
     def get_desc(self, obj):
         return obj.plot_desc
-
-    def get_image(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image.url) if obj.image else None
 
 
 class FullResponseSerializer(serializers.Serializer):

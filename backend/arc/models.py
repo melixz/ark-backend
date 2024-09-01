@@ -71,7 +71,8 @@ class Plot(models.Model):
 class Section(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="sections", verbose_name="Город")
     title = models.CharField(max_length=255, verbose_name="Заголовок", blank=True, null=True)
-    desc = models.TextField(verbose_name="Описание", blank=True, null=True)
+    desc_1 = models.TextField(verbose_name="Описание 1", blank=True, null=True)
+    desc_2 = models.TextField(verbose_name="Описание 2", blank=True, null=True)
     image_1 = models.ImageField(upload_to="sections/", verbose_name="Изображение 1", blank=True, null=True)
     image_2 = models.ImageField(upload_to="sections/", verbose_name="Изображение 2", blank=True, null=True)
     image_3 = models.ImageField(upload_to="sections/", verbose_name="Изображение 3", blank=True, null=True)
