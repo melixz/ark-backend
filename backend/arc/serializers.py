@@ -24,15 +24,15 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
 class ComplexSerializer(serializers.ModelSerializer):
     apartments = ApartmentSerializer(many=True, read_only=True)
-    bg = serializers.SerializerMethodField()
+    card_bg = serializers.SerializerMethodField()
 
     class Meta:
         model = Complex
-        fields = ["name", "path", "bg", "studia", "one", "two", "three", "apartments"]
+        fields = ["name", "path", "card_bg", "studia", "one", "two", "three", "apartments"]
 
-    def get_bg(self, obj):
+    def get_card_bg(self, obj):
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.bg.url) if obj.bg else None
+        return request.build_absolute_uri(obj.card_bg.url) if obj.card_bg else None
 
 
 class PlotLandSerializer(serializers.ModelSerializer):
