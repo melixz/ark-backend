@@ -49,7 +49,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = ["title", "desc", "image_1", "image_2", "image_3", "image_4", "loc", "desc_1", "desc_2"]
+        fields = ["title", "desc_1", "desc_2", "image_1", "image_2", "image_3", "image_4", "loc"]
 
     def get_image_1(self, obj):
         request = self.context.get("request")
@@ -70,7 +70,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
 class NewCityDataSerializer(serializers.ModelSerializer):
     complexes = ComplexSerializer(many=True, read_only=True)
-    section_1 = SectionSerializer(many=True, source="sections", read_only=True)
+    section = SectionSerializer(many=True, source="sections", read_only=True)
     title = serializers.SerializerMethodField()
     desc = serializers.SerializerMethodField()
     card_bg = serializers.SerializerMethodField()
@@ -86,7 +86,7 @@ class NewCityDataSerializer(serializers.ModelSerializer):
             "bg",
             "path",
             "complexes",
-            "section_1",
+            "section",
         ]
 
     def get_title(self, obj):
