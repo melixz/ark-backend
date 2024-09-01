@@ -1,3 +1,4 @@
+from django.utils.text import slugify
 from django.db import models
 from django.core.exceptions import ValidationError
 from PIL import Image
@@ -54,6 +55,8 @@ class Plot(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="plots", verbose_name="Город")
     district = models.CharField(max_length=200, verbose_name="Район", blank=True)
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    card_bg = models.ImageField(upload_to="plots/cards/", verbose_name="Фон карточки в слайдере", blank=True, null=True)
+    bg = models.ImageField(upload_to="plots/bg/", verbose_name="Фон на странице застройки", blank=True, null=True)
 
     class Meta:
         verbose_name = "Застройка"

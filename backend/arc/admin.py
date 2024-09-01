@@ -56,7 +56,7 @@ class ApartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Plot)
 class PlotAdmin(admin.ModelAdmin):
-    list_display = ("district", "city", "path")
+    list_display = ("district", "city", "path", "card_bg", "bg")
     search_fields = ("district", "city__name")
 
 

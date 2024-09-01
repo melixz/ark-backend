@@ -36,9 +36,20 @@ class ComplexSerializer(serializers.ModelSerializer):
 
 
 class PlotSerializer(serializers.ModelSerializer):
+    card_bg = serializers.SerializerMethodField()
+    bg = serializers.SerializerMethodField()
+
     class Meta:
         model = Plot
-        fields = ["district", "path"]
+        fields = ["district", "path", "card_bg", "bg"]
+
+    def get_card_bg(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.card_bg.url) if obj.card_bg else None
+
+    def get_bg(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.bg.url) if obj.bg else None
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -78,16 +89,7 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = [
-            "name",
-            "title",
-            "desc",
-            "card_bg",
-            "bg",
-            "path",
-            "complexes",
-            "section",
-        ]
+        fields = ["name", "title", "desc", "card_bg", "bg", "path", "complexes", "section"]
 
     def get_title(self, obj):
         return obj.new_title
