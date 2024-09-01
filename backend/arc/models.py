@@ -6,11 +6,13 @@ from PIL import Image
 class City(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название города")
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
-    image = models.ImageField(upload_to="cities/", verbose_name="Изображение", blank=True, null=True)
     new_title = models.CharField(max_length=255, verbose_name="Заголовок для новостройки", blank=True, null=True)
     new_desc = models.TextField(verbose_name="Описание для новостройки", blank=True, null=True)
     plot_title = models.CharField(max_length=255, verbose_name="Заголовок для застройки", blank=True, null=True)
     plot_desc = models.TextField(verbose_name="Описание для застройки", blank=True, null=True)
+    card_bg = models.ImageField(upload_to="cities/cards/", verbose_name="Фон карточки в слайдере", blank=True,
+                                null=True)
+    bg = models.ImageField(upload_to="cities/bg/", verbose_name="Фон на странице города", blank=True, null=True)
 
     class Meta:
         verbose_name = "Город"
@@ -33,10 +35,16 @@ class Complex(models.Model):
     one = models.PositiveIntegerField(verbose_name="Количество 1-комнатных квартир", default=0)
     two = models.PositiveIntegerField(verbose_name="Количество 2-комнатных квартир", default=0)
     three = models.PositiveIntegerField(verbose_name="Количество 3-комнатных квартир", default=0)
+    bg = models.ImageField(upload_to="complexes/bg/", verbose_name="Фон на странице ЖК", blank=True, null=True)
 
     class Meta:
         verbose_name = "Комплекс"
         verbose_name_plural = "Комплексы"
+
+    def save(self, *args, **kwargs):
+        if not self.path:
+            self.path = f"{slugify(self.city.name)}/{slugify(self.name)}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -67,6 +75,7 @@ class Section(models.Model):
     image_1 = models.ImageField(upload_to="sections/", verbose_name="Изображение 1", blank=True, null=True)
     image_2 = models.ImageField(upload_to="sections/", verbose_name="Изображение 2", blank=True, null=True)
     image_3 = models.ImageField(upload_to="sections/", verbose_name="Изображение 3", blank=True, null=True)
+    image_4 = models.ImageField(upload_to="sections/", verbose_name="Изображение 4", blank=True, null=True)
     loc = models.CharField(max_length=255, verbose_name="Локация", blank=True, null=True)
 
     class Meta:

@@ -30,14 +30,19 @@ class SectionInline(admin.TabularInline):
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
-    list_display = ("name", "path")
+    list_display = ("name", "path", "card_bg", "bg")
     search_fields = ("name",)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'path', 'card_bg', 'bg', 'new_title', 'new_desc', 'plot_title', 'plot_desc')
+        }),
+    )
     inlines = [ComplexInline, PlotInline, SectionInline]
 
 
 @admin.register(Complex)
 class ComplexAdmin(admin.ModelAdmin):
-    list_display = ("name", "city")
+    list_display = ("name", "city", "bg")
     search_fields = ("name", "city__name")
     inlines = [ApartmentInline]
 
