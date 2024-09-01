@@ -11,9 +11,13 @@ class City(models.Model):
     new_desc = models.TextField(verbose_name="Описание для новостройки", blank=True, null=True)
     plot_title = models.CharField(max_length=255, verbose_name="Заголовок для застройки", blank=True, null=True)
     plot_desc = models.TextField(verbose_name="Описание для застройки", blank=True, null=True)
-    card_bg = models.ImageField(upload_to="cities/cards/", verbose_name="Фон карточки в слайдере", blank=True,
-                                null=True)
-    bg = models.ImageField(upload_to="cities/bg/", verbose_name="Фон на странице города", blank=True, null=True)
+    complex_card_bg = models.ImageField(upload_to="cities/complexes/cards/", verbose_name="Фон карточки для комплексов",
+                                        blank=True, null=True)
+    complex_bg = models.ImageField(upload_to="cities/complexes/bg/", verbose_name="Фон для комплексов", blank=True,
+                                   null=True)
+    plot_card_bg = models.ImageField(upload_to="cities/plots/cards/", verbose_name="Фон карточки для застроек",
+                                     blank=True, null=True)
+    plot_bg = models.ImageField(upload_to="cities/plots/bg/", verbose_name="Фон для застроек", blank=True, null=True)
 
     class Meta:
         verbose_name = "Город"
@@ -22,7 +26,8 @@ class City(models.Model):
     def clean(self):
         if not (self.new_title and self.new_desc) and not (self.plot_title and self.plot_desc):
             raise ValidationError(
-                "Вы должны заполнить либо 'Заголовок для новостройки' и 'Описание для новостройки', либо 'Заголовок для застройки' и 'Описание для застройки'.")
+                "Вы должны заполнить либо 'Заголовок для новостройки' и 'Описание для новостройки', либо 'Заголовок для застройки' и 'Описание для застройки'."
+            )
 
     def __str__(self):
         return self.name
@@ -57,6 +62,10 @@ class Plot(models.Model):
     path = models.CharField(max_length=100, verbose_name="Путь", default="")
     card_bg = models.ImageField(upload_to="plots/cards/", verbose_name="Фон карточки в слайдере", blank=True, null=True)
     bg = models.ImageField(upload_to="plots/bg/", verbose_name="Фон на странице застройки", blank=True, null=True)
+    size_6 = models.PositiveIntegerField(verbose_name="6 соток", default=0)
+    size_8 = models.PositiveIntegerField(verbose_name="8 соток", default=0)
+    size_10 = models.PositiveIntegerField(verbose_name="10 соток", default=0)
+    size_12 = models.PositiveIntegerField(verbose_name="12 соток", default=0)
 
     class Meta:
         verbose_name = "Застройка"
@@ -71,20 +80,39 @@ class Plot(models.Model):
         return self.district
 
 
-class Section(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="sections", verbose_name="Город")
+class NewSection(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="new_sections", verbose_name="Город")
     title = models.CharField(max_length=255, verbose_name="Заголовок", blank=True, null=True)
     desc_1 = models.TextField(verbose_name="Описание 1", blank=True, null=True)
     desc_2 = models.TextField(verbose_name="Описание 2", blank=True, null=True)
-    image_1 = models.ImageField(upload_to="sections/", verbose_name="Изображение 1", blank=True, null=True)
-    image_2 = models.ImageField(upload_to="sections/", verbose_name="Изображение 2", blank=True, null=True)
-    image_3 = models.ImageField(upload_to="sections/", verbose_name="Изображение 3", blank=True, null=True)
-    image_4 = models.ImageField(upload_to="sections/", verbose_name="Изображение 4", blank=True, null=True)
+    image_1 = models.ImageField(upload_to="new_sections/", verbose_name="Изображение 1", blank=True, null=True)
+    image_2 = models.ImageField(upload_to="new_sections/", verbose_name="Изображение 2", blank=True, null=True)
+    image_3 = models.ImageField(upload_to="new_sections/", verbose_name="Изображение 3", blank=True, null=True)
+    image_4 = models.ImageField(upload_to="new_sections/", verbose_name="Изображение 4", blank=True, null=True)
     loc = models.CharField(max_length=255, verbose_name="Локация", blank=True, null=True)
 
     class Meta:
-        verbose_name = "Секция"
-        verbose_name_plural = "Секции"
+        verbose_name = "Секция новостроек"
+        verbose_name_plural = "Секции новостроек"
+
+    def __str__(self):
+        return self.title or f"{self.city.name} - {self.loc}"
+
+
+class PlotSection(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="plot_sections", verbose_name="Город")
+    title = models.CharField(max_length=255, verbose_name="Заголовок", blank=True, null=True)
+    desc_1 = models.TextField(verbose_name="Описание 1", blank=True, null=True)
+    desc_2 = models.TextField(verbose_name="Описание 2", blank=True, null=True)
+    image_1 = models.ImageField(upload_to="plot_sections/", verbose_name="Изображение 1", blank=True, null=True)
+    image_2 = models.ImageField(upload_to="plot_sections/", verbose_name="Изображение 2", blank=True, null=True)
+    image_3 = models.ImageField(upload_to="plot_sections/", verbose_name="Изображение 3", blank=True, null=True)
+    image_4 = models.ImageField(upload_to="plot_sections/", verbose_name="Изображение 4", blank=True, null=True)
+    loc = models.CharField(max_length=255, verbose_name="Локация", blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Секция застроек"
+        verbose_name_plural = "Секции застроек"
 
     def __str__(self):
         return self.title or f"{self.city.name} - {self.loc}"
@@ -98,11 +126,17 @@ class Apartment(models.Model):
         ("three_bedroom", "Трехкомнатная"),
     ]
     complex = models.ForeignKey("Complex", on_delete=models.CASCADE, related_name="apartments", verbose_name="Комплекс")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="apartments", verbose_name="Город", default=1)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория")
 
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
+
+    def save(self, *args, **kwargs):
+        if not self.city:
+            self.city = self.complex.city
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_category_display()} - {self.complex.name}"
@@ -121,16 +155,17 @@ class ApartmentImage(models.Model):
         verbose_name = "Изображение"
         verbose_name_plural = "Изображения"
 
-    def clean(self):
-        if self.image_type == "floor_plan" and ApartmentImage.objects.filter(apartment=self.apartment,
-                                                                             image_type="floor_plan").count() >= 10:
-            raise ValidationError("Для категории 'Схема квартиры' можно загрузить только 10 изображений.")
-        elif self.image_type == "slider_image" and ApartmentImage.objects.filter(apartment=self.apartment,
-                                                                                 image_type="slider_image").count() >= 10:
-            raise ValidationError("Для категории 'Картинка для слайдера' можно загрузить до 10 изображений.")
-
     def save(self, *args, **kwargs):
+        if self.pk is None:  # Объект новый, проверка на количество изображений
+            if self.image_type == "floor_plan" and ApartmentImage.objects.filter(apartment=self.apartment,
+                                                                                 image_type="floor_plan").count() >= 10:
+                raise ValidationError("Для категории 'Схема квартиры' можно загрузить только 10 изображений.")
+            elif self.image_type == "slider_image" and ApartmentImage.objects.filter(apartment=self.apartment,
+                                                                                     image_type="slider_image").count() >= 10:
+                raise ValidationError("Для категории 'Картинка для слайдера' можно загрузить до 10 изображений.")
+
         super().save(*args, **kwargs)
+
         img = Image.open(self.image.path)
         if img.height > 1125 or img.width > 1125:
             img.thumbnail((1125, 1125))
@@ -138,3 +173,22 @@ class ApartmentImage(models.Model):
 
     def __str__(self):
         return f"{self.apartment} - {self.get_image_type_display()}"
+
+
+class PlotLand(models.Model):
+    LAND_TYPE_CHOICES = [
+        ("6", "6 соток"),
+        ("8", "8 соток"),
+        ("10", "10 соток"),
+        ("12", "12 соток"),
+    ]
+    plot = models.ForeignKey(Plot, on_delete=models.CASCADE, related_name="lands", verbose_name="Застройка")
+    land_type = models.CharField(max_length=2, choices=LAND_TYPE_CHOICES, verbose_name="Тип участка")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена за участок")
+
+    class Meta:
+        verbose_name = "Участок"
+        verbose_name_plural = "Участки"
+
+    def __str__(self):
+        return f"{self.get_land_type_display()} - {self.plot.district}"

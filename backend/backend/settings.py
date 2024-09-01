@@ -193,6 +193,7 @@ JAZZMIN_SETTINGS = {
         "real_estate_app.Complex",  # Комплексы
         "real_estate_app.Apartment",  # Квартиры
         "real_estate_app.Plot",  # Застройки
+        "real_estate_app.PlotLand",  # Участки
         "real_estate_app.Section",  # Секции
         "auth",
         "auth.User",
@@ -207,6 +208,7 @@ JAZZMIN_SETTINGS = {
         "real_estate_app.Complex": "fas fa-building",
         "real_estate_app.Apartment": "fas fa-home",
         "real_estate_app.Plot": "fas fa-map",
+        "real_estate_app.PlotLand": "fas fa-map-marked",  # Добавлено для участков
         "real_estate_app.Section": "fas fa-layer-group",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
