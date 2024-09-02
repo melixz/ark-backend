@@ -1,5 +1,37 @@
 from rest_framework import serializers
-from .models import City, Complex, Plot, Apartment, ApartmentImage, PlotLand, NewSection, PlotSection
+from .models import (
+    City,
+    Complex,
+    ComplexImage,
+    Plot,
+    PlotImage,
+    Apartment,
+    ApartmentImage,
+    PlotLand,
+    NewSection,
+    PlotSection,
+)
+
+
+class ImageBaseSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ["image_type", "image_url"]
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image.url) if obj.image else None
+
+
+class ComplexImageSerializer(ImageBaseSerializer):
+    class Meta(ImageBaseSerializer.Meta):
+        model = ComplexImage
+
+
+class PlotImageSerializer(ImageBaseSerializer):
+    class Meta(ImageBaseSerializer.Meta):
+        model = PlotImage
 
 
 class ApartmentImageSerializer(serializers.ModelSerializer):
@@ -24,11 +56,22 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
 class ComplexSerializer(serializers.ModelSerializer):
     apartments = ApartmentSerializer(many=True, read_only=True)
+    images = ComplexImageSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
 
     class Meta:
         model = Complex
-        fields = ["name", "path", "card_bg", "studia", "one", "two", "three", "apartments"]
+        fields = [
+            "name",
+            "path",
+            "card_bg",
+            "studia",
+            "one",
+            "two",
+            "three",
+            "apartments",
+            "images",
+        ]
 
     def get_card_bg(self, obj):
         request = self.context.get("request")
@@ -36,7 +79,9 @@ class ComplexSerializer(serializers.ModelSerializer):
 
 
 class PlotLandSerializer(serializers.ModelSerializer):
-    land_type_display = serializers.CharField(source="get_land_type_display", read_only=True)
+    land_type_display = serializers.CharField(
+        source="get_land_type_display", read_only=True
+    )
 
     class Meta:
         model = PlotLand
@@ -44,12 +89,13 @@ class PlotLandSerializer(serializers.ModelSerializer):
 
 
 class PlotSerializer(serializers.ModelSerializer):
-    card_bg = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
+    images = PlotImageSerializer(many=True, read_only=True)
+    card_bg = serializers.SerializerMethodField()
 
     class Meta:
         model = Plot
-        fields = ["district", "path", "card_bg", "lands"]
+        fields = ["district", "path", "card_bg", "lands", "images"]
 
     def get_card_bg(self, obj):
         request = self.context.get("request")
@@ -64,7 +110,16 @@ class NewSectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NewSection
-        fields = ["title", "desc_1", "desc_2", "image_1", "image_2", "image_3", "image_4", "loc"]
+        fields = [
+            "title",
+            "desc_1",
+            "desc_2",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
+            "loc",
+        ]
 
     def get_image_1(self, obj):
         request = self.context.get("request")
@@ -91,7 +146,16 @@ class PlotSectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlotSection
-        fields = ["title", "desc_1", "desc_2", "image_1", "image_2", "image_3", "image_4", "loc"]
+        fields = [
+            "title",
+            "desc_1",
+            "desc_2",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
+            "loc",
+        ]
 
     def get_image_1(self, obj):
         request = self.context.get("request")
@@ -120,7 +184,16 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ["name", "title", "desc", "complex_card_bg", "complex_bg", "path", "complexes", "section"]
+        fields = [
+            "name",
+            "title",
+            "desc",
+            "complex_card_bg",
+            "complex_bg",
+            "path",
+            "complexes",
+            "section",
+        ]
 
     def get_title(self, obj):
         return obj.new_title
@@ -130,11 +203,17 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
     def get_complex_card_bg(self, obj):
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.complex_card_bg.url) if obj.complex_card_bg else None
+        return (
+            request.build_absolute_uri(obj.complex_card_bg.url)
+            if obj.complex_card_bg
+            else None
+        )
 
     def get_complex_bg(self, obj):
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.complex_bg.url) if obj.complex_bg else None
+        return (
+            request.build_absolute_uri(obj.complex_bg.url) if obj.complex_bg else None
+        )
 
 
 class PlotsCityDataSerializer(serializers.ModelSerializer):
@@ -147,7 +226,16 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ["name", "title", "desc", "plot_card_bg", "plot_bg", "path", "plots", "section"]
+        fields = [
+            "name",
+            "title",
+            "desc",
+            "plot_card_bg",
+            "plot_bg",
+            "path",
+            "plots",
+            "section",
+        ]
 
     def get_title(self, obj):
         return obj.plot_title
@@ -157,7 +245,11 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
 
     def get_plot_card_bg(self, obj):
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.plot_card_bg.url) if obj.plot_card_bg else None
+        return (
+            request.build_absolute_uri(obj.plot_card_bg.url)
+            if obj.plot_card_bg
+            else None
+        )
 
     def get_plot_bg(self, obj):
         request = self.context.get("request")
