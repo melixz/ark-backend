@@ -22,10 +22,17 @@ class ImageBase(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
+            parent_instance = self.get_parent_instance()
             if (
                 self.image_type == "slider_image"
                 and self.__class__.objects.filter(
-                    **{self._meta.model_name: self.get_parent_instance()},
+                    **{
+                        self._meta.get_field(
+                            "complex"
+                            if isinstance(parent_instance, Complex)
+                            else "plot"
+                        ).name: parent_instance
+                    },
                     image_type="slider_image",
                 ).count()
                 >= 10
@@ -36,7 +43,13 @@ class ImageBase(models.Model):
             elif (
                 self.image_type == "additional_image"
                 and self.__class__.objects.filter(
-                    **{self._meta.model_name: self.get_parent_instance()},
+                    **{
+                        self._meta.get_field(
+                            "complex"
+                            if isinstance(parent_instance, Complex)
+                            else "plot"
+                        ).name: parent_instance
+                    },
                     image_type="additional_image",
                 ).count()
                 >= 10
@@ -366,7 +379,7 @@ class ApartmentImage(models.Model):
         super().save(*args, **kwargs)
 
         img = Image.open(self.image.path)
-        if img.height > 1125 or img.width > 1125:
+        if img.height > 1125 and img.width > 1125:
             img.thumbnail((1125, 1125))
         img.save(self.image.path, quality=70, optimize=True)
 

@@ -31,7 +31,6 @@ class ApartmentImageInline(admin.TabularInline):
 class ApartmentInline(admin.TabularInline):
     model = Apartment
     extra = 1
-    inlines = [ApartmentImageInline]
 
 
 class PlotLandInline(admin.TabularInline):
@@ -49,18 +48,6 @@ class PlotSectionInline(admin.StackedInline):
     extra = 1
 
 
-class ComplexInline(admin.StackedInline):
-    model = Complex
-    extra = 1
-    inlines = [ComplexImageInline, ApartmentInline]
-
-
-class PlotInline(admin.StackedInline):
-    model = Plot
-    extra = 1
-    inlines = [PlotImageInline, PlotLandInline]
-
-
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = (
@@ -72,7 +59,21 @@ class CityAdmin(admin.ModelAdmin):
         "plot_bg",
     )
     search_fields = ("name",)
-    inlines = [ComplexInline, PlotInline, NewSectionInline, PlotSectionInline]
+    inlines = [NewSectionInline, PlotSectionInline]
+
+
+@admin.register(Complex)
+class ComplexAdmin(admin.ModelAdmin):
+    list_display = ("name", "city", "path", "card_bg")
+    search_fields = ("name", "city__name")
+    inlines = [ComplexImageInline, ApartmentInline]
+
+
+@admin.register(Plot)
+class PlotAdmin(admin.ModelAdmin):
+    list_display = ("district", "city", "path", "card_bg")
+    search_fields = ("district", "city__name")
+    inlines = [PlotImageInline, PlotLandInline]
 
 
 @admin.register(PlotLand)
@@ -91,17 +92,3 @@ class NewSectionAdmin(admin.ModelAdmin):
 class PlotSectionAdmin(admin.ModelAdmin):
     list_display = ("title", "city", "loc")
     search_fields = ("title", "city__name", "loc")
-
-
-@admin.register(Complex)
-class ComplexAdmin(admin.ModelAdmin):
-    list_display = ("name", "city", "path", "card_bg")
-    search_fields = ("name", "city__name")
-    inlines = [ComplexImageInline, ApartmentInline]
-
-
-@admin.register(Plot)
-class PlotAdmin(admin.ModelAdmin):
-    list_display = ("district", "city", "path", "card_bg")
-    search_fields = ("district", "city__name")
-    inlines = [PlotImageInline, PlotLandInline]

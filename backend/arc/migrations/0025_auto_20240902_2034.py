@@ -6,21 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('arc', '0024_compleximage_plotimage'),
+        ("arc", "0024_compleximage_plotimage"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='compleximage',
-            options={'verbose_name': 'Изображение комплекса', 'verbose_name_plural': 'Изображения комплексов'},
+            name="compleximage",
+            options={
+                "verbose_name": "Изображение комплекса",
+                "verbose_name_plural": "Изображения комплексов",
+            },
         ),
         migrations.AlterModelOptions(
-            name='plotimage',
-            options={'verbose_name': 'Изображение застройки', 'verbose_name_plural': 'Изображения застроек'},
+            name="plotimage",
+            options={
+                "verbose_name": "Изображение застройки",
+                "verbose_name_plural": "Изображения застроек",
+            },
         ),
         migrations.AlterField(
-            model_name='complex',
-            name='card_bg',
-            field=models.ImageField(blank=True, null=True, upload_to='complexes/cards/', verbose_name='Фон карточки в слайдере'),
+            model_name="complex",
+            name="card_bg",
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to="complexes/cards/",
+                verbose_name="Фон карточки в слайдере",
+            ),
         ),
     ]
