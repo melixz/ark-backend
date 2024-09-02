@@ -118,17 +118,28 @@ WSGI_APPLICATION = "backend.wsgi.application"
 #     }
 # }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "verceldb",
+#         "USER": "default",
+#         "PASSWORD": "bMUxSJ65kmYh",
+#         "HOST": "ep-curly-mouse-a2n5eg3c-pooler.eu-central-1.aws.neon.tech",
+#         "PORT": "5432",
+#         "OPTIONS": {
+#             "sslmode": "require",
+#         },
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "verceldb",
-        "USER": "default",
-        "PASSWORD": "bMUxSJ65kmYh",
-        "HOST": "ep-curly-mouse-a2n5eg3c-pooler.eu-central-1.aws.neon.tech",
-        "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'u2800927_arc',
+        'USER': 'u2800927_root',
+        'PASSWORD': '123321qweewq',
+        'HOST': 'arkcrimea.ru',
+        'PORT': '3306',
     }
 }
 
