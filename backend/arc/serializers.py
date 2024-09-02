@@ -7,6 +7,7 @@ from .models import (
     PlotImage,
     Apartment,
     ApartmentImage,
+    ApartmentSection,
     PlotLand,
     NewSection,
     PlotSection,
@@ -34,24 +35,63 @@ class PlotImageSerializer(ImageBaseSerializer):
         model = PlotImage
 
 
-class ApartmentImageSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+class ApartmentImageSerializer(ImageBaseSerializer):
+    class Meta(ImageBaseSerializer.Meta):
+        model = ApartmentImage
+
+
+class ApartmentSectionSerializer(serializers.ModelSerializer):
+    image_1_url = serializers.SerializerMethodField()
+    image_2_url = serializers.SerializerMethodField()
+    image_3_url = serializers.SerializerMethodField()
+    image_4_url = serializers.SerializerMethodField()
+    image_5_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = ApartmentImage
-        fields = ["image_type", "image_url"]
+        model = ApartmentSection
+        fields = [
+            "title",
+            "price",
+            "floor",
+            "room_count",
+            "apartment_number",
+            "area",
+            "delivery_date",
+            "image_1_url",
+            "image_2_url",
+            "image_3_url",
+            "image_4_url",
+            "image_5_url",
+        ]
 
-    def get_image_url(self, obj):
+    def get_image_1_url(self, obj):
         request = self.context.get("request")
-        return request.build_absolute_uri(obj.image.url) if obj.image else None
+        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
+
+    def get_image_2_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
+
+    def get_image_3_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
+
+    def get_image_4_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
+
+    def get_image_5_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image_5.url) if obj.image_5 else None
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
     images = ApartmentImageSerializer(many=True, read_only=True)
+    sections = ApartmentSectionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Apartment
-        fields = ["category", "images"]
+        fields = ["category", "images", "sections"]
 
 
 class ComplexSerializer(serializers.ModelSerializer):
@@ -65,10 +105,6 @@ class ComplexSerializer(serializers.ModelSerializer):
             "name",
             "path",
             "card_bg",
-            "studia",
-            "one",
-            "two",
-            "three",
             "apartments",
             "images",
         ]

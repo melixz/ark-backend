@@ -30,7 +30,11 @@ class ImageBase(models.Model):
                         self._meta.get_field(
                             "complex"
                             if isinstance(parent_instance, Complex)
-                            else "plot"
+                            else (
+                                "plot"
+                                if isinstance(parent_instance, Plot)
+                                else "apartment"
+                            )
                         ).name: parent_instance
                     },
                     image_type="slider_image",
@@ -47,7 +51,11 @@ class ImageBase(models.Model):
                         self._meta.get_field(
                             "complex"
                             if isinstance(parent_instance, Complex)
-                            else "plot"
+                            else (
+                                "plot"
+                                if isinstance(parent_instance, Plot)
+                                else "apartment"
+                            )
                         ).name: parent_instance
                     },
                     image_type="additional_image",
@@ -137,16 +145,6 @@ class Complex(models.Model):
         blank=True,
         null=True,
     )
-    studia = models.PositiveIntegerField(verbose_name="Количество студий", default=0)
-    one = models.PositiveIntegerField(
-        verbose_name="Количество 1-комнатных квартир", default=0
-    )
-    two = models.PositiveIntegerField(
-        verbose_name="Количество 2-комнатных квартир", default=0
-    )
-    three = models.PositiveIntegerField(
-        verbose_name="Количество 3-комнатных квартир", default=0
-    )
 
     class Meta:
         verbose_name = "Комплекс"
@@ -189,10 +187,6 @@ class Plot(models.Model):
         blank=True,
         null=True,
     )
-    size_6 = models.PositiveIntegerField(verbose_name="6 соток", default=0)
-    size_8 = models.PositiveIntegerField(verbose_name="8 соток", default=0)
-    size_10 = models.PositiveIntegerField(verbose_name="10 соток", default=0)
-    size_12 = models.PositiveIntegerField(verbose_name="12 соток", default=0)
 
     class Meta:
         verbose_name = "Застройка"
@@ -300,17 +294,13 @@ class Apartment(models.Model):
         ("three_bedroom", "Трехкомнатная"),
     ]
     complex = models.ForeignKey(
-        "Complex",
+        Complex,
         on_delete=models.CASCADE,
         related_name="apartments",
         verbose_name="Комплекс",
     )
     city = models.ForeignKey(
-        City,
-        on_delete=models.CASCADE,
-        related_name="apartments",
-        verbose_name="Город",
-        default=1,
+        City, on_delete=models.CASCADE, related_name="apartments", verbose_name="Город"
     )
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория"
@@ -320,71 +310,77 @@ class Apartment(models.Model):
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
 
-    def save(self, *args, **kwargs):
-        if not self.city:
-            self.city = self.complex.city
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.get_category_display()} - {self.complex.name}"
 
 
-class ApartmentImage(models.Model):
-    APARTMENT_IMAGE_TYPE_CHOICES = [
-        ("floor_plan", "Схема квартиры"),
-        ("slider_image", "Картинка для слайдера"),
-    ]
+class ApartmentImage(ImageBase):
     apartment = models.ForeignKey(
         Apartment,
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name="Квартира",
     )
-    image = models.ImageField(
-        upload_to="apartments/images/", verbose_name="Изображение"
+
+    class Meta:
+        verbose_name = "Изображение квартиры"
+        verbose_name_plural = "Изображения квартир"
+
+    def get_parent_instance(self):
+        return self.apartment
+
+
+class ApartmentSection(models.Model):
+    apartment = models.ForeignKey(
+        Apartment,
+        on_delete=models.CASCADE,
+        related_name="sections",
+        verbose_name="Квартира",
     )
-    image_type = models.CharField(
-        max_length=20,
-        choices=APARTMENT_IMAGE_TYPE_CHOICES,
-        verbose_name="Тип изображения",
+    title = models.CharField(max_length=255, verbose_name="Название секции")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    floor = models.PositiveIntegerField(verbose_name="Этаж")
+    room_count = models.PositiveIntegerField(verbose_name="Количество комнат")
+    apartment_number = models.CharField(max_length=10, verbose_name="Номер квартиры")
+    area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
+    delivery_date = models.DateField(verbose_name="Срок сдачи")
+    image_1 = models.ImageField(
+        upload_to="apartments/sections/",
+        verbose_name="Изображение 1",
+        blank=True,
+        null=True,
+    )
+    image_2 = models.ImageField(
+        upload_to="apartments/sections/",
+        verbose_name="Изображение 2",
+        blank=True,
+        null=True,
+    )
+    image_3 = models.ImageField(
+        upload_to="apartments/sections/",
+        verbose_name="Изображение 3",
+        blank=True,
+        null=True,
+    )
+    image_4 = models.ImageField(
+        upload_to="apartments/sections/",
+        verbose_name="Изображение 4",
+        blank=True,
+        null=True,
+    )
+    image_5 = models.ImageField(
+        upload_to="apartments/sections/",
+        verbose_name="Изображение 5",
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        verbose_name = "Изображение"
-        verbose_name_plural = "Изображения"
-
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            if (
-                self.image_type == "floor_plan"
-                and ApartmentImage.objects.filter(
-                    apartment=self.apartment, image_type="floor_plan"
-                ).count()
-                >= 10
-            ):
-                raise ValidationError(
-                    "Для категории 'Схема квартиры' можно загрузить только 10 изображений."
-                )
-            elif (
-                self.image_type == "slider_image"
-                and ApartmentImage.objects.filter(
-                    apartment=self.apartment, image_type="slider_image"
-                ).count()
-                >= 10
-            ):
-                raise ValidationError(
-                    "Для категории 'Картинка для слайдера' можно загрузить до 10 изображений."
-                )
-
-        super().save(*args, **kwargs)
-
-        img = Image.open(self.image.path)
-        if img.height > 1125 and img.width > 1125:
-            img.thumbnail((1125, 1125))
-        img.save(self.image.path, quality=70, optimize=True)
+        verbose_name = "Секция квартиры"
+        verbose_name_plural = "Секции квартир"
 
     def __str__(self):
-        return f"{self.apartment} - {self.get_image_type_display()}"
+        return f"{self.title} - {self.apartment}"
 
 
 class PlotLand(models.Model):

@@ -7,6 +7,7 @@ from .models import (
     PlotImage,
     Apartment,
     ApartmentImage,
+    ApartmentSection,
     PlotLand,
     NewSection,
     PlotSection,
@@ -28,8 +29,8 @@ class ApartmentImageInline(admin.TabularInline):
     extra = 1
 
 
-class ApartmentInline(admin.TabularInline):
-    model = Apartment
+class ApartmentSectionInline(admin.StackedInline):
+    model = ApartmentSection
     extra = 1
 
 
@@ -66,7 +67,14 @@ class CityAdmin(admin.ModelAdmin):
 class ComplexAdmin(admin.ModelAdmin):
     list_display = ("name", "city", "path", "card_bg")
     search_fields = ("name", "city__name")
-    inlines = [ComplexImageInline, ApartmentInline]
+    inlines = [ComplexImageInline]
+
+
+@admin.register(Apartment)
+class ApartmentAdmin(admin.ModelAdmin):
+    list_display = ("category", "complex", "city")
+    search_fields = ("complex__name", "city__name")
+    inlines = [ApartmentImageInline, ApartmentSectionInline]
 
 
 @admin.register(Plot)
