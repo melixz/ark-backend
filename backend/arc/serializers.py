@@ -112,18 +112,29 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
 
 class ComplexSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+    slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
-    images = ComplexImageSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
 
     class Meta:
         model = Complex
-        fields = [
-            "name",
-            "path",
-            "card_bg",
-            "apartments",
-            "images",
+        fields = ["name", "path", "card_bg", "images", "slider", "apartments"]
+
+    def get_images(self, obj):
+        request = self.context.get("request")
+        additional_images = obj.images.filter(image_type="additional_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in additional_images
+        ]
+
+    def get_slider(self, obj):
+        request = self.context.get("request")
+        slider_images = obj.images.filter(image_type="slider_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in slider_images
         ]
 
     def get_card_bg(self, obj):
@@ -142,13 +153,30 @@ class PlotLandSerializer(serializers.ModelSerializer):
 
 
 class PlotSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+    slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
-    images = PlotImageSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
 
     class Meta:
         model = Plot
-        fields = ["district", "path", "card_bg", "lands", "images"]
+        fields = ["district", "path", "card_bg", "images", "slider", "lands"]
+
+    def get_images(self, obj):
+        request = self.context.get("request")
+        additional_images = obj.images.filter(image_type="additional_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in additional_images
+        ]
+
+    def get_slider(self, obj):
+        request = self.context.get("request")
+        slider_images = obj.images.filter(image_type="slider_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in slider_images
+        ]
 
     def get_card_bg(self, obj):
         request = self.context.get("request")
@@ -156,10 +184,10 @@ class PlotSerializer(serializers.ModelSerializer):
 
 
 class NewSectionSerializer(serializers.ModelSerializer):
-    image_1 = serializers.SerializerMethodField()
-    image_2 = serializers.SerializerMethodField()
-    image_3 = serializers.SerializerMethodField()
-    image_4 = serializers.SerializerMethodField()
+    image_1_url = serializers.SerializerMethodField()
+    image_2_url = serializers.SerializerMethodField()
+    image_3_url = serializers.SerializerMethodField()
+    image_4_url = serializers.SerializerMethodField()
 
     class Meta:
         model = NewSection
@@ -167,35 +195,35 @@ class NewSectionSerializer(serializers.ModelSerializer):
             "title",
             "desc_1",
             "desc_2",
-            "image_1",
-            "image_2",
-            "image_3",
-            "image_4",
+            "image_1_url",
+            "image_2_url",
+            "image_3_url",
+            "image_4_url",
             "loc",
         ]
 
-    def get_image_1(self, obj):
+    def get_image_1_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
 
-    def get_image_2(self, obj):
+    def get_image_2_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
 
-    def get_image_3(self, obj):
+    def get_image_3_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
 
-    def get_image_4(self, obj):
+    def get_image_4_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
 
 
 class PlotSectionSerializer(serializers.ModelSerializer):
-    image_1 = serializers.SerializerMethodField()
-    image_2 = serializers.SerializerMethodField()
-    image_3 = serializers.SerializerMethodField()
-    image_4 = serializers.SerializerMethodField()
+    image_1_url = serializers.SerializerMethodField()
+    image_2_url = serializers.SerializerMethodField()
+    image_3_url = serializers.SerializerMethodField()
+    image_4_url = serializers.SerializerMethodField()
 
     class Meta:
         model = PlotSection
@@ -203,26 +231,26 @@ class PlotSectionSerializer(serializers.ModelSerializer):
             "title",
             "desc_1",
             "desc_2",
-            "image_1",
-            "image_2",
-            "image_3",
-            "image_4",
+            "image_1_url",
+            "image_2_url",
+            "image_3_url",
+            "image_4_url",
             "loc",
         ]
 
-    def get_image_1(self, obj):
+    def get_image_1_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
 
-    def get_image_2(self, obj):
+    def get_image_2_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
 
-    def get_image_3(self, obj):
+    def get_image_3_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
 
-    def get_image_4(self, obj):
+    def get_image_4_url(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
 

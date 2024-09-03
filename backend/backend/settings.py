@@ -133,13 +133,13 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'u2800927_arc',
-        'USER': 'u2800927_root',
-        'PASSWORD': '123321qweewq',
-        'HOST': 'arkcrimea.ru',
-        'PORT': '3306',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "u2800927_arc",
+        "USER": "u2800927_root",
+        "PASSWORD": "123321qweewq",
+        "HOST": "arkcrimea.ru",
+        "PORT": "3306",
     }
 }
 
