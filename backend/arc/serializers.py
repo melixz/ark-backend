@@ -86,12 +86,29 @@ class ApartmentSectionSerializer(serializers.ModelSerializer):
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
-    images = ApartmentImageSerializer(many=True, read_only=True)
+    images = serializers.SerializerMethodField()
+    slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Apartment
-        fields = ["category", "images", "sections"]
+        fields = ["category", "images", "slider", "sections"]
+
+    def get_images(self, obj):
+        request = self.context.get("request")
+        additional_images = obj.images.filter(image_type="additional_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in additional_images
+        ]
+
+    def get_slider(self, obj):
+        request = self.context.get("request")
+        slider_images = obj.images.filter(image_type="slider_image")
+        return [
+            request.build_absolute_uri(image.image.url) if image.image else None
+            for image in slider_images
+        ]
 
 
 class ComplexSerializer(serializers.ModelSerializer):
