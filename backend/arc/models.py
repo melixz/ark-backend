@@ -152,7 +152,7 @@ class Complex(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.path:
-            self.path = f"{slugify(self.city.name)}/{slugify(self.name)}"
+            self.path = f"{slugify(self.city.path)}/{slugify(self.name)}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -193,8 +193,8 @@ class Plot(models.Model):
         verbose_name_plural = "Застройки"
 
     def save(self, *args, **kwargs):
-        if self.district and not self.district.startswith("Район -"):
-            self.district = f"Район - {self.district}"
+        if not self.path:
+            self.path = f"{slugify(self.city.path)}/{slugify(self.district)}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -305,10 +305,18 @@ class Apartment(models.Model):
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория"
     )
+    path = models.CharField(max_length=100, verbose_name="Путь", default="")
 
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
+
+    def save(self, *args, **kwargs):
+        if not self.path:
+            self.path = (
+                f"{slugify(self.complex.path)}/{slugify(self.get_category_display())}"
+            )
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_category_display()} - {self.complex.name}"
@@ -399,10 +407,18 @@ class PlotLand(models.Model):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Цена за участок"
     )
+    path = models.CharField(max_length=100, verbose_name="Путь", default="")
 
     class Meta:
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
+
+    def save(self, *args, **kwargs):
+        if not self.path:
+            self.path = (
+                f"{slugify(self.plot.path)}/{slugify(self.get_land_type_display())}"
+            )
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_land_type_display()} - {self.plot.district}"

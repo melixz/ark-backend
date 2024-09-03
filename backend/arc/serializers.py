@@ -89,10 +89,11 @@ class ApartmentSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
+    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = Apartment
-        fields = ["category", "images", "slider", "sections"]
+        fields = ["category", "images", "slider", "sections", "path"]
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -116,6 +117,7 @@ class ComplexSerializer(serializers.ModelSerializer):
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
+    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = Complex
@@ -146,10 +148,11 @@ class PlotLandSerializer(serializers.ModelSerializer):
     land_type_display = serializers.CharField(
         source="get_land_type_display", read_only=True
     )
+    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = PlotLand
-        fields = ["land_type", "land_type_display", "price"]
+        fields = ["land_type", "land_type_display", "price", "path"]
 
 
 class PlotSerializer(serializers.ModelSerializer):
@@ -157,6 +160,7 @@ class PlotSerializer(serializers.ModelSerializer):
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
+    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = Plot
