@@ -121,13 +121,13 @@ class City(models.Model):
         verbose_name = "Город"
         verbose_name_plural = "Города"
 
-    def clean(self):
-        if not (self.new_title and self.new_desc) and not (
-            self.plot_title and self.plot_desc
-        ):
-            raise ValidationError(
-                "Вы должны заполнить либо 'Заголовок для новостройки' и 'Описание для новостройки', либо 'Заголовок для застройки' и 'Описание для застройки'."
-            )
+    def save(self, *args, **kwargs):
+        if not self.path:
+            if self.new_title or self.new_desc:
+                self.path = f"/new/{slugify(self.name)}"
+            elif self.plot_title or self.plot_desc:
+                self.path = f"/plots/{slugify(self.name)}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -152,7 +152,7 @@ class Complex(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.path:
-            self.path = f"{slugify(self.city.path)}/{slugify(self.name)}"
+            self.path = f"{self.city.path}/{slugify(self.name)}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -194,7 +194,7 @@ class Plot(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.path:
-            self.path = f"{slugify(self.city.path)}/{slugify(self.district)}"
+            self.path = f"{self.city.path}/{slugify(self.district)}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -305,7 +305,7 @@ class Apartment(models.Model):
     category = models.CharField(
         max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория"
     )
-    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
 
     class Meta:
         verbose_name = "Квартира"
@@ -405,7 +405,7 @@ class PlotLand(models.Model):
     price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Цена за участок"
     )
-    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
 
     class Meta:
         verbose_name = "Участок"

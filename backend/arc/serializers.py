@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils.text import slugify
 from .models import (
     City,
     Complex,
@@ -86,7 +87,7 @@ class ApartmentSectionSerializer(serializers.ModelSerializer):
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
-    path = serializers.CharField(read_only=True)
+    path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
@@ -94,6 +95,9 @@ class ApartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apartment
         fields = ["category", "path", "images", "slider", "sections"]
+
+    def get_path(self, obj):
+        return f"{obj.complex.path}/{slugify(obj.category.replace('_', '-'))}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -113,15 +117,18 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
 
 class ComplexSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
-    path = serializers.CharField(read_only=True)
 
     class Meta:
         model = Complex
         fields = ["name", "path", "card_bg", "images", "slider", "apartments"]
+
+    def get_path(self, obj):
+        return f"/new/{slugify(obj.name)}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -145,7 +152,7 @@ class ComplexSerializer(serializers.ModelSerializer):
 
 
 class PlotLandSerializer(serializers.ModelSerializer):
-    path = serializers.CharField(read_only=True)
+    path = serializers.SerializerMethodField()
     land_type_display = serializers.CharField(
         source="get_land_type_display", read_only=True
     )
@@ -154,17 +161,23 @@ class PlotLandSerializer(serializers.ModelSerializer):
         model = PlotLand
         fields = ["land_type", "path", "land_type_display", "price"]
 
+    def get_path(self, obj):
+        return f"{obj.plot.path}/{slugify(obj.get_land_type_display())}"
+
 
 class PlotSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
-    path = serializers.CharField(read_only=True)
 
     class Meta:
         model = Plot
         fields = ["district", "path", "card_bg", "images", "slider", "lands"]
+
+    def get_path(self, obj):
+        return f"/plots/{slugify(obj.district)}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -260,6 +273,7 @@ class PlotSectionSerializer(serializers.ModelSerializer):
 
 
 class NewCityDataSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
     complexes = ComplexSerializer(many=True, read_only=True)
     section = NewSectionSerializer(many=True, source="new_sections", read_only=True)
     title = serializers.SerializerMethodField()
@@ -279,6 +293,9 @@ class NewCityDataSerializer(serializers.ModelSerializer):
             "complexes",
             "section",
         ]
+
+    def get_path(self, obj):
+        return f"/new/{obj.path}"
 
     def get_title(self, obj):
         return obj.new_title
@@ -302,6 +319,7 @@ class NewCityDataSerializer(serializers.ModelSerializer):
 
 
 class PlotsCityDataSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
     plots = PlotSerializer(many=True, read_only=True)
     section = PlotSectionSerializer(many=True, source="plot_sections", read_only=True)
     title = serializers.SerializerMethodField()
@@ -321,6 +339,9 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
             "plots",
             "section",
         ]
+
+    def get_path(self, obj):
+        return f"/plots/{obj.path}"
 
     def get_title(self, obj):
         return obj.plot_title
