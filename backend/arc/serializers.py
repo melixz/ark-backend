@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.utils.text import slugify
 from .models import (
     City,
     Complex,
@@ -97,7 +96,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
         fields = ["category", "path", "images", "slider", "sections"]
 
     def get_path(self, obj):
-        return f"{obj.complex.path}/{slugify(obj.category.replace('_', '-'))}"
+        return f"/new/{obj.complex.city.path}/{obj.complex.path}/{obj.category.replace('_', '-')}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -128,7 +127,7 @@ class ComplexSerializer(serializers.ModelSerializer):
         fields = ["name", "path", "card_bg", "images", "slider", "apartments"]
 
     def get_path(self, obj):
-        return f"/new/{slugify(obj.name)}"
+        return f"/new/{obj.city.path}/{obj.path}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -162,7 +161,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
         fields = ["land_type", "path", "land_type_display", "price"]
 
     def get_path(self, obj):
-        return f"{obj.plot.path}/{slugify(obj.get_land_type_display())}"
+        return f"{obj.plot.path}/{obj.get_land_type_display().replace('_', '-')}"
 
 
 class PlotSerializer(serializers.ModelSerializer):
@@ -177,7 +176,7 @@ class PlotSerializer(serializers.ModelSerializer):
         fields = ["district", "path", "card_bg", "images", "slider", "lands"]
 
     def get_path(self, obj):
-        return f"/plots/{slugify(obj.district)}"
+        return f"/plots/{obj.city.path}/{obj.path}"
 
     def get_images(self, obj):
         request = self.context.get("request")
