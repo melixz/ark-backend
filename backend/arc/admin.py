@@ -72,9 +72,10 @@ class ComplexAdmin(admin.ModelAdmin):
 
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
-    list_display = ("category", "complex", "city")
+    list_display = ("category", "complex", "city", "path")
     search_fields = ("complex__name", "city__name")
     inlines = [ApartmentImageInline, ApartmentSectionInline]
+    readonly_fields = ("path",)
 
 
 @admin.register(Plot)
@@ -86,8 +87,9 @@ class PlotAdmin(admin.ModelAdmin):
 
 @admin.register(PlotLand)
 class PlotLandAdmin(admin.ModelAdmin):
-    list_display = ("plot", "land_type", "price")
+    list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
+    readonly_fields = ("path",)
 
 
 @admin.register(NewSection)

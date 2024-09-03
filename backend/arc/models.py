@@ -289,9 +289,9 @@ class PlotSection(models.Model):
 class Apartment(models.Model):
     CATEGORY_CHOICES = [
         ("studio", "Студия"),
-        ("one_bedroom", "Однокомнатная"),
-        ("two_bedroom", "Двухкомнатная"),
-        ("three_bedroom", "Трехкомнатная"),
+        ("one_room", "Однокомнатная"),
+        ("two_room", "Двухкомнатная"),
+        ("three_room", "Трехкомнатная"),
     ]
     complex = models.ForeignKey(
         Complex,
@@ -313,9 +313,7 @@ class Apartment(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.path:
-            self.path = (
-                f"{slugify(self.complex.path)}/{slugify(self.get_category_display())}"
-            )
+            self.path = f"{slugify(self.complex.path)}/{slugify(self.category.replace('_', '-'))}"
         super().save(*args, **kwargs)
 
     def __str__(self):
