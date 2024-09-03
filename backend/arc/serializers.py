@@ -86,14 +86,14 @@ class ApartmentSectionSerializer(serializers.ModelSerializer):
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
+    path = serializers.CharField(read_only=True)
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
-    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = Apartment
-        fields = ["category", "images", "slider", "sections", "path"]
+        fields = ["category", "path", "images", "slider", "sections"]
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -117,7 +117,7 @@ class ComplexSerializer(serializers.ModelSerializer):
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
-    path = serializers.CharField(source="path", read_only=True)
+    path = serializers.CharField(read_only=True)
 
     class Meta:
         model = Complex
@@ -145,14 +145,14 @@ class ComplexSerializer(serializers.ModelSerializer):
 
 
 class PlotLandSerializer(serializers.ModelSerializer):
+    path = serializers.CharField(read_only=True)
     land_type_display = serializers.CharField(
         source="get_land_type_display", read_only=True
     )
-    path = serializers.CharField(source="path", read_only=True)
 
     class Meta:
         model = PlotLand
-        fields = ["land_type", "land_type_display", "price", "path"]
+        fields = ["land_type", "path", "land_type_display", "price"]
 
 
 class PlotSerializer(serializers.ModelSerializer):
@@ -160,7 +160,7 @@ class PlotSerializer(serializers.ModelSerializer):
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
     card_bg = serializers.SerializerMethodField()
-    path = serializers.CharField(source="path", read_only=True)
+    path = serializers.CharField(read_only=True)
 
     class Meta:
         model = Plot
