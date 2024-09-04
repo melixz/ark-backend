@@ -165,7 +165,17 @@ class PlotLandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlotLand
-        fields = ["land_type", "path", "land_type_display", "price"]
+        fields = [
+            "land_type",
+            "path",
+            "land_type_display",
+            "price",
+            "gas",
+            "electricity",
+            "water",
+            "sewage",
+            "developed",
+        ]
 
     def get_path(self, obj):
         return obj.land_type

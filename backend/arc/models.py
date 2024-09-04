@@ -415,21 +415,61 @@ class ApartmentSection(models.Model):
 
 class PlotLand(models.Model):
     LAND_TYPE_CHOICES = [
-        ("6", "6 соток"),
-        ("8", "8 соток"),
-        ("10", "10 соток"),
-        ("12", "12 соток"),
+        ("SNT", "СНТ"),
+        ("IJS", "ИЖС"),
     ]
     plot = models.ForeignKey(
-        Plot, on_delete=models.CASCADE, related_name="lands", verbose_name="Застройка"
+        "Plot", on_delete=models.CASCADE, related_name="lands", verbose_name="Застройка"
     )
     land_type = models.CharField(
-        max_length=2, choices=LAND_TYPE_CHOICES, verbose_name="Тип участка"
+        max_length=3, choices=LAND_TYPE_CHOICES, verbose_name="Тип участка"
     )
     price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Цена за участок"
     )
     path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
+
+    gas = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Газ",
+        default="нет",
+    )
+    electricity = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Свет",
+        default="нет",
+    )
+    water = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Вода",
+        default="нет",
+    )
+    sewage = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Стоки",
+        default="нет",
+    )
+    developed = models.BooleanField(default=False, verbose_name="Разработан")
 
     class Meta:
         verbose_name = "Участок"
@@ -437,9 +477,7 @@ class PlotLand(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.path:
-            self.path = (
-                f"{slugify(self.plot.path)}/{slugify(self.get_land_type_display())}"
-            )
+            self.path = self.land_type
         super().save(*args, **kwargs)
 
     def __str__(self):
