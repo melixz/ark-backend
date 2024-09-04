@@ -9,9 +9,10 @@ from .models import (
     ApartmentImage,
     ApartmentSection,
     PlotLand,
-    PlotLandImage,  # Добавлено
+    PlotLandImage,
     NewSection,
     PlotSection,
+    ContactRequest,
 )
 
 
@@ -115,3 +116,9 @@ class NewSectionAdmin(admin.ModelAdmin):
 class PlotSectionAdmin(admin.ModelAdmin):
     list_display = ("title", "city", "loc")
     search_fields = ("title", "city__name", "loc")
+
+
+@admin.register(ContactRequest)
+class ContactRequestAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "phone", "path", "created_at")
+    search_fields = ("name", "email", "phone", "path")

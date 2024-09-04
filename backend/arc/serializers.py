@@ -12,6 +12,7 @@ from .models import (
     NewSection,
     PlotSection,
     PlotLandImage,
+    ContactRequest,
 )
 
 
@@ -165,20 +166,17 @@ class PlotLandImageSerializer(ImageBaseSerializer):
 
 class PlotLandSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
-    images = serializers.SerializerMethodField()
-    slider = PlotLandImageSerializer(many=True, read_only=True)
-
-    image_1_url = serializers.SerializerMethodField()
-    image_2_url = serializers.SerializerMethodField()
-    image_3_url = serializers.SerializerMethodField()
-    image_4_url = serializers.SerializerMethodField()
-    image_5_url = serializers.SerializerMethodField()
+    land_type_display = serializers.CharField(
+        source="get_land_type_display", read_only=True
+    )
+    images = PlotImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = PlotLand
         fields = [
             "land_type",
             "path",
+            "land_type_display",
             "area",
             "price",
             "gas",
@@ -186,43 +184,11 @@ class PlotLandSerializer(serializers.ModelSerializer):
             "water",
             "sewage",
             "developed",
-            "image_1_url",
-            "image_2_url",
-            "image_3_url",
-            "image_4_url",
-            "image_5_url",
-            "slider",
+            "images",
         ]
 
     def get_path(self, obj):
         return obj.land_type
-
-    def get_images(self, obj):
-        request = self.context.get("request")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in obj.images.filter(image_type="additional_image")
-        ]
-
-    def get_image_1_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
-
-    def get_image_2_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
-
-    def get_image_3_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
-
-    def get_image_4_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
-
-    def get_image_5_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_5.url) if obj.image_5 else None
 
 
 class PlotSerializer(serializers.ModelSerializer):
@@ -420,6 +386,12 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
     def get_plot_bg(self, obj):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.plot_bg.url) if obj.plot_bg else None
+
+
+class ContactRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactRequest
+        fields = ["name", "email", "phone", "path"]
 
 
 class FullResponseSerializer(serializers.Serializer):

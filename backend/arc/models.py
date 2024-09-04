@@ -519,3 +519,18 @@ class PlotLandImage(ImageBase):
 
     def get_parent_instance(self):
         return self.plot_land
+
+
+class ContactRequest(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Имя, фамилия")
+    email = models.EmailField(verbose_name="Адрес эл. почты")
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    path = models.CharField(max_length=255, verbose_name="Путь")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата заявки")
+
+    class Meta:
+        verbose_name = "Форма обратной связи"
+        verbose_name_plural = "Форма обратной связи"
+
+    def __str__(self):
+        return f"Заявка от {self.name} ({self.email})"
