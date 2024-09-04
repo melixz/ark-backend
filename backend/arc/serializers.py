@@ -93,10 +93,17 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Apartment
-        fields = ["category", "path", "images", "slider", "sections"]
+        fields = [
+            "category",
+            "path",
+            "images",
+            "slider",
+            "sections",
+            "floor_count",
+        ]
 
     def get_path(self, obj):
-        return f"/new/{obj.complex.city.path}/{obj.complex.path}/{obj.category.replace('_', '-')}"
+        return f"{obj.category.replace('_', '-')}"
 
     def get_images(self, obj):
         request = self.context.get("request")
@@ -161,7 +168,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
         fields = ["land_type", "path", "land_type_display", "price"]
 
     def get_path(self, obj):
-        return f"{obj.plot.path}/{obj.get_land_type_display().replace('_', '-')}"
+        return obj.land_type
 
 
 class PlotSerializer(serializers.ModelSerializer):
@@ -176,7 +183,7 @@ class PlotSerializer(serializers.ModelSerializer):
         fields = ["district", "path", "card_bg", "images", "slider", "lands"]
 
     def get_path(self, obj):
-        return f"/plots/{obj.city.path}/{obj.path}"
+        return obj.path.split("/")[-1]
 
     def get_images(self, obj):
         request = self.context.get("request")

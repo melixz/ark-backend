@@ -1,3 +1,4 @@
+import os
 from django.utils.text import slugify
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -68,10 +69,30 @@ class ImageBase(models.Model):
 
         super().save(*args, **kwargs)
 
+        self.process_image()
+
+    def process_image(self):
         img = Image.open(self.image.path)
+
+        if img.mode in ("RGBA", "LA") or (
+            img.mode == "P" and "transparency" in img.info
+        ):
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])
+            img = background
+
         if img.height > 1125 or img.width > 1125:
             img.thumbnail((1125, 1125))
-        img.save(self.image.path, quality=70, optimize=True)
+
+        file_root, file_ext = os.path.splitext(self.image.path)
+        if file_ext.lower() != ".jpg" and file_ext.lower() != ".jpeg":
+            new_image_path = f"{file_root}.jpg"
+            img.save(new_image_path, format="JPEG", quality=70, optimize=True)
+            self.image.name = os.path.basename(new_image_path)
+            if os.path.exists(self.image.path):
+                os.remove(self.image.path)
+        else:
+            img.save(self.image.path, quality=70, optimize=True)
 
     def __str__(self):
         return f"{self.get_parent_instance()} - {self.get_image_type_display()}"
@@ -306,6 +327,9 @@ class Apartment(models.Model):
         max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория"
     )
     path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
+    floor_count = models.PositiveIntegerField(
+        verbose_name="Количество этажей", blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Квартира"

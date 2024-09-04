@@ -72,7 +72,13 @@ class ComplexAdmin(admin.ModelAdmin):
 
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
-    list_display = ("category", "complex", "city", "path")
+    list_display = (
+        "category",
+        "complex",
+        "city",
+        "path",
+        "floor_count",
+    )  # Добавлено поле floor_count
     search_fields = ("complex__name", "city__name")
     inlines = [ApartmentImageInline, ApartmentSectionInline]
     readonly_fields = ("path",)
