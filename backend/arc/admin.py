@@ -9,6 +9,7 @@ from .models import (
     ApartmentImage,
     ApartmentSection,
     PlotLand,
+    PlotLandImage,  # Добавлено
     NewSection,
     PlotSection,
 )
@@ -21,6 +22,11 @@ class ComplexImageInline(admin.TabularInline):
 
 class PlotImageInline(admin.TabularInline):
     model = PlotImage
+    extra = 1
+
+
+class PlotLandImageInline(admin.TabularInline):  # Новый Inline для картинок участков
+    model = PlotLandImage
     extra = 1
 
 
@@ -78,7 +84,7 @@ class ApartmentAdmin(admin.ModelAdmin):
         "city",
         "path",
         "floor_count",
-    )  # Добавлено поле floor_count
+    )
     search_fields = ("complex__name", "city__name")
     inlines = [ApartmentImageInline, ApartmentSectionInline]
     readonly_fields = ("path",)
@@ -96,6 +102,7 @@ class PlotLandAdmin(admin.ModelAdmin):
     list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
     readonly_fields = ("path",)
+    inlines = [PlotLandImageInline]  # Inline для управления изображениями
 
 
 @admin.register(NewSection)

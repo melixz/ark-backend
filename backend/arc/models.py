@@ -424,11 +424,15 @@ class PlotLand(models.Model):
     land_type = models.CharField(
         max_length=3, choices=LAND_TYPE_CHOICES, verbose_name="Тип участка"
     )
+    area = models.DecimalField(
+        max_digits=5, decimal_places=2, verbose_name="Площадь участка (в сотках)"
+    )
     price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Цена за участок"
     )
     path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
 
+    # Дополнительные поля для участка
     gas = models.CharField(
         max_length=20,
         choices=[
@@ -471,6 +475,23 @@ class PlotLand(models.Model):
     )
     developed = models.BooleanField(default=False, verbose_name="Разработан")
 
+    # Обязательные изображения
+    image_1 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
+    )
+    image_2 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True
+    )
+    image_3 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True
+    )
+    image_4 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True
+    )
+    image_5 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True
+    )
+
     class Meta:
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
@@ -482,3 +503,19 @@ class PlotLand(models.Model):
 
     def __str__(self):
         return f"{self.get_land_type_display()} - {self.plot.district}"
+
+
+class PlotLandImage(ImageBase):
+    plot_land = models.ForeignKey(
+        "PlotLand",
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name="Участок",
+    )
+
+    class Meta:
+        verbose_name = "Изображение участка"
+        verbose_name_plural = "Изображения участков"
+
+    def get_parent_instance(self):
+        return self.plot_land
