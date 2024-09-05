@@ -42,23 +42,18 @@ class ApartmentSectionInline(admin.StackedInline):
     extra = 1
 
 
-class PlotLandInline(admin.TabularInline):
-    model = PlotLand
+class PlotLandSectionInline(admin.StackedInline):
+    model = PlotLandSection
     extra = 1
 
 
-class NewSectionInline(admin.StackedInline):
+class NewSectionInline(admin.StackedInline):  # Добавляем этот класс
     model = NewSection
     extra = 1
 
 
 class PlotSectionInline(admin.StackedInline):
     model = PlotSection
-    extra = 1
-
-
-class PlotLandSectionInline(admin.StackedInline):
-    model = PlotLandSection
     extra = 1
 
 
@@ -73,7 +68,7 @@ class CityAdmin(admin.ModelAdmin):
         "plot_bg",
     )
     search_fields = ("name",)
-    inlines = [NewSectionInline, PlotSectionInline]
+    inlines = [NewSectionInline, PlotSectionInline]  # Теперь NewSectionInline определён
 
 
 @admin.register(Complex)
@@ -101,7 +96,7 @@ class ApartmentAdmin(admin.ModelAdmin):
 class PlotAdmin(admin.ModelAdmin):
     list_display = ("district", "city", "path", "card_bg")
     search_fields = ("district", "city__name")
-    inlines = [PlotImageInline, PlotLandInline]
+    inlines = [PlotImageInline]
 
 
 @admin.register(PlotLand)
@@ -109,7 +104,7 @@ class PlotLandAdmin(admin.ModelAdmin):
     list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
     readonly_fields = ("path",)
-    inlines = [PlotLandSectionInline]
+    inlines = [PlotLandImageInline, PlotLandSectionInline]
 
 
 @admin.register(NewSection)
