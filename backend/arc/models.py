@@ -629,5 +629,5 @@ class DynamicFormSubmission(models.Model):
         verbose_name = "Отправка формы"
         verbose_name_plural = "Отправки форм"
 
-    def __str__(self):
+    def str(self):
         return f"{self.name} - {self.submitted_at}"

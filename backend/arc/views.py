@@ -1,7 +1,7 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
-from .models import City
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 
 
@@ -17,16 +17,17 @@ class FullDataAPIView(APIView):
         }
 
         serializer = FullResponseSerializer(response_data, context={"request": request})
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DynamicFormSubmissionView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = DynamicFormSubmissionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {"message": "Форма успешно отправлена"}, status=status.HTTP_201_CREATED
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        data = request.data
+
+        form_submission = DynamicFormSubmission(
+            name="Dynamic Form Submission", data=data
+        )
+        form_submission.save()
+
+        serializer = DynamicFormSubmissionSerializer(form_submission)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
