@@ -178,6 +178,8 @@ class PlotLandSectionSerializer(serializers.ModelSerializer):
             "title",
             "price",
             "area",
+            "land_status",
+            "land_purpose",
             "gas",
             "electricity",
             "water",

@@ -109,7 +109,7 @@ class PlotLandAdmin(admin.ModelAdmin):
     list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
     readonly_fields = ("path",)
-    inlines = [PlotLandImageInline, PlotLandSectionInline]
+    inlines = [PlotLandSectionInline]
 
 
 @admin.register(NewSection)

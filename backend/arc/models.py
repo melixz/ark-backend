@@ -521,16 +521,25 @@ class PlotLandImage(ImageBase):
 
 
 class PlotLandSection(models.Model):
+    STATUS_CHOICES = [
+        ("privatized", "Приватизированный"),
+        ("settlement", "Земли населенных пунктов"),
+    ]
+
     plot_land = models.ForeignKey(
-        PlotLand,
+        "PlotLand",
         on_delete=models.CASCADE,
         related_name="sections",
         verbose_name="Участок",
     )
     title = models.CharField(max_length=255, verbose_name="Название секции")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    area = models.DecimalField(
-        max_digits=6, decimal_places=2, verbose_name="Площадь (в сотках)"
+    area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
+    land_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        verbose_name="Статус земли",
+        default="privatized",
     )
     gas = models.CharField(
         max_length=20,
@@ -573,31 +582,31 @@ class PlotLandSection(models.Model):
         default="нет",
     )
     image_1 = models.ImageField(
-        upload_to="plotland_sections/",
+        upload_to="plot_land_sections/",
         verbose_name="Изображение 1",
         blank=True,
         null=True,
     )
     image_2 = models.ImageField(
-        upload_to="plotland_sections/",
+        upload_to="plot_land_sections/",
         verbose_name="Изображение 2",
         blank=True,
         null=True,
     )
     image_3 = models.ImageField(
-        upload_to="plotland_sections/",
+        upload_to="plot_land_sections/",
         verbose_name="Изображение 3",
         blank=True,
         null=True,
     )
     image_4 = models.ImageField(
-        upload_to="plotland_sections/",
+        upload_to="plot_land_sections/",
         verbose_name="Изображение 4",
         blank=True,
         null=True,
     )
     image_5 = models.ImageField(
-        upload_to="plotland_sections/",
+        upload_to="plot_land_sections/",
         verbose_name="Изображение 5",
         blank=True,
         null=True,
@@ -608,7 +617,7 @@ class PlotLandSection(models.Model):
         verbose_name_plural = "Секции участков"
 
     def __str__(self):
-        return f"{self.title} - {self.plot_land}"
+        return self.title
 
 
 class ContactRequest(models.Model):
