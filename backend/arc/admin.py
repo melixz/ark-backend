@@ -13,7 +13,7 @@ from .models import (
     NewSection,
     PlotSection,
     PlotLandSection,
-    ContactRequest,
+    DynamicFormSubmission,
 )
 
 
@@ -119,7 +119,8 @@ class PlotSectionAdmin(admin.ModelAdmin):
     search_fields = ("title", "city__name", "loc")
 
 
-@admin.register(ContactRequest)
-class ContactRequestAdmin(admin.ModelAdmin):
-    list_display = ("name", "email", "phone", "path", "created_at")
-    search_fields = ("name", "email", "phone", "path")
+@admin.register(DynamicFormSubmission)
+class DynamicFormSubmissionAdmin(admin.ModelAdmin):
+    list_display = ("name", "submitted_at")
+    readonly_fields = ("submitted_at", "data")
+    search_fields = ("name",)

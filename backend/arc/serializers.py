@@ -13,7 +13,7 @@ from .models import (
     PlotSection,
     PlotLandImage,
     PlotLandSection,
-    ContactRequest,
+    DynamicFormSubmission,
 )
 
 
@@ -456,10 +456,11 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(obj.plot_bg.url) if obj.plot_bg else None
 
 
-class ContactRequestSerializer(serializers.ModelSerializer):
+class DynamicFormSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ContactRequest
-        fields = ["name", "email", "phone", "path"]
+        model = DynamicFormSubmission
+        fields = ["name", "data", "submitted_at"]
+        read_only_fields = ["submitted_at"]
 
 
 class FullResponseSerializer(serializers.Serializer):

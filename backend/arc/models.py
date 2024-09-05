@@ -620,16 +620,14 @@ class PlotLandSection(models.Model):
         return self.title
 
 
-class ContactRequest(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Имя, фамилия")
-    email = models.EmailField(verbose_name="Адрес эл. почты")
-    phone = models.CharField(max_length=20, verbose_name="Телефон")
-    path = models.CharField(max_length=255, verbose_name="Путь")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата заявки")
+class DynamicFormSubmission(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Название формы")
+    data = models.JSONField(verbose_name="Данные формы")
+    submitted_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отправки")
 
     class Meta:
-        verbose_name = "Форма обратной связи"
-        verbose_name_plural = "Форма обратной связи"
+        verbose_name = "Отправка формы"
+        verbose_name_plural = "Отправки форм"
 
     def __str__(self):
-        return f"Заявка от {self.name} ({self.email})"
+        return f"{self.name} - {self.submitted_at}"
