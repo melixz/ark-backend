@@ -12,6 +12,7 @@ from .models import (
     PlotLandImage,
     NewSection,
     PlotSection,
+    PlotLandSection,
     ContactRequest,
 )
 
@@ -53,6 +54,11 @@ class NewSectionInline(admin.StackedInline):
 
 class PlotSectionInline(admin.StackedInline):
     model = PlotSection
+    extra = 1
+
+
+class PlotLandSectionInline(admin.StackedInline):
+    model = PlotLandSection
     extra = 1
 
 
@@ -103,7 +109,7 @@ class PlotLandAdmin(admin.ModelAdmin):
     list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
     readonly_fields = ("path",)
-    inlines = [PlotLandImageInline]
+    inlines = [PlotLandImageInline, PlotLandSectionInline]
 
 
 @admin.register(NewSection)

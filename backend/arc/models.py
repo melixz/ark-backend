@@ -51,7 +51,6 @@ class ImageBase(models.Model):
                     raise ValidationError(
                         "Для категории 'Картинка для слайдера' можно загрузить до 10 изображений."
                     )
-                # Проверка лимита для дополнительных изображений
                 elif (
                     self.image_type == "additional_image"
                     and self.__class__.objects.filter(
@@ -519,6 +518,97 @@ class PlotLandImage(ImageBase):
 
     def get_parent_instance(self):
         return self.plot_land
+
+
+class PlotLandSection(models.Model):
+    plot_land = models.ForeignKey(
+        PlotLand,
+        on_delete=models.CASCADE,
+        related_name="sections",
+        verbose_name="Участок",
+    )
+    title = models.CharField(max_length=255, verbose_name="Название секции")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    area = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Площадь (в сотках)"
+    )
+    gas = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Газ",
+        default="нет",
+    )
+    electricity = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Свет",
+        default="нет",
+    )
+    water = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Вода",
+        default="нет",
+    )
+    sewage = models.CharField(
+        max_length=20,
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("возможность", "Есть возможность подключения"),
+        ],
+        verbose_name="Стоки",
+        default="нет",
+    )
+    image_1 = models.ImageField(
+        upload_to="plotland_sections/",
+        verbose_name="Изображение 1",
+        blank=True,
+        null=True,
+    )
+    image_2 = models.ImageField(
+        upload_to="plotland_sections/",
+        verbose_name="Изображение 2",
+        blank=True,
+        null=True,
+    )
+    image_3 = models.ImageField(
+        upload_to="plotland_sections/",
+        verbose_name="Изображение 3",
+        blank=True,
+        null=True,
+    )
+    image_4 = models.ImageField(
+        upload_to="plotland_sections/",
+        verbose_name="Изображение 4",
+        blank=True,
+        null=True,
+    )
+    image_5 = models.ImageField(
+        upload_to="plotland_sections/",
+        verbose_name="Изображение 5",
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = "Секция участка"
+        verbose_name_plural = "Секции участков"
+
+    def __str__(self):
+        return f"{self.title} - {self.plot_land}"
 
 
 class ContactRequest(models.Model):
