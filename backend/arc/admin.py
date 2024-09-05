@@ -26,7 +26,7 @@ class PlotImageInline(admin.TabularInline):
     extra = 1
 
 
-class PlotLandImageInline(admin.TabularInline):  # Новый Inline для картинок участков
+class PlotLandImageInline(admin.TabularInline):
     model = PlotLandImage
     extra = 1
 
@@ -103,7 +103,7 @@ class PlotLandAdmin(admin.ModelAdmin):
     list_display = ("plot", "land_type", "price", "path")
     search_fields = ("plot__district", "land_type")
     readonly_fields = ("path",)
-    inlines = [PlotLandImageInline]  # Inline для управления изображениями
+    inlines = [PlotLandImageInline]
 
 
 @admin.register(NewSection)

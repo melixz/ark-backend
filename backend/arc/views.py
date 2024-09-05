@@ -7,17 +7,22 @@ from .serializers import FullResponseSerializer, ContactRequestSerializer
 
 class FullDataAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        cities = City.objects.all()
+        new_cities = City.objects.filter(new_title__isnull=False)
+
+        plot_cities = City.objects.filter(plot_title__isnull=False)
+
         response_data = {
-            "new": cities,
-            "plots": cities,
+            "new": new_cities,
+            "plots": plot_cities,
         }
-        return Response(
-            FullResponseSerializer(response_data, context={"request": request}).data
-        )
+
+        serializer = FullResponseSerializer(response_data, context={"request": request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         serializer = ContactRequestSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(

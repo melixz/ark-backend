@@ -24,51 +24,51 @@ class ImageBase(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is None:
             parent_instance = self.get_parent_instance()
-            if (
-                self.image_type == "slider_image"
-                and self.__class__.objects.filter(
-                    **{
-                        self._meta.get_field(
-                            "complex"
-                            if isinstance(parent_instance, Complex)
-                            else (
-                                "plot"
-                                if isinstance(parent_instance, Plot)
-                                else "apartment"
-                            )
-                        ).name: parent_instance
-                    },
-                    image_type="slider_image",
-                ).count()
-                >= 10
-            ):
-                raise ValidationError(
-                    "Для категории 'Картинка для слайдера' можно загрузить до 10 изображений."
-                )
-            elif (
-                self.image_type == "additional_image"
-                and self.__class__.objects.filter(
-                    **{
-                        self._meta.get_field(
-                            "complex"
-                            if isinstance(parent_instance, Complex)
-                            else (
-                                "plot"
-                                if isinstance(parent_instance, Plot)
-                                else "apartment"
-                            )
-                        ).name: parent_instance
-                    },
-                    image_type="additional_image",
-                ).count()
-                >= 10
-            ):
-                raise ValidationError(
-                    "Для категории 'Дополнительное изображение' можно загрузить до 10 изображений."
-                )
+            parent_field_name = None
+
+            if isinstance(parent_instance, Complex):
+                parent_field_name = "complex"
+            elif isinstance(parent_instance, Plot):
+                parent_field_name = "plot"
+            elif isinstance(parent_instance, PlotLand):
+                parent_field_name = "plot_land"
+            elif isinstance(parent_instance, Apartment):
+                parent_field_name = "apartment"
+
+            if parent_field_name:
+                if (
+                    self.image_type == "slider_image"
+                    and self.__class__.objects.filter(
+                        **{
+                            self._meta.get_field(
+                                parent_field_name
+                            ).name: parent_instance
+                        },
+                        image_type="slider_image",
+                    ).count()
+                    >= 10
+                ):
+                    raise ValidationError(
+                        "Для категории 'Картинка для слайдера' можно загрузить до 10 изображений."
+                    )
+                # Проверка лимита для дополнительных изображений
+                elif (
+                    self.image_type == "additional_image"
+                    and self.__class__.objects.filter(
+                        **{
+                            self._meta.get_field(
+                                parent_field_name
+                            ).name: parent_instance
+                        },
+                        image_type="additional_image",
+                    ).count()
+                    >= 10
+                ):
+                    raise ValidationError(
+                        "Для категории 'Дополнительное изображение' можно загрузить до 10 изображений."
+                    )
 
         super().save(*args, **kwargs)
-
         self.process_image()
 
     def process_image(self):
