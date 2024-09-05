@@ -175,20 +175,19 @@ class PlotLandSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlotLandSection
         fields = [
-            "title",
-            "price",
-            "area",
-            "land_status",
-            "land_purpose",
-            "gas",
-            "electricity",
-            "water",
-            "sewage",
-            "image_1_url",
-            "image_2_url",
-            "image_3_url",
-            "image_4_url",
-            "image_5_url",
+            "title",  # Заголовок секции
+            "price",  # Цена участка
+            "area",  # Площадь участка
+            "land_status",  # Статус земли (приватизированный или другие варианты)
+            "gas",  # Газ (доступен или нет)
+            "electricity",  # Электричество
+            "water",  # Вода
+            "sewage",  # Стоки
+            "image_1_url",  # Ссылка на первое изображение
+            "image_2_url",  # Ссылка на второе изображение
+            "image_3_url",  # Ссылка на третье изображение
+            "image_4_url",  # Ссылка на четвертое изображение
+            "image_5_url",  # Ссылка на пятое изображение
         ]
 
     def get_image_1_url(self, obj):
