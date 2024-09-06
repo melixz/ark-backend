@@ -10,9 +10,15 @@ class ImageBase(models.Model):
         ("slider_image", "Картинка для слайдера"),
         ("additional_image", "Дополнительное изображение"),
     ]
-    image = models.ImageField(upload_to="images/", verbose_name="Изображение")
+    image = models.ImageField(
+        upload_to="images/", verbose_name="Изображение", blank=True, null=True
+    )
     image_type = models.CharField(
-        max_length=20, choices=IMAGE_TYPE_CHOICES, verbose_name="Тип изображения"
+        max_length=20,
+        choices=IMAGE_TYPE_CHOICES,
+        verbose_name="Тип изображения",
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -98,8 +104,12 @@ class ImageBase(models.Model):
 
 
 class City(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название города")
-    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    name = models.CharField(
+        max_length=100, verbose_name="Название города", blank=True, null=True
+    )
+    path = models.CharField(
+        max_length=100, verbose_name="Путь", default="", blank=True, null=True
+    )
     new_title = models.CharField(
         max_length=255, verbose_name="Заголовок для новостройки", blank=True, null=True
     )
@@ -155,10 +165,19 @@ class City(models.Model):
 
 class Complex(models.Model):
     city = models.ForeignKey(
-        City, on_delete=models.CASCADE, related_name="complexes", verbose_name="Город"
+        City,
+        on_delete=models.CASCADE,
+        related_name="complexes",
+        verbose_name="Город",
+        blank=True,
+        null=True,
     )
-    name = models.CharField(max_length=200, verbose_name="Название комплекса")
-    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    name = models.CharField(
+        max_length=200, verbose_name="Название комплекса", blank=True, null=True
+    )
+    path = models.CharField(
+        max_length=100, verbose_name="Путь", default="", blank=True, null=True
+    )
     card_bg = models.ImageField(
         upload_to="complexes/cards/",
         verbose_name="Фон карточки в слайдере",
@@ -185,6 +204,8 @@ class ComplexImage(ImageBase):
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name="Комплекс",
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -197,10 +218,19 @@ class ComplexImage(ImageBase):
 
 class Plot(models.Model):
     city = models.ForeignKey(
-        City, on_delete=models.CASCADE, related_name="plots", verbose_name="Город"
+        City,
+        on_delete=models.CASCADE,
+        related_name="plots",
+        verbose_name="Город",
+        blank=True,
+        null=True,
     )
-    district = models.CharField(max_length=200, verbose_name="Район", blank=True)
-    path = models.CharField(max_length=100, verbose_name="Путь", default="")
+    district = models.CharField(
+        max_length=200, verbose_name="Район", blank=True, null=True
+    )
+    path = models.CharField(
+        max_length=100, verbose_name="Путь", default="", blank=True, null=True
+    )
     card_bg = models.ImageField(
         upload_to="plots/cards/",
         verbose_name="Фон карточки в слайдере",
@@ -223,7 +253,12 @@ class Plot(models.Model):
 
 class PlotImage(ImageBase):
     plot = models.ForeignKey(
-        Plot, on_delete=models.CASCADE, related_name="images", verbose_name="Застройка"
+        Plot,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name="Застройка",
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -240,6 +275,8 @@ class NewSection(models.Model):
         on_delete=models.CASCADE,
         related_name="new_sections",
         verbose_name="Город",
+        blank=True,
+        null=True,
     )
     title = models.CharField(
         max_length=255, verbose_name="Заголовок", blank=True, null=True
@@ -276,6 +313,8 @@ class PlotSection(models.Model):
         on_delete=models.CASCADE,
         related_name="plot_sections",
         verbose_name="Город",
+        blank=True,
+        null=True,
     )
     title = models.CharField(
         max_length=255, verbose_name="Заголовок", blank=True, null=True
@@ -318,14 +357,25 @@ class Apartment(models.Model):
         on_delete=models.CASCADE,
         related_name="apartments",
         verbose_name="Комплекс",
+        blank=True,
+        null=True,
     )
     city = models.ForeignKey(
-        City, on_delete=models.CASCADE, related_name="apartments", verbose_name="Город"
+        City,
+        on_delete=models.CASCADE,
+        related_name="apartments",
+        verbose_name="Город",
+        blank=True,
+        null=True,
     )
     category = models.CharField(
-        max_length=50, choices=CATEGORY_CHOICES, verbose_name="Категория"
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        verbose_name="Категория",
+        blank=True,
+        null=True,
     )
-    path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
+    path = models.CharField(max_length=100, verbose_name="Путь", blank=True, null=True)
     floor_count = models.PositiveIntegerField(
         verbose_name="Количество этажей", blank=True, null=True
     )
@@ -349,6 +399,8 @@ class ApartmentImage(ImageBase):
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name="Квартира",
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -365,14 +417,26 @@ class ApartmentSection(models.Model):
         on_delete=models.CASCADE,
         related_name="sections",
         verbose_name="Квартира",
+        blank=True,
+        null=True,
     )
-    title = models.CharField(max_length=255, verbose_name="Название секции")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    floor = models.PositiveIntegerField(verbose_name="Этаж")
-    room_count = models.PositiveIntegerField(verbose_name="Количество комнат")
-    apartment_number = models.CharField(max_length=10, verbose_name="Номер квартиры")
-    area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
-    delivery_date = models.DateField(verbose_name="Срок сдачи")
+    title = models.CharField(
+        max_length=255, verbose_name="Название секции", blank=True, null=True
+    )
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Цена", blank=True, null=True
+    )
+    floor = models.PositiveIntegerField(verbose_name="Этаж", blank=True, null=True)
+    room_count = models.PositiveIntegerField(
+        verbose_name="Количество комнат", blank=True, null=True
+    )
+    apartment_number = models.CharField(
+        max_length=10, verbose_name="Номер квартиры", blank=True, null=True
+    )
+    area = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Площадь", blank=True, null=True
+    )
+    delivery_date = models.DateField(verbose_name="Срок сдачи", blank=True, null=True)
     image_1 = models.ImageField(
         upload_to="apartments/sections/",
         verbose_name="Изображение 1",
@@ -418,20 +482,36 @@ class PlotLand(models.Model):
         ("IJS", "ИЖС"),
     ]
     plot = models.ForeignKey(
-        "Plot", on_delete=models.CASCADE, related_name="lands", verbose_name="Застройка"
+        "Plot",
+        on_delete=models.CASCADE,
+        related_name="lands",
+        verbose_name="Застройка",
+        blank=True,
+        null=True,
     )
     land_type = models.CharField(
-        max_length=3, choices=LAND_TYPE_CHOICES, verbose_name="Тип участка"
+        max_length=3,
+        choices=LAND_TYPE_CHOICES,
+        verbose_name="Тип участка",
+        blank=True,
+        null=True,
     )
     area = models.DecimalField(
-        max_digits=5, decimal_places=2, verbose_name="Площадь участка (в сотках)"
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Площадь участка (в сотках)",
+        blank=True,
+        null=True,
     )
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Цена за участок"
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Цена за участок",
+        blank=True,
+        null=True,
     )
-    path = models.CharField(max_length=100, verbose_name="Путь", blank=True)
+    path = models.CharField(max_length=100, verbose_name="Путь", blank=True, null=True)
 
-    # Дополнительные поля для участка
     gas = models.CharField(
         max_length=20,
         choices=[
@@ -441,6 +521,8 @@ class PlotLand(models.Model):
         ],
         verbose_name="Газ",
         default="нет",
+        blank=True,
+        null=True,
     )
     electricity = models.CharField(
         max_length=20,
@@ -451,6 +533,8 @@ class PlotLand(models.Model):
         ],
         verbose_name="Свет",
         default="нет",
+        blank=True,
+        null=True,
     )
     water = models.CharField(
         max_length=20,
@@ -461,6 +545,8 @@ class PlotLand(models.Model):
         ],
         verbose_name="Вода",
         default="нет",
+        blank=True,
+        null=True,
     )
     sewage = models.CharField(
         max_length=20,
@@ -471,10 +557,13 @@ class PlotLand(models.Model):
         ],
         verbose_name="Стоки",
         default="нет",
+        blank=True,
+        null=True,
     )
-    developed = models.BooleanField(default=False, verbose_name="Разработан")
+    developed = models.BooleanField(
+        default=False, verbose_name="Разработан", blank=True, null=True
+    )
 
-    # Обязательные изображения
     image_1 = models.ImageField(
         upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
     )
@@ -510,6 +599,8 @@ class PlotLandImage(ImageBase):
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name="Участок",
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -531,15 +622,25 @@ class PlotLandSection(models.Model):
         on_delete=models.CASCADE,
         related_name="sections",
         verbose_name="Участок",
+        blank=True,
+        null=True,
     )
-    title = models.CharField(max_length=255, verbose_name="Название секции")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
-    area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
+    title = models.CharField(
+        max_length=255, verbose_name="Название секции", blank=True, null=True
+    )
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name="Цена", blank=True, null=True
+    )
+    area = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Площадь", blank=True, null=True
+    )
     land_status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         verbose_name="Статус земли",
         default="privatized",
+        blank=True,
+        null=True,
     )
     gas = models.CharField(
         max_length=20,
@@ -550,6 +651,8 @@ class PlotLandSection(models.Model):
         ],
         verbose_name="Газ",
         default="нет",
+        blank=True,
+        null=True,
     )
     electricity = models.CharField(
         max_length=20,
@@ -560,6 +663,8 @@ class PlotLandSection(models.Model):
         ],
         verbose_name="Свет",
         default="нет",
+        blank=True,
+        null=True,
     )
     water = models.CharField(
         max_length=20,
@@ -570,6 +675,8 @@ class PlotLandSection(models.Model):
         ],
         verbose_name="Вода",
         default="нет",
+        blank=True,
+        null=True,
     )
     sewage = models.CharField(
         max_length=20,
@@ -580,6 +687,8 @@ class PlotLandSection(models.Model):
         ],
         verbose_name="Стоки",
         default="нет",
+        blank=True,
+        null=True,
     )
     image_1 = models.ImageField(
         upload_to="plot_land_sections/",
@@ -621,8 +730,10 @@ class PlotLandSection(models.Model):
 
 
 class DynamicFormSubmission(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Название формы")
-    data = models.JSONField(verbose_name="Данные формы")
+    name = models.CharField(
+        max_length=255, verbose_name="Название формы", blank=True, null=True
+    )
+    data = models.JSONField(verbose_name="Данные формы", blank=True, null=True)
     submitted_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отправки")
 
     class Meta:
