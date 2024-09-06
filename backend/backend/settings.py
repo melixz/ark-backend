@@ -27,11 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
+    "localhost",  # Добавляем localhost
     ".vercel.app",
     ".now.sh",
-    "http://localhost:3000",
     "arkcrimea.ru",
 ]
+
 
 # Application definition
 
