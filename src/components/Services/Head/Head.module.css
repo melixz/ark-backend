@@ -1,0 +1,36 @@
+.head__row {
+  padding-top: clamp(2.5rem, 1.429rem + 5.36vw, 6.25rem);
+  padding-bottom: clamp(1.875rem, 0.679rem + 5.98vw, 6.063rem);
+}
+.head__girl {
+  background-image: url("../../../assets/services__girl_bgr.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: clamp(12.5rem, 7.625rem + 25.38vw, 34.563rem);
+}
+.head__title {
+  font-size: clamp(1.5rem, 1.214rem + 1.43vw, 2.5rem);
+  font-family: "Montserrat-Regular", "sans-serif";
+  line-height: clamp(2rem, 1.75rem + 1.25vw, 2.875rem);
+}
+.head__title_span {
+  text-transform: uppercase;
+  font-family: "Montserrat-Medium", "sans-serif";
+  color: #e21a18;
+  margin-top: 0.5rem;
+}
+.head__text {
+  width: clamp(17.5rem, 10.179rem + 36.61vw, 43.125rem);
+  font-size: clamp(1rem, 0.857rem + 0.71vw, 1.5rem);
+  font-family: "Roboto-Light", "sans-serif";
+}
+.second {
+  padding-left: clamp(0rem, -3.179rem + 10.89vw, 7.625rem);
+}
+.third {
+  padding-left: clamp(0rem, -6.232rem + 21.16vw, 14.813rem);
+}
+.head__col_desc {
+  padding-bottom: clamp(1rem, 0.643rem + 1.79vw, 2.25rem);
+}

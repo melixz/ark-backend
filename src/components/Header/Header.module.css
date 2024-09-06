@@ -1,0 +1,27 @@
+.header {
+  height: clamp(3.125rem, 2.518rem + 3.04vw, 5.25rem);
+  background-color: #252627;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+.header__container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.header__row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .header__container {
+    justify-content: center;
+  }
+}

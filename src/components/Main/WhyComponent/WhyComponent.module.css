@@ -1,0 +1,96 @@
+.why__container {
+  padding: 0;
+}
+.row_title_section {
+  margin-top: 12%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  justify-content: space-between;
+}
+.main__title_row,
+.main__description_row {
+  padding-inline: 5%;
+}
+.crimea__icon {
+  border-radius: 16px;
+  height: clamp(12.5rem, 7.25rem + 26.25vw, 30.875rem);
+  width: 100%;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.orderFirst {
+  order: -2;
+}
+.orderMiddle {
+  order: 0;
+}
+.orderLast {
+  order: -1;
+}
+.main__text {
+  min-height: clamp(2.5rem, 1.786rem + 3.57vw, 5rem);
+  border-bottom: #2a3659 solid 1px;
+  margin: 0;
+  width: clamp(20.3rem, 15.214rem + 7.93vw, 27.75rem);
+  display: flex;
+  align-items: center;
+  font-size: clamp(1rem, 0.857rem + 0.71vw, 1.5rem);
+}
+.why__row_desc {
+  min-height: clamp(12.5rem, 7.25rem + 26.25vw, 30.875rem);
+}
+.main__list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.main__list_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: #2a3659 solid 1px;
+  min-height: clamp(2.5rem, 1.786rem + 3.57vw, 5rem);
+}
+.main__list_title,
+.main__list_num {
+  padding: 0;
+  margin: 0;
+  font-size: clamp(0.9rem, 0.337rem + 0.9vw, 2.8rem);
+}
+.main__title {
+  text-align: center;
+  margin-bottom: clamp(0.875rem, 0.268rem + 3.04vw, 3rem);
+  font-size: clamp(1.5rem, 1.071rem + 2.14vw, 3rem);
+  font-weight: 400;
+  line-height: 48px;
+}
+
+@media (max-width: 576px) {
+  .row_title_section {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main__title {
+    text-align: left;
+  }
+}
+@media (max-width: 1024px) {
+  .row_title_section {
+    flex-direction: column;
+  }
+  .orderFirst {
+    order: -2;
+  }
+  .orderMiddle {
+    order: -1;
+  }
+  .orderLast {
+    order: 0;
+  }
+}

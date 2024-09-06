@@ -1,0 +1,64 @@
+.sell__container {
+  max-width: 1200px;
+  padding-top: clamp(1.875rem, 1.018rem + 4.29vw, 4.875rem);
+  padding-bottom: clamp(1rem, 0.929rem + 0.36vw, 1.25rem);
+}
+.sell__row {
+  gap: 28px;
+  min-height: 600px;
+}
+.sell__col {
+  height: clamp(12.5rem, 17.75rem + 76.75vw, 35.625rem);
+  background-color: #e2ecee;
+  border-radius: 17px;
+  padding: 24px 44px 38px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sell__title {
+  font-size: clamp(1.5rem, 1.214rem + 1.43vw, 2.5rem);
+  line-height: clamp(2rem, 1.75rem + 1.25vw, 2.875rem);
+  font-family: "Montserrat-Regular", sans-serif;
+  width: clamp(17.875rem, 17.089rem + 3.93vw, 20.625rem);
+}
+.sell__text {
+  font-size: clamp(1rem, 0.929rem + 0.36vw, 1.25rem);
+  font-family: "Roboto-Light", "sans-serif";
+  width: 90%;
+}
+.sell__text_large {
+  font-size: clamp(1.125rem, 1.018rem + 0.54vw, 1.5rem);
+}
+.sell__col_cost {
+  align-self: flex-end;
+}
+.payment__row {
+  padding-top: clamp(1.875rem, 1.161rem + 3.57vw, 4.375rem);
+}
+.price__row {
+  padding-bottom: clamp(1.875rem, 0.716rem + 5.8vw, 5.063rem);
+}
+.payment__text {
+  font-size: clamp(1rem, 0.857rem + 0.71vw, 1.5rem);
+  font-family: "Roboto-Light", "sans-serif";
+}
+.price__text {
+  font-size: clamp(0.875rem, 0.804rem + 0.36vw, 1.125rem);
+  font-family: "Roboto-Light", "sans-serif";
+  border-bottom: #2a3659 1px solid;
+  height: clamp(2.5rem, 2.964rem + 3.68vw, 3.375rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+@media (max-width: 1200px) {
+  .price__text {
+    height: clamp(5.5rem, 2.964rem + 3.68vw, 3.375rem);
+  }
+}
+@media (max-width: 992px) {
+  .price__text {
+    height: clamp(9.5rem, 7.964rem + 7.68vw, 6.375rem);
+  }
+}

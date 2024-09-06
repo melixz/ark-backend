@@ -1,0 +1,20 @@
+.contants__link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  text-decoration: none;
+  color: #f2f4f6;
+  font-size: 16px;
+  line-height: 24px;
+  font-family: "Roboto-medium";
+  transition: all 0.3s ease;
+}
+.contants__link:hover {
+  color: #e21a18;
+}
+@media screen and (max-width: 1200px) {
+  .contants__link {
+    display: none;
+  }
+}

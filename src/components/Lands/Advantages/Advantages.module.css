@@ -1,0 +1,13 @@
+.advantages__content {
+  padding: 0;
+  padding-bottom: clamp(1.25rem, -1.161rem + 12.05vw, 9.688rem);
+}
+.advantages__content_details {
+  background-color: #e2effa;
+  flex-grow: 1;
+  display: flex;
+}
+.details__title_color {
+  color: #e21a18;
+  text-transform: uppercase;
+}

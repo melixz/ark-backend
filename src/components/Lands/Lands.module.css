@@ -1,0 +1,68 @@
+.lands {
+  flex-grow: 1;
+  margin-top: clamp(3.125rem, 2.518rem + 3.04vw, 5.25rem);
+  padding: 0 !important;
+  background-color: #dfeeee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.lands__title {
+  font-size: clamp(2.25rem, 2.036rem + 1.07vw, 3rem);
+  font-family: "Montserrat-Regular", sans-serif;
+}
+.lands__subtitle {
+  font-size: clamp(1rem, 0.714rem + 1.43vw, 2rem);
+  font-family: "Montserrat-Medium", sans-serif;
+}
+.lands_fluid {
+  padding: 0;
+  flex-grow: 1;
+}
+.lands__container {
+  padding-top: clamp(1.875rem, 1.518rem + 1.79vw, 3.125rem);
+}
+.lands__row_slider {
+  padding-top: clamp(1.875rem, 1.179rem + 3.48vw, 4.313rem);
+}
+.lands__container_map {
+  padding-top: clamp(1.875rem, 1.518rem + 1.79vw, 3.125rem);
+  padding-bottom: clamp(1.875rem, 1.518rem + 5.79vw, 7.125rem);
+}
+.lands__title_color {
+  color: #e21a18;
+  text-transform: uppercase;
+}
+.map__col_btn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.map__button {
+  width: clamp(14rem, 13.964rem + 9.18vw, 22.125rem);
+  height: clamp(2.588rem, 1.563rem + 2.63vw, 3.565rem);
+  background-color: #e21a18;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 4px;
+  text-decoration: none;
+  font-size: clamp(1rem, 0.857rem + 0.71vw, 1.5rem);
+}
+.map__button:hover {
+  background-color: #fb3633;
+  cursor: pointer;
+}
+.map__row_btn {
+  align-items: center;
+  padding-top: clamp(2.5rem, 2.143rem + 1.79vw, 3.75rem);
+  padding-bottom: clamp(1.875rem, 1.018rem + 4.29vw, 4.875rem);
+}
+.map__text {
+  font-size: clamp(1.5rem, 1.071rem + 2.14vw, 3rem);
+  font-family: "Montserrat-Medium", "sans-serif";
+  margin-bottom: 0;
+}

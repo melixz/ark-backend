@@ -1,0 +1,90 @@
+.wrapper {
+  background-color: #e2ecee;
+  width: clamp(17.5rem, 11.273rem + 31.14vw, 34.625rem);
+  height: clamp(3.5rem, 3.143rem + 1.79vw, 4.75rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+}
+.content__col_img {
+  background-image: url("../../../assets/legal__man.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: clamp(19.75rem, 20.159rem + 24.95vw, 33.625rem);
+  border-radius: 17px;
+}
+.legal__col_text {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.legal__text {
+  font-size: clamp(1rem, 0.818rem + 0.91vw, 1.5rem);
+  font-family: "Roboto-Light", "sans-serif";
+  width: clamp(17.5rem, 9.545rem + 39.77vw, 34.375rem);
+  margin-bottom: 0;
+}
+.legal__row_text {
+  padding-top: 8px;
+  padding-bottom: 28px;
+}
+.content__text {
+  font-size: clamp(0.875rem, 0.784rem + 0.45vw, 1.125rem);
+  font-family: "Roboto-Regular", "sans-serif";
+}
+.content__row {
+  gap: 24px;
+  padding-bottom: clamp(1.875rem, 1.08rem + 3.98vw, 4.063rem);
+}
+.content__list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  margin-bottom: 0;
+  height: 100%;
+}
+.content__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-height: clamp(2.5rem, 1.786rem + 7.57vw, 5rem);
+  border-bottom: solid 1px #2a3659;
+  gap: 10px;
+}
+.content__text {
+  margin: 0;
+  font-size: clamp(1rem, 0.929rem + 0.36vw, 1.25rem);
+  font-family: "Roboto-Regular", "sans-serif";
+}
+.button__row {
+  justify-content: flex-end;
+  padding-bottom: clamp(1.875rem, 1.602rem + 1.36vw, 2.625rem);
+}
+.button__col {
+  display: flex;
+  align-items: center;
+}
+.button {
+  width: clamp(14rem, 12.273rem + 8.64vw, 18.75rem);
+  height: clamp(2.688rem, 2.574rem + 0.57vw, 3rem);
+  background-color: #e21a18;
+  color: #fff;
+  border-radius: 10px;
+  border: none;
+  font-size: clamp(1rem, 0.929rem + 0.36vw, 1.25rem);
+  font-family: "Roboto-Regular", "sans-serif";
+}
+@media (max-width: 992px) {
+  .content__row {
+    flex-direction: column;
+  }
+  .legal__col_text {
+    justify-content: flex-start;
+  }
+  .button__col {
+    justify-content: center;
+  }
+}

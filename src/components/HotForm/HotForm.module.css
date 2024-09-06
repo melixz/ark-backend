@@ -1,0 +1,8 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  margin-top: clamp(3.125rem, 2.518rem + 3.04vw, 5.25rem);
+  padding: 0 !important;
+}
