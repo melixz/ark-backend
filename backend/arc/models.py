@@ -86,18 +86,15 @@ class ImageBase(models.Model):
             background.paste(img, mask=img.split()[3])
             img = background
 
-        if img.height > 1125 or img.width > 1125:
-            img.thumbnail((1125, 1125))
-
         file_root, file_ext = os.path.splitext(self.image.path)
         if file_ext.lower() != ".jpg" and file_ext.lower() != ".jpeg":
             new_image_path = f"{file_root}.jpg"
-            img.save(new_image_path, format="JPEG", quality=70, optimize=True)
+            img.save(new_image_path, format="JPEG", quality=100)
             self.image.name = os.path.basename(new_image_path)
             if os.path.exists(self.image.path):
                 os.remove(self.image.path)
         else:
-            img.save(self.image.path, quality=70, optimize=True)
+            img.save(self.image.path, quality=100)
 
     def __str__(self):
         return f"{self.get_parent_instance()} - {self.get_image_type_display()}"
