@@ -1,2 +1,27 @@
-.venv/
-backend/.venv/
+# Python  
+__pycache__/  
+*.py[cod]  
+*$py.class  
+
+# Django  
+*.log  
+*.pot  
+*.pyc  
+local_settings.py  
+db.sqlite3  
+db.sqlite3-journal  
+
+# React  
+node_modules/  
+build/  
+.DS_Store  
+.env.local  
+.env.development.local  
+.env.test.local  
+.env.production.local  
+
+# General  
+.idea/  
+.vscode/  
+*.swp  
+*.swo  

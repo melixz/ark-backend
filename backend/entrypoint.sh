@@ -1,19 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
-# Проверка на существование виртуального окружения
-if [ ! -d "/opt/backend/.venv" ]; then
-    echo "Virtual environment not found. Creating..."
-    python -m venv /opt/backend/.venv
+if [ "$DATABASE" = "postgres" ]
+then
+    echo "Waiting for PostgreSQL to start..."
+
+    while ! nc -z $SQL_HOST $SQL_PORT; do
+      sleep 0.1
+    done
+
+    echo "PostgreSQL started"
 fi
 
-# Активируем виртуальное окружение
-source /opt/backend/.venv/bin/activate
-
-# Применяем миграции
+# Применяем миграции, собираем статические файлы
 python manage.py migrate
-
-# Собираем статические файлы
 python manage.py collectstatic --noinput
 
-# Запускаем uwsgi
-exec uwsgi --http :8000 --module backend.wsgi
+exec "$@"
