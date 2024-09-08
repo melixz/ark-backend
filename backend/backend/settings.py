@@ -34,8 +34,9 @@ ALLOWED_HOSTS = [
     "localhost",  # Добавляем localhost
     ".vercel.app",
     ".now.sh",
-    "arkcrimea.ru",
-    "www.arkcrimea.ru",
+    "dom-ark.com",
+    "www.dom-ark.com",
+    "5.63.153.192",
 ]
 
 
