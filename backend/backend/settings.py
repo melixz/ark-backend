@@ -205,10 +205,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 JAZZMIN_SETTINGS = {
-    "site_title": "АРК Admin",
-    "site_header": "АРК",
-    "site_brand": "АРК",
-    "welcome_sign": "Добро пожаловать в «АРК»!",
+    "site_title": "ARC Admin",
+    "site_header": "ARC",
+    "site_brand": "ARC",
+    "welcome_sign": "Добро пожаловать в «ARC»!",
     "copyright": "TOXIC TEAM",
     "show_sidebar": True,
     "navigation_expanded": True,
