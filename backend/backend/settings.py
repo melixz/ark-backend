@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     "dom-ark.com",
     "www.dom-ark.com",
     "5.63.153.192",
+    "*"
 ]
 
 
