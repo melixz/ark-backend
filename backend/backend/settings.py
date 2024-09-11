@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-1@b0tw9j$d$$w@=+weh)&lmk@ky=_h6l1(ua$g%b9ltgvymo^x"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "clearcache",
     # "admin_reorder",
-    "arc",
+    "ark",
 ]
 
 MIDDLEWARE = [
@@ -138,8 +138,8 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('SQL_HOST', 'db'),
-        'PORT': os.getenv('SQL_PORT', '5432'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     }
 }
 
@@ -205,10 +205,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 JAZZMIN_SETTINGS = {
-    "site_title": "ARC Admin",
-    "site_header": "ARC",
-    "site_brand": "ARC",
-    "welcome_sign": "Добро пожаловать в «ARC»!",
+    "site_title": "ARK Admin",
+    "site_header": "ARK",
+    "site_brand": "ARK",
+    "welcome_sign": "Добро пожаловать в «ARK»!",
     "copyright": "TOXIC TEAM",
     "show_sidebar": True,
     "navigation_expanded": True,

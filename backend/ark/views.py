@@ -1,14 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
 from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 
 
 class FullDataAPIView(APIView):
-    permission_classes = [IsAdminUser]
-
     def get(self, request, *args, **kwargs):
         new_cities = City.objects.filter(new_title__isnull=False)
 
@@ -24,8 +21,6 @@ class FullDataAPIView(APIView):
 
 
 class DynamicFormSubmissionView(APIView):
-    permission_classes = [IsAdminUser]
-
     def post(self, request, format=None):
         data = request.data
 
