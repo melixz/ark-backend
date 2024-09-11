@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 
 class FullDataAPIView(APIView):
@@ -21,6 +22,11 @@ class FullDataAPIView(APIView):
 
 
 class DynamicFormSubmissionView(APIView):
+    class DynamicFormSubmissionView(APIView):
+        throttle_classes = [AnonRateThrottle, UserRateThrottle]
+        throttle_anon = '100/day'  # 100 запросов в день для анонимных пользователей
+        # throttle_user = '1000/day'  # 1000 запросов в день для авторизованных пользователей
+
     def post(self, request, format=None):
         data = request.data
 
