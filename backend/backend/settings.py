@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-1@b0tw9j$d$$w@=+weh)&lmk@ky=_h6l1(ua$g%b9ltgvymo^x"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     "dom-ark.com",
     "www.dom-ark.com",
     "5.63.153.192",
-    "*"
+    "*",
 ]
 
 
@@ -193,7 +193,7 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
