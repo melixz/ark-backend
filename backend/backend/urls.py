@@ -45,6 +45,7 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("i18n/", include("django.conf.urls.i18n")),
 ]
 
 if settings.DEBUG:

@@ -31,13 +31,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
-    "localhost",  # Добавляем localhost
-    ".vercel.app",
-    ".now.sh",
+    "localhost",
     "dom-ark.com",
     "www.dom-ark.com",
-    "5.63.153.192",
-    "*",
+    "79.174.86.29",
 ]
 
 
@@ -62,17 +59,16 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # Добавлено
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    # "admin_reorder.middleware.ModelAdminReorder",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
@@ -115,33 +111,35 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_DB'),
-#         'USER': os.getenv('POSTGRES_USER'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-#         'HOST': os.getenv('POSTGRES_HOST'),
-#         'PORT': os.getenv('POSTGRES_PORT'),
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
+    }
+}
 
 # DATABASES = {
 #     "default": {
@@ -204,41 +202,53 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
 JAZZMIN_SETTINGS = {
     "site_title": "ARK Admin",
-    "site_header": "ARK",
+    "site_header": "ARK Админ панель",  # Разделены слова для лучшего отображения
     "site_brand": "ARK",
-    "welcome_sign": "Добро пожаловать в «ARK»!",
+    "welcome_sign": "Добро пожаловать в ARK!",
     "copyright": "TOXIC TEAM",
+    # "site_logo": "path/to/your/logo.png",  # На будущее: путь к вашему логотипу
+    # "site_icon": "path/to/your/favicon.ico",  # На будущее: путь к вашему favicon
+    "search_model": "ark.City",
     "show_sidebar": True,
     "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
     "order_with_respect_to": [
-        "real_estate_app.City",  # Города
-        "real_estate_app.Complex",  # Комплексы
-        "real_estate_app.Apartment",  # Квартиры
-        "real_estate_app.Plot",  # Застройки
-        "real_estate_app.PlotLand",  # Участки
-        "real_estate_app.Section",  # Секции
+        # Группа: Города - Комплексы - Квартиры
+        "ark.City",
+        "ark.Complex",
+        "ark.Apartment",
+        "ark.NewSection",
+        # Группа: Города - Застройки - Участки и Секции
+        "ark.Plot",
+        "ark.PlotLand",
+        "ark.NewSection",
+        "ark.PlotSection",
+        # Другие модели
+        "ark.DynamicFormSubmission",
         "auth",
-        "auth.User",
-        "auth.Group",
-        "sites",
     ],
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "real_estate_app.City": "fas fa-city",
-        "real_estate_app.Complex": "fas fa-building",
-        "real_estate_app.Apartment": "fas fa-home",
-        "real_estate_app.Plot": "fas fa-map",
-        "real_estate_app.PlotLand": "fas fa-map-marked",  # Добавлено для участков
-        "real_estate_app.Section": "fas fa-layer-group",
+        "ark.City": "fas fa-city",
+        "ark.Complex": "fas fa-building",
+        "ark.Apartment": "fas fa-home",
+        "ark.Plot": "fas fa-map",
+        "ark.PlotLand": "fas fa-map-marked",
+        "ark.NewSection": "fas fa-layer-group",
+        "ark.PlotSection": "fas fa-layer-group",
+        "ark.DynamicFormSubmission": "fas fa-envelope",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": True,
-    "custom_js": None,
+    "custom_css": None,  # На будущее: путь к вашему кастомному CSS
+    "custom_js": None,  # На будущее: путь к вашему кастомному JS
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
     "changeform_format": "horizontal_tabs",
@@ -246,31 +256,22 @@ JAZZMIN_SETTINGS = {
         "auth.user": "collapsible",
         "auth.group": "vertical_tabs",
     },
-    "language_chooser": False,
+    "language_chooser": True,  # Включает выбор языка в админке
 }
 
 JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    # Вы можете изменить тему на другую, например, "flatly", "darkly", "cerulean", "cosmo", "cyborg", "darkly", "journal", "lumen", "paper", "sandstone", "simplex", "slate", "spacelab", "superhero", "united", "yeti"
+    # "dark_mode_theme": "darkly",  # Тема для темного режима
+    # Настройки навбара
     "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": True,
-    "brand_small_text": False,
-    "brand_colour": "navbar-primary",
-    "accent": "accent-primary",
-    "navbar": "navbar-white navbar-light",
-    "no_navbar_border": False,
-    "navbar_fixed": False,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": False,
-    "sidebar": "sidebar-light-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "spacelab",
-    "dark_mode_theme": None,
+    "navbar_dark_mode": False,  # Установите True для темного навбара
+    "navbar_fixed": True,  # Закрепить навбар при прокрутке
+    # Настройки боковой панели
+    "sidebar_fixed": True,  # Закрепить боковую панель при прокрутке
+    "sidebar": "sidebar-dark-primary",
+    # Цветовая схема боковой панели. Попробуйте "sidebar-light-primary" для светлой боковой панели
+    # Настройки кнопок
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -279,25 +280,25 @@ JAZZMIN_UI_TWEAKS = {
         "danger": "btn-danger",
         "success": "btn-success",
     },
-    "actions_sticky_top": False,
+    # Настройки акцентов
+    "accent": "accent-primary",
+    # Настройки компоновки
+    "body_small_text": False,
+    "footer_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": False,
+    # Другие настройки
+    "no_navbar_border": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "sidebar_disable_hover": False,
+    "actions_sticky_top": True,
+    # "custom_css": "path/to/your/custom.css",  # На будущее: путь к вашему кастомному CSS
+    # "custom_js": "path/to/your/custom.js",    # На будущее: путь к вашему кастомному JS
 }
-
-# ADMIN_REORDER = (
-#     {
-#         "app": "real_estate_app",  # Ваше приложение
-#         "models": (
-#             "real_estate_app.City",
-#             "real_estate_app.Developer",
-#             "real_estate_app.Complex",
-#             "real_estate_app.Apartment",
-#         ),
-#     },
-#     {
-#         "app": "auth",
-#         "models": (
-#             "auth.User",
-#             "auth.Group",
-#         ),
-#     },
-#     "sites",
-# )

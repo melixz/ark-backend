@@ -17,28 +17,34 @@ from .models import (
     DynamicFormSubmission,
 )
 
-
 # Инлайны для изображений и секций
+
+
+# Инлайн для изображений комплекса
 class ComplexImageInline(admin.TabularInline):
     model = ComplexImage
     extra = 1
 
 
+# Инлайн для изображений застройки
 class PlotImageInline(admin.TabularInline):
     model = PlotImage
     extra = 1
 
 
+# Инлайн для изображений земельного участка
 class PlotLandImageInline(admin.TabularInline):
     model = PlotLandImage
     extra = 1
 
 
+# Инлайн для изображений квартиры
 class ApartmentImageInline(admin.TabularInline):
     model = ApartmentImage
     extra = 1
 
 
+# Инлайн для секций квартиры
 class ApartmentSectionInline(admin.StackedInline):
     model = ApartmentSection
     extra = 1
@@ -50,10 +56,16 @@ class ApartmentSectionInline(admin.StackedInline):
         "apartment_number",
         "area",
         "delivery_date",
+        "image_1",
+        "image_2",
+        "image_3",
+        "image_4",
+        "image_5",
     )
     readonly_fields = ("apartment_number",)
 
 
+# Инлайн для секций земельного участка
 class PlotLandSectionInline(admin.StackedInline):
     model = PlotLandSection
     extra = 1
@@ -66,14 +78,21 @@ class PlotLandSectionInline(admin.StackedInline):
         "electricity",
         "water",
         "sewage",
+        "image_1",
+        "image_2",
+        "image_3",
+        "image_4",
+        "image_5",
     )
 
 
+# Инлайн для секций новостроек
 class NewSectionInline(admin.StackedInline):
     model = NewSection
     extra = 1
 
 
+# Инлайн для секций застроек
 class PlotSectionInline(admin.StackedInline):
     model = PlotSection
     extra = 1
@@ -95,6 +114,7 @@ class CityAdmin(admin.ModelAdmin):
     list_filter = ("name",)
     readonly_fields = ("path",)
 
+    # Отображение миниатюры для complex_card_bg
     def complex_card_bg_thumbnail(self, obj):
         if obj.complex_card_bg:
             return format_html(
@@ -104,6 +124,7 @@ class CityAdmin(admin.ModelAdmin):
 
     complex_card_bg_thumbnail.short_description = "Фон карточки (комплексы)"
 
+    # Отображение миниатюры для complex_bg
     def complex_bg_thumbnail(self, obj):
         if obj.complex_bg:
             return format_html(
@@ -113,6 +134,7 @@ class CityAdmin(admin.ModelAdmin):
 
     complex_bg_thumbnail.short_description = "Фон (комплексы)"
 
+    # Отображение миниатюры для plot_card_bg
     def plot_card_bg_thumbnail(self, obj):
         if obj.plot_card_bg:
             return format_html(
@@ -122,6 +144,7 @@ class CityAdmin(admin.ModelAdmin):
 
     plot_card_bg_thumbnail.short_description = "Фон карточки (застройки)"
 
+    # Отображение миниатюры для plot_bg
     def plot_bg_thumbnail(self, obj):
         if obj.plot_bg:
             return format_html('<img src="{}" style="height: 50px;"/>', obj.plot_bg.url)
@@ -141,6 +164,7 @@ class ComplexAdmin(admin.ModelAdmin):
     autocomplete_fields = ["city"]
     list_select_related = ("city",)
 
+    # Отображение миниатюры для card_bg
     def card_bg_thumbnail(self, obj):
         if obj.card_bg:
             return format_html('<img src="{}" style="height: 50px;"/>', obj.card_bg.url)
@@ -178,6 +202,7 @@ class PlotAdmin(admin.ModelAdmin):
     autocomplete_fields = ["city"]
     list_select_related = ("city",)
 
+    # Отображение миниатюры для card_bg
     def card_bg_thumbnail(self, obj):
         if obj.card_bg:
             return format_html('<img src="{}" style="height: 50px;"/>', obj.card_bg.url)
