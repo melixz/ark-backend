@@ -17,17 +17,15 @@ from .models import (
 )
 
 
+# Базовый сериализатор для ImageBase моделей
 class ImageBaseSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+    image_url = serializers.ImageField(source="image", read_only=True)
 
     class Meta:
         fields = ["image_type", "image_url"]
 
-    def get_image_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image.url) if obj.image else None
 
-
+# Сериализаторы для моделей изображений
 class ComplexImageSerializer(ImageBaseSerializer):
     class Meta(ImageBaseSerializer.Meta):
         model = ComplexImage
@@ -43,12 +41,35 @@ class ApartmentImageSerializer(ImageBaseSerializer):
         model = ApartmentImage
 
 
-class ApartmentSectionSerializer(serializers.ModelSerializer):
-    image_1_url = serializers.SerializerMethodField()
-    image_2_url = serializers.SerializerMethodField()
-    image_3_url = serializers.SerializerMethodField()
-    image_4_url = serializers.SerializerMethodField()
-    image_5_url = serializers.SerializerMethodField()
+class PlotLandImageSerializer(ImageBaseSerializer):
+    class Meta(ImageBaseSerializer.Meta):
+        model = PlotLandImage
+
+
+# Базовый миксин для секций с изображениями
+class SectionImageMixin(serializers.ModelSerializer):
+    image_fields = []  # Список полей изображений, определяемый в каждом сериализаторе
+
+    def get_field_names(self, declared_fields, info):
+        fields = super().get_field_names(declared_fields, info)
+        fields.extend(self.image_fields)
+        return fields
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request")
+        for image_field in self.image_fields:
+            image = getattr(instance, image_field, None)
+            if image:
+                representation[image_field] = request.build_absolute_uri(image.url)
+            else:
+                representation[image_field] = None
+        return representation
+
+
+# Сериализатор для ApartmentSection
+class ApartmentSectionSerializer(SectionImageMixin, serializers.ModelSerializer):
+    image_fields = ["image_1", "image_2", "image_3", "image_4", "image_5"]
 
     class Meta:
         model = ApartmentSection
@@ -60,34 +81,38 @@ class ApartmentSectionSerializer(serializers.ModelSerializer):
             "apartment_number",
             "area",
             "delivery_date",
-            "image_1_url",
-            "image_2_url",
-            "image_3_url",
-            "image_4_url",
-            "image_5_url",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
+            "image_5",
         ]
 
-    def get_image_1_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
 
-    def get_image_2_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
+# Сериализатор для PlotLandSection
+class PlotLandSectionSerializer(SectionImageMixin, serializers.ModelSerializer):
+    image_fields = ["image_1", "image_2", "image_3", "image_4", "image_5"]
 
-    def get_image_3_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
+    class Meta:
+        model = PlotLandSection
+        fields = [
+            "title",
+            "price",
+            "area",
+            "land_status",
+            "gas",
+            "electricity",
+            "water",
+            "sewage",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
+            "image_5",
+        ]
 
-    def get_image_4_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
 
-    def get_image_5_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_5.url) if obj.image_5 else None
-
-
+# Сериализатор для Apartment
 class ApartmentSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
@@ -106,111 +131,59 @@ class ApartmentSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        return f"{obj.category.replace('_', '-')}"
+        city_path = (
+            obj.complex.city.path.strip("/")
+            if obj.complex and obj.complex.city and obj.complex.city.path
+            else ""
+        )
+        complex_path = (
+            obj.complex.path.strip("/") if obj.complex and obj.complex.path else ""
+        )
+        apartment_path = obj.path.strip("/") if obj.path else ""
+        return f"/new/{city_path}/{complex_path}/{apartment_path}"
+
+    def get_images_by_type(self, obj, image_type):
+        images = obj.images.filter(image_type=image_type)
+        serializer = ApartmentImageSerializer(images, many=True, context=self.context)
+        return serializer.data
 
     def get_images(self, obj):
-        request = self.context.get("request")
-        additional_images = obj.images.filter(image_type="additional_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in additional_images
-        ]
+        return self.get_images_by_type(obj, "additional_image")
 
     def get_slider(self, obj):
-        request = self.context.get("request")
-        slider_images = obj.images.filter(image_type="slider_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in slider_images
-        ]
+        return self.get_images_by_type(obj, "slider_image")
 
 
+# Сериализатор для Complex
 class ComplexSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
-    card_bg = serializers.SerializerMethodField()
+    card_bg = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Complex
         fields = ["name", "path", "card_bg", "images", "slider", "apartments"]
 
     def get_path(self, obj):
-        return f"/new/{obj.city.path}/{obj.path}"
+        city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""
+        complex_path = obj.path.strip("/") if obj.path else ""
+        return f"/new/{city_path}/{complex_path}"
+
+    def get_images_by_type(self, obj, image_type):
+        images = obj.images.filter(image_type=image_type)
+        serializer = ComplexImageSerializer(images, many=True, context=self.context)
+        return serializer.data
 
     def get_images(self, obj):
-        request = self.context.get("request")
-        additional_images = obj.images.filter(image_type="additional_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in additional_images
-        ]
+        return self.get_images_by_type(obj, "additional_image")
 
     def get_slider(self, obj):
-        request = self.context.get("request")
-        slider_images = obj.images.filter(image_type="slider_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in slider_images
-        ]
-
-    def get_card_bg(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.card_bg.url) if obj.card_bg else None
+        return self.get_images_by_type(obj, "slider_image")
 
 
-class PlotLandImageSerializer(ImageBaseSerializer):
-    class Meta(ImageBaseSerializer.Meta):
-        model = PlotLandImage
-
-
-class PlotLandSectionSerializer(serializers.ModelSerializer):
-    image_1_url = serializers.SerializerMethodField()
-    image_2_url = serializers.SerializerMethodField()
-    image_3_url = serializers.SerializerMethodField()
-    image_4_url = serializers.SerializerMethodField()
-    image_5_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PlotLandSection
-        fields = [
-            "title",  # Заголовок секции
-            "price",  # Цена участка
-            "area",  # Площадь участка
-            "land_status",  # Статус земли (приватизированный или другие варианты)
-            "gas",  # Газ (доступен или нет)
-            "electricity",  # Электричество
-            "water",  # Вода
-            "sewage",  # Стоки
-            "image_1_url",  # Ссылка на первое изображение
-            "image_2_url",  # Ссылка на второе изображение
-            "image_3_url",  # Ссылка на третье изображение
-            "image_4_url",  # Ссылка на четвертое изображение
-            "image_5_url",  # Ссылка на пятое изображение
-        ]
-
-    def get_image_1_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
-
-    def get_image_2_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
-
-    def get_image_3_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
-
-    def get_image_4_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
-
-    def get_image_5_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_5.url) if obj.image_5 else None
-
-
+# Сериализатор для PlotLand
 class PlotLandSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     land_type_display = serializers.CharField(
@@ -239,65 +212,59 @@ class PlotLandSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        return obj.land_type
+        city_path = (
+            obj.plot.city.path.strip("/")
+            if obj.plot and obj.plot.city and obj.plot.city.path
+            else ""
+        )
+        plot_path = obj.plot.path.strip("/") if obj.plot and obj.plot.path else ""
+        land_path = obj.path.strip("/") if obj.path else ""
+        return f"/plots/{city_path}/{plot_path}/{land_path}"
+
+    def get_images_by_type(self, obj, image_type):
+        images = obj.images.filter(image_type=image_type)
+        serializer = PlotLandImageSerializer(images, many=True, context=self.context)
+        return serializer.data
 
     def get_images(self, obj):
-        request = self.context.get("request")
-        additional_images = obj.images.filter(image_type="additional_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in additional_images
-        ]
+        return self.get_images_by_type(obj, "additional_image")
 
     def get_slider(self, obj):
-        request = self.context.get("request")
-        slider_images = obj.images.filter(image_type="slider_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in slider_images
-        ]
+        return self.get_images_by_type(obj, "slider_image")
 
 
+# Сериализатор для Plot
 class PlotSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
-    card_bg = serializers.SerializerMethodField()
+    card_bg = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Plot
         fields = ["district", "path", "card_bg", "images", "slider", "lands"]
 
     def get_path(self, obj):
-        return obj.path.split("/")[-1]
+        city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""
+        plot_path = obj.path.strip("/") if obj.path else ""
+        return f"/plots/{city_path}/{plot_path}"
+
+    def get_images_by_type(self, obj, image_type):
+        images = obj.images.filter(image_type=image_type)
+        serializer = PlotImageSerializer(images, many=True, context=self.context)
+        return serializer.data
 
     def get_images(self, obj):
-        request = self.context.get("request")
-        additional_images = obj.images.filter(image_type="additional_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in additional_images
-        ]
+        return self.get_images_by_type(obj, "additional_image")
 
     def get_slider(self, obj):
-        request = self.context.get("request")
-        slider_images = obj.images.filter(image_type="slider_image")
-        return [
-            request.build_absolute_uri(image.image.url) if image.image else None
-            for image in slider_images
-        ]
-
-    def get_card_bg(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.card_bg.url) if obj.card_bg else None
+        return self.get_images_by_type(obj, "slider_image")
 
 
-class NewSectionSerializer(serializers.ModelSerializer):
-    image_1_url = serializers.SerializerMethodField()
-    image_2_url = serializers.SerializerMethodField()
-    image_3_url = serializers.SerializerMethodField()
-    image_4_url = serializers.SerializerMethodField()
+# Сериализатор для NewSection
+class NewSectionSerializer(SectionImageMixin, serializers.ModelSerializer):
+    image_fields = ["image_1", "image_2", "image_3", "image_4"]
 
     class Meta:
         model = NewSection
@@ -305,35 +272,17 @@ class NewSectionSerializer(serializers.ModelSerializer):
             "title",
             "desc_1",
             "desc_2",
-            "image_1_url",
-            "image_2_url",
-            "image_3_url",
-            "image_4_url",
             "loc",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
         ]
 
-    def get_image_1_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
 
-    def get_image_2_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
-
-    def get_image_3_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
-
-    def get_image_4_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
-
-
-class PlotSectionSerializer(serializers.ModelSerializer):
-    image_1_url = serializers.SerializerMethodField()
-    image_2_url = serializers.SerializerMethodField()
-    image_3_url = serializers.SerializerMethodField()
-    image_4_url = serializers.SerializerMethodField()
+# Сериализатор для PlotSection
+class PlotSectionSerializer(SectionImageMixin, serializers.ModelSerializer):
+    image_fields = ["image_1", "image_2", "image_3", "image_4"]
 
     class Meta:
         model = PlotSection
@@ -341,38 +290,23 @@ class PlotSectionSerializer(serializers.ModelSerializer):
             "title",
             "desc_1",
             "desc_2",
-            "image_1_url",
-            "image_2_url",
-            "image_3_url",
-            "image_4_url",
             "loc",
+            "image_1",
+            "image_2",
+            "image_3",
+            "image_4",
         ]
 
-    def get_image_1_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_1.url) if obj.image_1 else None
 
-    def get_image_2_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_2.url) if obj.image_2 else None
-
-    def get_image_3_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_3.url) if obj.image_3 else None
-
-    def get_image_4_url(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.image_4.url) if obj.image_4 else None
-
-
+# Сериализатор для City (новостройки)
 class NewCityDataSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     complexes = ComplexSerializer(many=True, read_only=True)
     section = NewSectionSerializer(many=True, source="new_sections", read_only=True)
-    title = serializers.SerializerMethodField()
-    desc = serializers.SerializerMethodField()
-    complex_card_bg = serializers.SerializerMethodField()
-    complex_bg = serializers.SerializerMethodField()
+    title = serializers.CharField(source="new_title", read_only=True)
+    desc = serializers.CharField(source="new_desc", read_only=True)
+    complex_card_bg = serializers.ImageField(read_only=True)
+    complex_bg = serializers.ImageField(read_only=True)
 
     class Meta:
         model = City
@@ -388,37 +322,19 @@ class NewCityDataSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        return f"/new/{obj.path}"
-
-    def get_title(self, obj):
-        return obj.new_title
-
-    def get_desc(self, obj):
-        return obj.new_desc
-
-    def get_complex_card_bg(self, obj):
-        request = self.context.get("request")
-        return (
-            request.build_absolute_uri(obj.complex_card_bg.url)
-            if obj.complex_card_bg
-            else None
-        )
-
-    def get_complex_bg(self, obj):
-        request = self.context.get("request")
-        return (
-            request.build_absolute_uri(obj.complex_bg.url) if obj.complex_bg else None
-        )
+        city_path = obj.path.strip("/") if obj.path else ""
+        return f"/new/{city_path}"
 
 
+# Сериализатор для City (застройки)
 class PlotsCityDataSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     plots = PlotSerializer(many=True, read_only=True)
     section = PlotSectionSerializer(many=True, source="plot_sections", read_only=True)
-    title = serializers.SerializerMethodField()
-    desc = serializers.SerializerMethodField()
-    plot_card_bg = serializers.SerializerMethodField()
-    plot_bg = serializers.SerializerMethodField()
+    title = serializers.CharField(source="plot_title", read_only=True)
+    desc = serializers.CharField(source="plot_desc", read_only=True)
+    plot_card_bg = serializers.ImageField(read_only=True)
+    plot_bg = serializers.ImageField(read_only=True)
 
     class Meta:
         model = City
@@ -434,27 +350,11 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        return f"/plots/{obj.path}"
-
-    def get_title(self, obj):
-        return obj.plot_title
-
-    def get_desc(self, obj):
-        return obj.plot_desc
-
-    def get_plot_card_bg(self, obj):
-        request = self.context.get("request")
-        return (
-            request.build_absolute_uri(obj.plot_card_bg.url)
-            if obj.plot_card_bg
-            else None
-        )
-
-    def get_plot_bg(self, obj):
-        request = self.context.get("request")
-        return request.build_absolute_uri(obj.plot_bg.url) if obj.plot_bg else None
+        city_path = obj.path.strip("/") if obj.path else ""
+        return f"/plots/{city_path}"
 
 
+# Сериализатор для отправок динамических форм
 class DynamicFormSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicFormSubmission
@@ -462,6 +362,7 @@ class DynamicFormSubmissionSerializer(serializers.ModelSerializer):
         read_only_fields = ["submitted_at"]
 
 
+# Сериализатор для полного ответа
 class FullResponseSerializer(serializers.Serializer):
     new = NewCityDataSerializer(many=True)
     plots = PlotsCityDataSerializer(many=True)

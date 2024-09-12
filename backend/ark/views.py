@@ -1,39 +1,78 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from django.core.cache import cache
+
+
+# Кастомные классы для ограничения скорости запросов
+class CustomAnonRateThrottle(AnonRateThrottle):
+    rate = "100/day"
+
+
+class CustomUserRateThrottle(UserRateThrottle):
+    rate = "1000/day"
 
 
 class FullDataAPIView(APIView):
+    """
+    API-представление для получения полной информации о новостройках и застройках.
+    """
+
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request, *args, **kwargs):
-        new_cities = City.objects.filter(new_title__isnull=False)
+        cache_key = "full_data_api_response"
+        data = cache.get(cache_key)
 
-        plot_cities = City.objects.filter(plot_title__isnull=False)
+        if not data:
+            # Оптимизированные запросы с использованием prefetch_related
+            new_cities = City.objects.filter(new_title__isnull=False).prefetch_related(
+                "complexes__apartments__sections",
+                "complexes__images",
+                "new_sections",
+                "complexes__apartments__images",
+            )
 
-        response_data = {
-            "new": new_cities,
-            "plots": plot_cities,
-        }
+            plot_cities = City.objects.filter(
+                plot_title__isnull=False
+            ).prefetch_related(
+                "plots__lands__sections",
+                "plots__images",
+                "plot_sections",
+                "plots__lands__images",
+            )
 
-        serializer = FullResponseSerializer(response_data, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = {
+                "new": new_cities,
+                "plots": plot_cities,
+            }
+
+            serializer = FullResponseSerializer(
+                response_data, context={"request": request}
+            )
+            data = serializer.data
+            cache.set(cache_key, data, 60 * 15)  # Кэшируем на 15 минут
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class DynamicFormSubmissionView(APIView):
-    class DynamicFormSubmissionView(APIView):
-        throttle_classes = [AnonRateThrottle, UserRateThrottle]
-        throttle_anon = '100/day'  # 100 запросов в день для анонимных пользователей
-        # throttle_user = '1000/day'  # 1000 запросов в день для авторизованных пользователей
+    """
+    API-представление для приема отправок динамических форм.
+    """
+
+    throttle_classes = [CustomAnonRateThrottle, CustomUserRateThrottle]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, format=None):
-        data = request.data
-
-        form_submission = DynamicFormSubmission(
-            name="Dynamic Form Submission", data=data
-        )
-        form_submission.save()
-
-        serializer = DynamicFormSubmissionSerializer(form_submission)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = DynamicFormSubmissionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"detail": "Форма успешно отправлена."}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
