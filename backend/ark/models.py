@@ -64,7 +64,7 @@ class ImageBase(models.Model):
         - Убирает прозрачность, если она есть.
         - Сохраняет обработанное изображение.
         """
-        if not self.image:
+        if not self.image:  # Добавлена проверка на наличие изображения
             return
 
         try:
@@ -91,8 +91,7 @@ class ImageBase(models.Model):
             )
 
         except Exception as e:
-            # Здесь можно добавить логирование ошибок
-            pass
+            pass  # Здесь можно добавить логирование ошибок
 
     def __str__(self):
         return f"{self.get_parent_instance()} - {self.get_image_type_display()}"
@@ -441,7 +440,9 @@ class ApartmentSection(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
     floor = models.PositiveIntegerField(verbose_name="Этаж")
     room_count = models.PositiveIntegerField(verbose_name="Количество комнат")
-    apartment_number = models.CharField(max_length=10, verbose_name="Номер квартиры")
+    apartment_number = models.CharField(
+        max_length=10, verbose_name="Номер квартиры", blank=True, null=True
+    )
     area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
     delivery_date = models.DateField(verbose_name="Срок сдачи")
     image_1 = models.ImageField(

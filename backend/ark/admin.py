@@ -36,12 +36,28 @@ class PlotImageInline(admin.TabularInline):
 class PlotLandImageInline(admin.TabularInline):
     model = PlotLandImage
     extra = 1
+    readonly_fields = ("image_thumbnail",)
+
+    def image_thumbnail(self, obj):
+        if obj.image and hasattr(obj.image, "url"):  # Проверка на наличие изображения
+            return format_html('<img src="{}" style="height: 50px;"/>', obj.image.url)
+        return "-"
+
+    image_thumbnail.short_description = "Превью изображения"
 
 
 # Инлайн для изображений квартиры
 class ApartmentImageInline(admin.TabularInline):
     model = ApartmentImage
     extra = 1
+    readonly_fields = ("image_thumbnail",)
+
+    def image_thumbnail(self, obj):
+        if obj.image and hasattr(obj.image, "url"):  # Проверка на наличие изображения
+            return format_html('<img src="{}" style="height: 50px;"/>', obj.image.url)
+        return "-"
+
+    image_thumbnail.short_description = "Превью изображения"
 
 
 # Инлайн для секций квартиры
@@ -62,7 +78,6 @@ class ApartmentSectionInline(admin.StackedInline):
         "image_4",
         "image_5",
     )
-    readonly_fields = ("apartment_number",)
 
 
 # Инлайн для секций земельного участка
