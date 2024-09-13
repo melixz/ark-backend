@@ -4,19 +4,17 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image
-from slugify import slugify  # Изменено: используем python-slugify
+from slugify import slugify  # Используется python-slugify
 
 
 class ImageBase(models.Model):
-    """
-    Абстрактная базовая модель для работы с изображениями.
-    Предоставляет общие поля и методы для моделей изображений.
-    """
+    """Абстрактная базовая модель для работы с изображениями."""
 
     IMAGE_TYPE_CHOICES = [
         ("slider_image", "Картинка для слайдера"),
         ("additional_image", "Дополнительное изображение"),
     ]
+
     image = models.ImageField(
         upload_to="images/", verbose_name="Изображение", blank=True, null=True
     )
@@ -33,21 +31,16 @@ class ImageBase(models.Model):
         abstract = True
 
     def get_parent_instance(self):
-        """
-        Возвращает экземпляр родительской модели на основе parent_field_name.
-        """
+        """Возвращает экземпляр родительской модели на основе parent_field_name."""
         return getattr(self, self.parent_field_name, None)
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для валидации и обработки изображения перед сохранением.
-        """
+        """Переопределение метода save для валидации и обработки изображения перед сохранением."""
         if not self.pk:
             parent_instance = self.get_parent_instance()
             if parent_instance and self.image_type:
-                parent_field_name = self.parent_field_name
                 image_count = self.__class__.objects.filter(
-                    **{parent_field_name: parent_instance},
+                    **{self.parent_field_name: parent_instance},
                     image_type=self.image_type,
                 ).count()
                 if image_count >= 10:
@@ -58,49 +51,38 @@ class ImageBase(models.Model):
         self.process_image()
 
     def process_image(self):
-        """
-        Обрабатывает загруженное изображение:
-        - Конвертирует в формат JPEG.
-        - Убирает прозрачность, если она есть.
-        - Сохраняет обработанное изображение.
-        """
-        if not self.image:  # Добавлена проверка на наличие изображения
+        """Обрабатывает загруженное изображение."""
+        if not self.image:
             return
-
         try:
             img = Image.open(self.image)
             img_format = "JPEG"
-
             if img.mode in ("RGBA", "LA") or (
                 img.mode == "P" and "transparency" in img.info
             ):
                 background = Image.new("RGB", img.size, (255, 255, 255))
-                background.paste(img, mask=img.split()[3])
+                background.paste(
+                    img, mask=img.split()[3] if img.mode == "RGBA" else None
+                )
                 img = background
-
-            # Сохраняем изображение в памяти
             buffer = BytesIO()
             img.save(buffer, format=img_format, quality=100)
             buffer.seek(0)
-
-            # Обновляем поле image новым изображением
             self.image.save(
                 f"{os.path.splitext(self.image.name)[0]}.jpg",
                 ContentFile(buffer.read()),
                 save=False,
             )
-
-        except Exception as e:
-            pass  # Здесь можно добавить логирование ошибок
+            super().save(update_fields=["image"])
+        except Exception:
+            pass  # Можно добавить логирование ошибок
 
     def __str__(self):
         return f"{self.get_parent_instance()} - {self.get_image_type_display()}"
 
 
 class City(models.Model):
-    """
-    Модель города, содержащая информацию о новостройках и застройках.
-    """
+    """Модель города, содержащая информацию о новостройках и застройках."""
 
     name = models.CharField(
         max_length=100, verbose_name="Название города", blank=False, null=False
@@ -150,9 +132,7 @@ class City(models.Model):
         verbose_name_plural = "Города"
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для автоматического формирования пути.
-        """
+        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
             self.path = slugify(self.name)
         super().save(*args, **kwargs)
@@ -162,9 +142,7 @@ class City(models.Model):
 
 
 class Complex(models.Model):
-    """
-    Модель жилого комплекса.
-    """
+    """Модель жилого комплекса."""
 
     city = models.ForeignKey(
         City, on_delete=models.CASCADE, related_name="complexes", verbose_name="Город"
@@ -186,11 +164,10 @@ class Complex(models.Model):
     class Meta:
         verbose_name = "Комплекс"
         verbose_name_plural = "Комплексы"
+        unique_together = ("city", "path")
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для автоматического формирования пути.
-        """
+        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
             self.path = slugify(self.name)
         super().save(*args, **kwargs)
@@ -200,9 +177,7 @@ class Complex(models.Model):
 
 
 class ComplexImage(ImageBase):
-    """
-    Модель изображений для комплекса.
-    """
+    """Модель изображений для комплекса."""
 
     complex = models.ForeignKey(
         Complex,
@@ -221,9 +196,7 @@ class ComplexImage(ImageBase):
 
 
 class Plot(models.Model):
-    """
-    Модель застройки.
-    """
+    """Модель застройки."""
 
     city = models.ForeignKey(
         City, on_delete=models.CASCADE, related_name="plots", verbose_name="Город"
@@ -245,11 +218,10 @@ class Plot(models.Model):
     class Meta:
         verbose_name = "Застройка"
         verbose_name_plural = "Застройки"
+        unique_together = ("city", "path")
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для автоматического формирования пути.
-        """
+        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
             self.path = slugify(self.district)
         super().save(*args, **kwargs)
@@ -259,9 +231,7 @@ class Plot(models.Model):
 
 
 class PlotImage(ImageBase):
-    """
-    Модель изображений для застройки.
-    """
+    """Модель изображений для застройки."""
 
     plot = models.ForeignKey(
         Plot, on_delete=models.CASCADE, related_name="images", verbose_name="Застройка"
@@ -277,9 +247,7 @@ class PlotImage(ImageBase):
 
 
 class NewSection(models.Model):
-    """
-    Модель секции новостроек для города.
-    """
+    """Модель секции новостроек для города."""
 
     city = models.ForeignKey(
         City,
@@ -317,9 +285,7 @@ class NewSection(models.Model):
 
 
 class PlotSection(models.Model):
-    """
-    Модель секции застроек для города.
-    """
+    """Модель секции застроек для города."""
 
     city = models.ForeignKey(
         City,
@@ -357,9 +323,7 @@ class PlotSection(models.Model):
 
 
 class Apartment(models.Model):
-    """
-    Модель квартиры в жилом комплексе.
-    """
+    """Модель квартиры в жилом комплексе."""
 
     CATEGORY_CHOICES = [
         ("studio", "Студия"),
@@ -367,6 +331,7 @@ class Apartment(models.Model):
         ("two_room", "Двухкомнатная"),
         ("three_room", "Трехкомнатная"),
     ]
+
     complex = models.ForeignKey(
         Complex,
         on_delete=models.CASCADE,
@@ -393,11 +358,10 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
+        unique_together = ("complex", "path")
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для автоматического формирования пути.
-        """
+        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
             self.path = slugify(self.category.replace("_", "-"))
         super().save(*args, **kwargs)
@@ -407,9 +371,7 @@ class Apartment(models.Model):
 
 
 class ApartmentImage(ImageBase):
-    """
-    Модель изображений для квартиры.
-    """
+    """Модель изображений для квартиры."""
 
     apartment = models.ForeignKey(
         Apartment,
@@ -428,9 +390,7 @@ class ApartmentImage(ImageBase):
 
 
 class ApartmentSection(models.Model):
-    """
-    Модель секции внутри квартиры (например, отдельные комнаты).
-    """
+    """Модель секции внутри квартиры."""
 
     apartment = models.ForeignKey(
         Apartment,
@@ -487,14 +447,13 @@ class ApartmentSection(models.Model):
 
 
 class PlotLand(models.Model):
-    """
-    Модель земельного участка в застройке.
-    """
+    """Модель земельного участка в застройке."""
 
     LAND_TYPE_CHOICES = [
         ("SNT", "СНТ"),
         ("IJS", "ИЖС"),
     ]
+
     plot = models.ForeignKey(
         Plot, on_delete=models.CASCADE, related_name="lands", verbose_name="Застройка"
     )
@@ -522,8 +481,6 @@ class PlotLand(models.Model):
     path = models.CharField(
         max_length=100, verbose_name="Путь", blank=False, null=False
     )
-
-    # Дополнительные поля для участка
     gas = models.CharField(
         max_length=40,
         choices=[
@@ -565,8 +522,6 @@ class PlotLand(models.Model):
         default="нет",
     )
     developed = models.BooleanField(default=False, verbose_name="Разработан")
-
-    # Изображения участка
     image_1 = models.ImageField(
         upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
     )
@@ -586,11 +541,10 @@ class PlotLand(models.Model):
     class Meta:
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
+        unique_together = ("plot", "path")
 
     def save(self, *args, **kwargs):
-        """
-        Переопределение метода save для автоматического формирования пути.
-        """
+        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
             self.path = slugify(self.land_type)
         super().save(*args, **kwargs)
@@ -600,9 +554,7 @@ class PlotLand(models.Model):
 
 
 class PlotLandImage(ImageBase):
-    """
-    Модель изображений для земельного участка.
-    """
+    """Модель изображений для земельного участка."""
 
     plot_land = models.ForeignKey(
         PlotLand,
@@ -621,9 +573,7 @@ class PlotLandImage(ImageBase):
 
 
 class PlotLandSection(models.Model):
-    """
-    Модель секции внутри земельного участка.
-    """
+    """Модель секции внутри земельного участка."""
 
     STATUS_CHOICES = [
         ("privatized", "Приватизированный"),
@@ -725,9 +675,7 @@ class PlotLandSection(models.Model):
 
 
 class DynamicFormSubmission(models.Model):
-    """
-    Модель для хранения отправок динамических форм.
-    """
+    """Модель для хранения отправок динамических форм."""
 
     name = models.CharField(max_length=255, verbose_name="Название формы")
     data = models.JSONField(verbose_name="Данные формы")

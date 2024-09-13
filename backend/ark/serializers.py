@@ -17,6 +17,14 @@ from .models import (
 )
 
 
+# Вспомогательная функция для построения путей
+def build_path(*segments):
+    """
+    Объединяет сегменты пути, гарантируя отсутствие лишних слешей.
+    """
+    return "/" + "/".join(segment.strip("/") for segment in segments if segment)
+
+
 # Базовый сериализатор для ImageBase моделей
 class ImageBaseSerializer(serializers.ModelSerializer):
     image_url = serializers.ImageField(source="image", read_only=True)
@@ -131,16 +139,19 @@ class ApartmentSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = (
-            obj.complex.city.path.strip("/")
-            if obj.complex and obj.complex.city and obj.complex.city.path
-            else ""
-        )
-        complex_path = (
-            obj.complex.path.strip("/") if obj.complex and obj.complex.path else ""
-        )
-        apartment_path = obj.path.strip("/") if obj.path else ""
-        return f"/new/{city_path}/{complex_path}/{apartment_path}"
+        if obj.complex and obj.complex.city and obj.complex.city.path:
+            city_path = obj.complex.city.path
+        else:
+            city_path = ""
+
+        if obj.complex and obj.complex.path:
+            complex_path = obj.complex.path
+        else:
+            complex_path = ""
+
+        apartment_path = obj.path if obj.path else ""
+
+        return build_path("new", city_path, complex_path, apartment_path)
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -176,9 +187,14 @@ class ComplexSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""
-        complex_path = obj.path.strip("/") if obj.path else ""
-        return f"/new/{city_path}/{complex_path}"
+        if obj.city and obj.city.path:
+            city_path = obj.city.path
+        else:
+            city_path = ""
+
+        complex_path = obj.path if obj.path else ""
+
+        return build_path("new", city_path, complex_path)
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -221,9 +237,19 @@ class PlotLandSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        plot_path = obj.plot.path.strip("/") if obj.plot and obj.plot.path else ""
-        land_path = obj.path.strip("/") if obj.path else ""
-        return f"/{plot_path}/{land_path}"
+        if obj.plot and obj.plot.city and obj.plot.city.path:
+            city_path = obj.plot.city.path
+        else:
+            city_path = ""
+
+        if obj.plot and obj.plot.path:
+            plot_path = obj.plot.path
+        else:
+            plot_path = ""
+
+        land_path = obj.path if obj.path else ""
+
+        return build_path("plots", city_path, plot_path, land_path)
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -259,9 +285,14 @@ class PlotSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""
-        plot_path = obj.path.strip("/") if obj.path else ""
-        return f"/plots/{city_path}/{plot_path}"
+        if obj.city and obj.city.path:
+            city_path = obj.city.path
+        else:
+            city_path = ""
+
+        plot_path = obj.path if obj.path else ""
+
+        return build_path("plots", city_path, plot_path)
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -335,8 +366,8 @@ class NewCityDataSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = obj.path.strip("/") if obj.path else ""
-        return f"/new/{city_path}"
+        city_path = obj.path if obj.path else ""
+        return build_path("new", city_path)
 
 
 # Сериализатор для City (застройки)
@@ -363,8 +394,8 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = obj.path.strip("/") if obj.path else ""
-        return f"/plots/{city_path}"
+        city_path = obj.path if obj.path else ""
+        return build_path("plots", city_path)
 
 
 # Сериализатор для отправок динамических форм
