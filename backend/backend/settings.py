@@ -131,13 +131,13 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': os.getenv('POSTGRES_PORT'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
 
@@ -250,7 +250,7 @@ JAZZMIN_SETTINGS = {
     "custom_css": None,  # На будущее: путь к вашему кастомному CSS
     "custom_js": None,  # На будущее: путь к вашему кастомному JS
     "use_google_fonts_cdn": True,
-    "show_ui_builder": False,
+    "show_ui_builder": True,
     "changeform_format": "horizontal_tabs",
     "changeform_format_overrides": {
         "auth.user": "collapsible",
@@ -260,18 +260,27 @@ JAZZMIN_SETTINGS = {
 }
 
 JAZZMIN_UI_TWEAKS = {
-    "theme": "flatly",
-    # Вы можете изменить тему на другую, например, "flatly", "darkly", "cerulean", "cosmo", "cyborg", "darkly", "journal", "lumen", "paper", "sandstone", "simplex", "slate", "spacelab", "superhero", "united", "yeti"
-    # "dark_mode_theme": "darkly",  # Тема для темного режима
-    # Настройки навбара
-    "navbar_small_text": False,
-    "navbar_dark_mode": False,  # Установите True для темного навбара
-    "navbar_fixed": True,  # Закрепить навбар при прокрутке
-    # Настройки боковой панели
-    "sidebar_fixed": True,  # Закрепить боковую панель при прокрутке
-    "sidebar": "sidebar-dark-primary",
-    # Цветовая схема боковой панели. Попробуйте "sidebar-light-primary" для светлой боковой панели
-    # Настройки кнопок
+    "navbar_small_text": True,
+    "footer_small_text": True,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-danger",
+    "accent": "accent-maroon",
+    "navbar": "navbar-gray-dark navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": True,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-danger",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
+    "theme": "united",
+    "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -280,23 +289,7 @@ JAZZMIN_UI_TWEAKS = {
         "danger": "btn-danger",
         "success": "btn-success",
     },
-    # Настройки акцентов
-    "accent": "accent-primary",
-    # Настройки компоновки
-    "body_small_text": False,
-    "footer_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": False,
-    # Другие настройки
-    "no_navbar_border": False,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
+    "navbar_dark_mode": False,
     "sidebar_disable_hover": False,
     "actions_sticky_top": True,
     # "custom_css": "path/to/your/custom.css",  # На будущее: путь к вашему кастомному CSS
