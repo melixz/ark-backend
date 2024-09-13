@@ -48,7 +48,7 @@ class PlotLandImageSerializer(ImageBaseSerializer):
 
 # Базовый миксин для секций с изображениями
 class SectionImageMixin(serializers.ModelSerializer):
-    image_fields = []  # Список полей изображений, определяемый в каждом сериализаторе
+    image_fields = []
 
     def get_field_names(self, declared_fields, info):
         fields = super().get_field_names(declared_fields, info)
@@ -157,6 +157,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
 # Сериализатор для Complex
 class ComplexSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
+    desk = serializers.CharField(read_only=True)
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
@@ -164,7 +165,15 @@ class ComplexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Complex
-        fields = ["name", "path", "card_bg", "images", "slider", "apartments"]
+        fields = [
+            "name",
+            "path",
+            "desk",
+            "card_bg",
+            "images",
+            "slider",
+            "apartments",
+        ]
 
     def get_path(self, obj):
         city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""
@@ -212,14 +221,9 @@ class PlotLandSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        city_path = (
-            obj.plot.city.path.strip("/")
-            if obj.plot and obj.plot.city and obj.plot.city.path
-            else ""
-        )
         plot_path = obj.plot.path.strip("/") if obj.plot and obj.plot.path else ""
         land_path = obj.path.strip("/") if obj.path else ""
-        return f"/plots/{city_path}/{plot_path}/{land_path}"
+        return f"/{plot_path}/{land_path}"
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -236,6 +240,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
 # Сериализатор для Plot
 class PlotSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
+    desk = serializers.CharField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
@@ -243,7 +248,15 @@ class PlotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plot
-        fields = ["district", "path", "card_bg", "images", "slider", "lands"]
+        fields = [
+            "district",
+            "path",
+            "desk",
+            "card_bg",
+            "images",
+            "slider",
+            "lands",
+        ]
 
     def get_path(self, obj):
         city_path = obj.city.path.strip("/") if obj.city and obj.city.path else ""

@@ -171,7 +171,7 @@ class CityAdmin(admin.ModelAdmin):
 # Администратор для комплекса
 @admin.register(Complex)
 class ComplexAdmin(admin.ModelAdmin):
-    list_display = ("name", "city", "path", "card_bg_thumbnail")
+    list_display = ("name", "city", "desk", "path", "card_bg_thumbnail")
     search_fields = ("name", "city__name")
     list_filter = ("city",)
     inlines = [ComplexImageInline]
@@ -209,7 +209,7 @@ class ApartmentAdmin(admin.ModelAdmin):
 # Администратор для застройки
 @admin.register(Plot)
 class PlotAdmin(admin.ModelAdmin):
-    list_display = ("district", "city", "path", "card_bg_thumbnail")
+    list_display = ("district", "city", "desk", "path", "card_bg_thumbnail")
     search_fields = ("district", "city__name")
     inlines = [PlotImageInline]
     readonly_fields = ("path",)

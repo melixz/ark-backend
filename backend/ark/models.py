@@ -21,7 +21,7 @@ class ImageBase(models.Model):
         upload_to="images/", verbose_name="Изображение", blank=True, null=True
     )
     image_type = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=IMAGE_TYPE_CHOICES,
         verbose_name="Тип изображения",
         blank=True,
@@ -170,8 +170,9 @@ class Complex(models.Model):
         City, on_delete=models.CASCADE, related_name="complexes", verbose_name="Город"
     )
     name = models.CharField(
-        max_length=200, verbose_name="Название комплекса", blank=False, null=False
+        max_length=400, verbose_name="Название комплекса", blank=False, null=False
     )
+    desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     path = models.CharField(
         max_length=100, verbose_name="Путь", blank=False, null=False
     )
@@ -228,8 +229,9 @@ class Plot(models.Model):
         City, on_delete=models.CASCADE, related_name="plots", verbose_name="Город"
     )
     district = models.CharField(
-        max_length=200, verbose_name="Район", blank=False, null=False
+        max_length=400, verbose_name="Район", blank=False, null=False
     )
+    desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     path = models.CharField(
         max_length=100, verbose_name="Путь", blank=False, null=False
     )
@@ -523,41 +525,41 @@ class PlotLand(models.Model):
 
     # Дополнительные поля для участка
     gas = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Газ",
         default="нет",
     )
     electricity = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Свет",
         default="нет",
     )
     water = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Вода",
         default="нет",
     )
     sewage = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Стоки",
         default="нет",
@@ -638,47 +640,47 @@ class PlotLandSection(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
     area = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Площадь")
     land_status = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=STATUS_CHOICES,
         verbose_name="Статус земли",
         default="privatized",
     )
     gas = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Газ",
         default="нет",
     )
     electricity = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Свет",
         default="нет",
     )
     water = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Вода",
         default="нет",
     )
     sewage = models.CharField(
-        max_length=20,
+        max_length=40,
         choices=[
             ("да", "Да"),
             ("нет", "Нет"),
-            ("возможность", "Есть возможность подключения"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
         ],
         verbose_name="Стоки",
         default="нет",
