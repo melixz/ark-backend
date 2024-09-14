@@ -1,6 +1,8 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -16,13 +18,17 @@ class CustomUserRateThrottle(UserRateThrottle):
     rate = "1000/day"
 
 
-class FullDataAPIView(APIView):
+class FullDataAPIView(ListAPIView):
     """
     API-представление для получения полной информации о новостройках и застройках.
     """
 
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(
+        operation_description="Получить полную информацию о новостройках и застройках",
+        responses={status.HTTP_200_OK: FullResponseSerializer},
+    )
     def get(self, request, *args, **kwargs):
         cache_key = "full_data_api_response"
         data = cache.get(cache_key)
@@ -64,6 +70,10 @@ class DynamicFormSubmissionView(APIView):
     API-представление для приема отправок динамических форм.
     """
 
+    @swagger_auto_schema(
+        operation_description="Получить полную информацию о новостройках и застройках",
+        responses={status.HTTP_201_CREATED: DynamicFormSubmissionSerializer},
+    )
     def post(self, request, format=None):
         data = request.data
 
