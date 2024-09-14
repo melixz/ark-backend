@@ -4,12 +4,10 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image
-from slugify import slugify  # Используется python-slugify
+from slugify import slugify
 
 
 class ImageBase(models.Model):
-    """Абстрактная базовая модель для работы с изображениями."""
-
     IMAGE_TYPE_CHOICES = [
         ("slider_image", "Картинка для слайдера"),
         ("additional_image", "Дополнительное изображение"),
@@ -24,17 +22,15 @@ class ImageBase(models.Model):
         blank=True,
         null=True,
     )
-    parent_field_name = None  # Должно быть определено в наследуемой модели
+    parent_field_name = None
 
     class Meta:
         abstract = True
 
     def get_parent_instance(self):
-        """Возвращает экземпляр родительской модели на основе parent_field_name."""
         return getattr(self, self.parent_field_name, None)
 
     def save(self, *args, **kwargs):
-        """Переопределение метода save для валидации и обработки изображения перед сохранением."""
         if not self.pk:
             parent_instance = self.get_parent_instance()
             if parent_instance and self.image_type:
@@ -50,44 +46,34 @@ class ImageBase(models.Model):
         self.process_image()
 
     def process_image(self):
-        """Обрабатывает загруженное изображение, сохраняет в исходном формате или конвертирует при необходимости."""
         if not self.image:
             return
         try:
-            img = Image.open(self.image)
-            img_format = img.format  # Получаем исходный формат
-
-            # Проверяем, поддерживается ли формат WebP
-            if img_format not in ["JPEG", "PNG", "WEBP"]:
-                img_format = "JPEG"  # По умолчанию конвертируем в JPEG, если формат не поддерживается
-
-            # Если изображение имеет прозрачность, конвертируем в JPEG
-            if img.mode in ("RGBA", "LA") or (
-                img.mode == "P" and "transparency" in img.info
-            ):
-                if img_format != "WEBP":  # WebP поддерживает прозрачность
-                    background = Image.new("RGB", img.size, (255, 255, 255))
-                    background.paste(
-                        img, mask=img.split()[3] if img.mode == "RGBA" else None
-                    )
-                    img = background
+            with Image.open(self.image.path) as img:
+                img_format = img.format
+                if img_format not in ["JPEG", "PNG", "WEBP"]:
                     img_format = "JPEG"
 
-            buffer = BytesIO()
-            img.save(buffer, format=img_format, quality=100)
-            buffer.seek(0)
+                if img.mode in ("RGBA", "LA") or (
+                    img.mode == "P" and "transparency" in img.info
+                ):
+                    if img_format != "WEBP":
+                        img = img.convert("RGBA")
+                        img_format = "PNG"
 
-            # Определяем расширение файла на основе формата
-            extension = "jpg" if img_format == "JPEG" else img_format.lower()
+                max_size = (1920, 1080)
+                img.thumbnail(max_size, Image.LANCZOS)
 
-            self.image.save(
-                f"{os.path.splitext(self.image.name)[0]}.{extension}",
-                ContentFile(buffer.read()),
-                save=False,
-            )
-            super().save(update_fields=["image"])
+                buffer = BytesIO()
+                img.save(buffer, format=img_format, quality=85)
+                buffer.seek(0)
+
+                extension = "jpg" if img_format == "JPEG" else img_format.lower()
+                new_name = f"{os.path.splitext(self.image.name)[0]}.{extension}"
+
+                self.image.save(new_name, ContentFile(buffer.getvalue()), save=False)
+                super().save(update_fields=["image"])
         except Exception as e:
-            # Рекомендуется добавить логирование ошибок
             print(f"Ошибка обработки изображения: {e}")
 
     def __str__(self):
