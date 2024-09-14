@@ -126,6 +126,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
+    title = serializers.CharField(source="apartment_title")
+    desk = serializers.CharField(source="apartment_desc")
 
     class Meta:
         model = Apartment
@@ -135,6 +137,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
             "images",
             "slider",
             "sections",
+            "title",
+            "desk",
             "floor_count",
         ]
 
@@ -158,7 +162,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
 # Сериализатор для Complex
 class ComplexSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
-    desk = serializers.CharField(read_only=True)
+    title = serializers.CharField(source="complex_title")
+    desk = serializers.CharField(source="complex_desc")
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     apartments = ApartmentSerializer(many=True, read_only=True)
@@ -169,6 +174,7 @@ class ComplexSerializer(serializers.ModelSerializer):
         fields = [
             "name",
             "path",
+            "title",
             "desk",
             "card_bg",
             "images",
@@ -197,6 +203,8 @@ class PlotLandSerializer(serializers.ModelSerializer):
     land_type_display = serializers.CharField(
         source="get_land_type_display", read_only=True
     )
+    title = serializers.CharField(source="plot_land_title")
+    desk = serializers.CharField(read_only=True)
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = PlotLandSectionSerializer(many=True, read_only=True)
@@ -214,6 +222,8 @@ class PlotLandSerializer(serializers.ModelSerializer):
             "water",
             "sewage",
             "developed",
+            "title",
+            "desk",
             "images",
             "slider",
             "sections",
@@ -237,7 +247,8 @@ class PlotLandSerializer(serializers.ModelSerializer):
 # Сериализатор для Plot
 class PlotSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
-    desk = serializers.CharField()
+    title = serializers.CharField(source="plot_title")
+    desk = serializers.CharField(source="plot_desc")
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     lands = PlotLandSerializer(many=True, read_only=True)
@@ -248,6 +259,7 @@ class PlotSerializer(serializers.ModelSerializer):
         fields = [
             "district",
             "path",
+            "title",
             "desk",
             "card_bg",
             "images",
@@ -311,8 +323,8 @@ class NewCityDataSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     complexes = ComplexSerializer(many=True, read_only=True)
     section = NewSectionSerializer(many=True, source="new_sections", read_only=True)
-    title = serializers.CharField(source="new_title", read_only=True)
-    desc = serializers.CharField(source="new_desc", read_only=True)
+    title = serializers.CharField(source="new_title")
+    desc = serializers.CharField(source="new_desc")
     complex_card_bg = serializers.ImageField(read_only=True)
     complex_bg = serializers.ImageField(read_only=True)
 
@@ -339,8 +351,8 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     plots = PlotSerializer(many=True, read_only=True)
     section = PlotSectionSerializer(many=True, source="plot_sections", read_only=True)
-    title = serializers.CharField(source="plot_title", read_only=True)
-    desc = serializers.CharField(source="plot_desc", read_only=True)
+    title = serializers.CharField(source="plot_title")
+    desc = serializers.CharField(source="plot_desc")
     plot_card_bg = serializers.ImageField(read_only=True)
     plot_bg = serializers.ImageField(read_only=True)
 

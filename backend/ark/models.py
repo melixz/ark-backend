@@ -14,7 +14,6 @@ class ImageBase(models.Model):
         ("slider_image", "Картинка для слайдера"),
         ("additional_image", "Дополнительное изображение"),
     ]
-
     image = models.ImageField(
         upload_to="images/", verbose_name="Изображение", blank=True, null=True
     )
@@ -51,31 +50,45 @@ class ImageBase(models.Model):
         self.process_image()
 
     def process_image(self):
-        """Обрабатывает загруженное изображение."""
+        """Обрабатывает загруженное изображение, сохраняет в исходном формате или конвертирует при необходимости."""
         if not self.image:
             return
         try:
             img = Image.open(self.image)
-            img_format = "JPEG"
+            img_format = img.format  # Получаем исходный формат
+
+            # Проверяем, поддерживается ли формат WebP
+            if img_format not in ["JPEG", "PNG", "WEBP"]:
+                img_format = "JPEG"  # По умолчанию конвертируем в JPEG, если формат не поддерживается
+
+            # Если изображение имеет прозрачность, конвертируем в JPEG
             if img.mode in ("RGBA", "LA") or (
                 img.mode == "P" and "transparency" in img.info
             ):
-                background = Image.new("RGB", img.size, (255, 255, 255))
-                background.paste(
-                    img, mask=img.split()[3] if img.mode == "RGBA" else None
-                )
-                img = background
+                if img_format != "WEBP":  # WebP поддерживает прозрачность
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    background.paste(
+                        img, mask=img.split()[3] if img.mode == "RGBA" else None
+                    )
+                    img = background
+                    img_format = "JPEG"
+
             buffer = BytesIO()
             img.save(buffer, format=img_format, quality=100)
             buffer.seek(0)
+
+            # Определяем расширение файла на основе формата
+            extension = "jpg" if img_format == "JPEG" else img_format.lower()
+
             self.image.save(
-                f"{os.path.splitext(self.image.name)[0]}.jpg",
+                f"{os.path.splitext(self.image.name)[0]}.{extension}",
                 ContentFile(buffer.read()),
                 save=False,
             )
             super().save(update_fields=["image"])
-        except Exception:
-            pass  # Можно добавить логирование ошибок
+        except Exception as e:
+            # Рекомендуется добавить логирование ошибок
+            print(f"Ошибка обработки изображения: {e}")
 
     def __str__(self):
         return f"{self.get_parent_instance()} - {self.get_image_type_display()}"
@@ -150,6 +163,9 @@ class Complex(models.Model):
     name = models.CharField(
         max_length=400, verbose_name="Название комплекса", blank=False, null=False
     )
+    title = models.CharField(
+        max_length=255, verbose_name="Заголовок", blank=True, null=True
+    )
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     path = models.CharField(
         max_length=100, verbose_name="Путь", blank=False, null=False
@@ -203,6 +219,9 @@ class Plot(models.Model):
     )
     district = models.CharField(
         max_length=400, verbose_name="Район", blank=False, null=False
+    )
+    title = models.CharField(
+        max_length=255, verbose_name="Заголовок", blank=True, null=True
     )
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     path = models.CharField(
@@ -351,6 +370,8 @@ class Apartment(models.Model):
     path = models.CharField(
         max_length=100, verbose_name="Путь", blank=False, null=False
     )
+    title = models.CharField(max_length=255, verbose_name="Заголовок квартиры")
+    desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     floor_count = models.PositiveIntegerField(
         verbose_name="Количество этажей", blank=True, null=True
     )
@@ -522,6 +543,8 @@ class PlotLand(models.Model):
         default="нет",
     )
     developed = models.BooleanField(default=False, verbose_name="Разработан")
+    title = models.CharField(max_length=255, verbose_name="Заголовок участка")
+    desk = models.TextField(verbose_name="Описание", blank=True, null=True)
     image_1 = models.ImageField(
         upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
     )

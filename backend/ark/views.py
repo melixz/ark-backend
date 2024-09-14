@@ -64,15 +64,13 @@ class DynamicFormSubmissionView(APIView):
     API-представление для приема отправок динамических форм.
     """
 
-    throttle_classes = [CustomAnonRateThrottle, CustomUserRateThrottle]
-    permission_classes = [permissions.AllowAny]
-
     def post(self, request, format=None):
-        serializer = DynamicFormSubmissionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {"detail": "Форма успешно отправлена."}, status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+
+        form_submission = DynamicFormSubmission(
+            name="Dynamic Form Submission", data=data
+        )
+        form_submission.save()
+
+        serializer = DynamicFormSubmissionSerializer(form_submission)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
