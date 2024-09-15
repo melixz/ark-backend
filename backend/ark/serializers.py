@@ -327,6 +327,8 @@ class NewCityDataSerializer(serializers.ModelSerializer):
         model = City
         fields = [
             "name",
+            "new_title",
+            "new_desc",
             "complex_card_bg",
             "complex_bg",
             "path",
@@ -351,6 +353,8 @@ class PlotsCityDataSerializer(serializers.ModelSerializer):
         model = City
         fields = [
             "name",
+            "plot_title",
+            "plot_desc",
             "plot_card_bg",
             "plot_bg",
             "path",
