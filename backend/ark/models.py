@@ -354,7 +354,7 @@ class Apartment(models.Model):
         null=False,
     )
     path = models.CharField(
-        max_length=100, verbose_name="Путь", blank=False, null=False
+        max_length=100, verbose_name="Путь", blank=False, null=False, unique=True
     )
     title = models.CharField(max_length=255, verbose_name="Заголовок квартиры")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
@@ -367,14 +367,39 @@ class Apartment(models.Model):
         verbose_name_plural = "Квартиры"
         unique_together = ("complex", "path")
 
+    def generate_sequential_path(self):
+        """Генерация пути на основе последовательного номера."""
+        apartment_count = Apartment.objects.filter(complex=self.complex).count()
+        return f"{self.category}/{apartment_count + 1}"
+
     def save(self, *args, **kwargs):
-        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
-            self.path = slugify(self.category.replace("_", "-"))
+            self.path = self.generate_sequential_path()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_category_display()} - {self.complex.name}"
+
+    @staticmethod
+    def bulk_create_apartments(complex, city, category, count):
+        """
+        Статический метод для массового создания квартир с последовательными путями.
+        """
+        apartments = []
+        existing_count = Apartment.objects.filter(complex=complex).count()
+
+        for i in range(count):
+            path = f"{category}/{existing_count + i + 1}"
+            apartment = Apartment(
+                complex=complex,
+                city=city,
+                category=category,
+                path=path,
+                title=f"{category.capitalize()} {i + 1}",
+            )
+            apartments.append(apartment)
+
+        Apartment.objects.bulk_create(apartments)
 
 
 class ApartmentImage(ImageBase):
@@ -486,7 +511,7 @@ class PlotLand(models.Model):
         null=False,
     )
     path = models.CharField(
-        max_length=100, verbose_name="Путь", blank=False, null=False
+        max_length=100, verbose_name="Путь", blank=False, null=False, unique=True
     )
     gas = models.CharField(
         max_length=40,
@@ -552,14 +577,38 @@ class PlotLand(models.Model):
         verbose_name_plural = "Участки"
         unique_together = ("plot", "path")
 
+    def generate_sequential_path(self):
+        """Генерация пути на основе последовательного номера."""
+        land_count = PlotLand.objects.filter(plot=self.plot).count()
+        return f"{self.land_type}/{land_count + 1}"
+
     def save(self, *args, **kwargs):
-        """Переопределение метода save для автоматического формирования пути."""
         if not self.path:
-            self.path = slugify(self.land_type)
+            self.path = self.generate_sequential_path()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_land_type_display()} - {self.plot.district}"
+
+    @staticmethod
+    def bulk_create_plotlands(plot, land_type, count):
+        """
+        Статический метод для массового создания участков с последовательными путями.
+        """
+        lands = []
+        existing_count = PlotLand.objects.filter(plot=plot).count()
+
+        for i in range(count):
+            path = f"{land_type}/{existing_count + i + 1}"
+            land = PlotLand(
+                plot=plot,
+                land_type=land_type,
+                path=path,
+                title=f"Участок {i + 1}",
+            )
+            lands.append(land)
+
+        PlotLand.objects.bulk_create(lands)
 
 
 class PlotLandImage(ImageBase):
