@@ -370,7 +370,7 @@ class Apartment(models.Model):
     def generate_sequential_path(self):
         """Генерация пути на основе последовательного номера."""
         apartment_count = Apartment.objects.filter(complex=self.complex).count()
-        return f"{self.category}/{apartment_count + 1}"
+        return f"{self.category}-{apartment_count + 1}"
 
     def save(self, *args, **kwargs):
         if not self.path:
@@ -580,7 +580,7 @@ class PlotLand(models.Model):
     def generate_sequential_path(self):
         """Генерация пути на основе последовательного номера."""
         land_count = PlotLand.objects.filter(plot=self.plot).count()
-        return f"{self.land_type}/{land_count + 1}"
+        return f"{self.land_type}-{land_count + 1}"
 
     def save(self, *args, **kwargs):
         if not self.path:
