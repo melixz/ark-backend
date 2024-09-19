@@ -230,7 +230,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
         ]
 
     def get_path(self, obj):
-        return obj.land_type
+        return f"{obj.land_type}-{obj.id}"
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
