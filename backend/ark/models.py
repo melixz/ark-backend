@@ -55,7 +55,7 @@ class ImageBase(models.Model):
                     img_format = "JPEG"
 
                 if img.mode in ("RGBA", "LA") or (
-                    img.mode == "P" and "transparency" in img.info
+                        img.mode == "P" and "transparency" in img.info
                 ):
                     if img_format != "WEBP":
                         img = img.convert("RGBA")
@@ -354,7 +354,7 @@ class Apartment(models.Model):
         null=False,
     )
     path = models.CharField(
-        max_length=100, verbose_name="Путь", blank=False, null=False, unique=True
+        max_length=100, verbose_name="Путь", blank=False, null=False
     )
     title = models.CharField(max_length=255, verbose_name="Заголовок квартиры")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
@@ -365,12 +365,22 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
-        unique_together = ("complex", "path")
+        unique_together = ("complex", "path")  # Уникальность в пределах комплекса и пути
 
     def generate_sequential_path(self):
-        """Генерация пути на основе последовательного номера."""
-        apartment_count = Apartment.objects.filter(complex=self.complex).count()
-        return f"{self.category}-{apartment_count + 1}"
+        """Генерация уникального пути на основе категории и последовательного номера внутри комплекса."""
+        # Начинаем с номера 1
+        apartment_count = 1
+        new_path = f"{self.category}-{apartment_count}"
+
+        # Проверяем, что сгенерированный путь уникален внутри данного комплекса и категории
+        while Apartment.objects.filter(
+                complex=self.complex, category=self.category, path=new_path
+        ).exists():
+            apartment_count += 1
+            new_path = f"{self.category}-{apartment_count}"
+
+        return new_path
 
     def save(self, *args, **kwargs):
         if not self.path:
@@ -379,27 +389,6 @@ class Apartment(models.Model):
 
     def __str__(self):
         return f"{self.get_category_display()} - {self.complex.name}"
-
-    @staticmethod
-    def bulk_create_apartments(complex, city, category, count):
-        """
-        Статический метод для массового создания квартир с последовательными путями.
-        """
-        apartments = []
-        existing_count = Apartment.objects.filter(complex=complex).count()
-
-        for i in range(count):
-            path = f"{category}/{existing_count + i + 1}"
-            apartment = Apartment(
-                complex=complex,
-                city=city,
-                category=category,
-                path=path,
-                title=f"{category.capitalize()} {i + 1}",
-            )
-            apartments.append(apartment)
-
-        Apartment.objects.bulk_create(apartments)
 
 
 class ApartmentImage(ImageBase):
@@ -511,66 +500,40 @@ class PlotLand(models.Model):
         null=False,
     )
     path = models.CharField(
-        max_length=100, verbose_name="Путь", blank=False, null=False, unique=True
+        max_length=100, verbose_name="Путь", blank=False, null=False
     )
     gas = models.CharField(
         max_length=40,
-        choices=[
-            ("да", "Да"),
-            ("нет", "Нет"),
-            ("Есть возможность подключения", "Есть возможность подключения"),
-        ],
+        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
         verbose_name="Газ",
         default="нет",
     )
     electricity = models.CharField(
         max_length=40,
-        choices=[
-            ("да", "Да"),
-            ("нет", "Нет"),
-            ("Есть возможность подключения", "Есть возможность подключения"),
-        ],
+        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
         verbose_name="Свет",
         default="нет",
     )
     water = models.CharField(
         max_length=40,
-        choices=[
-            ("да", "Да"),
-            ("нет", "Нет"),
-            ("Есть возможность подключения", "Есть возможность подключения"),
-        ],
+        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
         verbose_name="Вода",
         default="нет",
     )
     sewage = models.CharField(
         max_length=40,
-        choices=[
-            ("да", "Да"),
-            ("нет", "Нет"),
-            ("Есть возможность подключения", "Есть возможность подключения"),
-        ],
+        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
         verbose_name="Стоки",
         default="нет",
     )
     developed = models.BooleanField(default=False, verbose_name="Разработан")
     title = models.CharField(max_length=255, verbose_name="Заголовок участка")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
-    image_1 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
-    )
-    image_2 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True
-    )
-    image_3 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True
-    )
-    image_4 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True
-    )
-    image_5 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True
-    )
+    image_1 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True)
+    image_2 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True)
+    image_3 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True)
+    image_4 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True)
+    image_5 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True)
 
     class Meta:
         verbose_name = "Участок"
@@ -578,9 +541,17 @@ class PlotLand(models.Model):
         unique_together = ("plot", "path")
 
     def generate_sequential_path(self):
-        """Генерация пути на основе последовательного номера."""
-        land_count = PlotLand.objects.filter(plot=self.plot).count()
-        return f"{self.land_type}-{land_count + 1}"
+        """Генерация уникального пути на основе последовательного номера для каждого типа участка в пределах одной застройки."""
+        # Начинаем с номера 1
+        land_count = 1
+        new_path = f"{self.land_type}-{land_count}"
+
+        # Проверяем, что сгенерированный путь уникален внутри данной застройки и типа участка
+        while PlotLand.objects.filter(plot=self.plot, land_type=self.land_type, path=new_path).exists():
+            land_count += 1
+            new_path = f"{self.land_type}-{land_count}"
+
+        return new_path
 
     def save(self, *args, **kwargs):
         if not self.path:
@@ -589,26 +560,6 @@ class PlotLand(models.Model):
 
     def __str__(self):
         return f"{self.get_land_type_display()} - {self.plot.district}"
-
-    @staticmethod
-    def bulk_create_plotlands(plot, land_type, count):
-        """
-        Статический метод для массового создания участков с последовательными путями.
-        """
-        lands = []
-        existing_count = PlotLand.objects.filter(plot=plot).count()
-
-        for i in range(count):
-            path = f"{land_type}/{existing_count + i + 1}"
-            land = PlotLand(
-                plot=plot,
-                land_type=land_type,
-                path=path,
-                title=f"Участок {i + 1}",
-            )
-            lands.append(land)
-
-        PlotLand.objects.bulk_create(lands)
 
 
 class PlotLandImage(ImageBase):

@@ -128,7 +128,6 @@ class PlotLandSectionSerializer(SectionImageMixin, serializers.ModelSerializer):
 
 # Сериализатор для Apartment
 class ApartmentSerializer(serializers.ModelSerializer):
-    path = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
     slider = serializers.SerializerMethodField()
     sections = ApartmentSectionSerializer(many=True, read_only=True)
@@ -137,7 +136,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
         model = Apartment
         fields = [
             "category",
-            "path",
+            "path",  # Удалено переопределение `path`
             "images",
             "slider",
             "sections",
@@ -145,11 +144,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
             "desk",
             "floor_count",
         ]
-
-    def get_path(self, obj):
-        return obj.path.replace(
-            f"{obj.complex.city.path}/{obj.complex.city.path}", obj.complex.city.path
-        )
+        read_only_fields = ["path"]  # Сделать поле `path` только для чтения
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -201,7 +196,6 @@ class ComplexSerializer(serializers.ModelSerializer):
 
 # Сериализатор для PlotLand
 class PlotLandSerializer(serializers.ModelSerializer):
-    path = serializers.SerializerMethodField()
     land_type_display = serializers.CharField(
         source="get_land_type_display", read_only=True
     )
@@ -213,7 +207,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
         model = PlotLand
         fields = [
             "land_type",
-            "path",
+            "path",  # Теперь поле `path` не переопределяется
             "land_type_display",
             "area",
             "price",
@@ -228,9 +222,6 @@ class PlotLandSerializer(serializers.ModelSerializer):
             "slider",
             "sections",
         ]
-
-    def get_path(self, obj):
-        return f"{obj.land_type}-{obj.id}"
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
