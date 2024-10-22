@@ -91,9 +91,6 @@ class DynamicFormSubmissionView(APIView):
             "name": data.get("name", "Не указано"),
             "phone": data.get("phone", ""),
             "email": data.get("email", ""),
-            "message": data.get("message", ""),
-            "referrer": request.META.get("HTTP_REFERER", "Неизвестно"),
-            "ip": request.META.get("REMOTE_ADDR", "127.0.0.1"),  # IP адрес клиента
         }
 
         # Проверка наличия обязательных полей
@@ -136,7 +133,6 @@ class DynamicFormSubmissionView(APIView):
         Телефон: {crm_data['phone']}
         Почта: {crm_data['email']}
         Цель: город, ЖК или район, тип квартир либо участки в сотках
-        Ссылка: {crm_data['referrer']}
         """
 
         # 5. Отправка сообщения в Телеграм
