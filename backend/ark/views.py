@@ -1,5 +1,6 @@
 import logging
 import requests
+import datetime
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -77,11 +78,9 @@ class DynamicFormSubmissionView(APIView):
 
     def post(self, request, format=None):
         data = request.data
-
-        # 1. Логирование данных формы
         logger.debug(f"Получены данные формы: {data}")
 
-        # 2. Сохранение данных формы в базу данных
+        # 1. Сохранение данных формы в базу данных
         form_submission = DynamicFormSubmission(
             name="Dynamic Form Submission",
             data=data,
@@ -91,48 +90,52 @@ class DynamicFormSubmissionView(APIView):
         # Сериализация данных для ответа
         serializer = DynamicFormSubmissionSerializer(form_submission)
 
-        # 3. Подготовка данных для отправки в CRM API
-        crm_api_url = "https://ark.yucrm.ru/api/orders/post"
-        crm_api_token = settings.CRM_API_TOKEN
+        # 2. Подготовка данных для отправки в CRM API
+        crm_api_url = "https://ark.yucrm.ru/api/orders/post?oauth_token=db261d739af48b5089afa551226ec0b7"
 
         crm_data = {
-            "oauth_token": crm_api_token,
-            "name": data.get("name", "Не указано"),
-            "phone": data.get("phone", ""),
-            "email": data.get("email", ""),
-            "message": data.get("message", ""),
-            "referrer": request.META.get("HTTP_REFERER", "Неизвестно"),
-            "ip": request.META.get("REMOTE_ADDR", "127.0.0.1"),
+            "name": data.get("name", "Не указано"),  # Получаем имя клиента
+            "phone": data.get("phone", ""),  # Телефон клиента
+            "email": data.get("email", ""),  # Email клиента
+            "url": request.META.get("HTTP_REFERER", "Неизвестно"),  # Источник
+            "time": datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),  # Время отправки заявки
         }
 
         logger.debug(f"Отправляем данные в CRM: {crm_data}")
 
-        headers = {
-            "Content-Type": "application/json",
-        }
-
+        # 3. Отправка данных на CRM
         try:
-            crm_response = requests.post(crm_api_url, json=crm_data, headers=headers)
-            logger.debug(
-                f"Ответ от CRM: {crm_response.status_code}, {crm_response.text}"
-            )
-            if crm_response.status_code == 200:
-                crm_response_data = crm_response.json()
-            else:
+            crm_response = requests.post(crm_api_url, data=crm_data)
+
+            # Проверка ответа от CRM
+            if crm_response.status_code != 200:
+                crm_error_data = crm_response.json()
+                logger.error(f"CRM Server error: {crm_error_data}")
                 return Response(
-                    {"error": "Ошибка при отправке данных на CRM"},
+                    {
+                        "error": f"Ошибка при отправке данных на CRM: {crm_error_data.get('error', {}).get('message', 'Неизвестная ошибка')}"
+                    },
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
+            else:
+                crm_response_data = crm_response.json()
+                logger.debug(f"Полный ответ от CRM: {crm_response_data}")
+
+                # Получение ID заявки из CRM
+                application_id = crm_response_data.get("result", {}).get(
+                    "id", "Неизвестный ID"
+                )
+                logger.debug(f"ID заявки: {application_id}")
         except requests.exceptions.RequestException as e:
             logger.error(f"Ошибка при отправке данных в CRM: {e}")
             return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": f"Ошибка при отправке формы в CRM: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        # 4. Получение ID заявки из CRM
-        application_id = crm_response_data.get("result", {}).get("id", "Неизвестный ID")
-
-        # 5. Подготовка сообщения для Telegram
+        # 4. Подготовка сообщения для Telegram
         telegram_message = f"""
         Внимание!
         Поступила новая заявка с сайта arkcrimea.ru.
@@ -140,12 +143,12 @@ class DynamicFormSubmissionView(APIView):
         Имя: {crm_data['name']}
         Телефон: {crm_data['phone']}
         Почта: {crm_data['email']}
-        Ссылка: {crm_data['referrer']}
+        Ссылка: {crm_data['url']}
         """
 
         logger.debug(f"Отправляем сообщение в Telegram: {telegram_message}")
 
-        # 6. Отправка сообщения в Telegram
+        # 5. Отправка сообщения в Telegram
         bot_token = settings.TELEGRAM_BOT_TOKEN
         chat_id = settings.TELEGRAM_CHAT_ID
 
@@ -165,8 +168,9 @@ class DynamicFormSubmissionView(APIView):
         except requests.exceptions.RequestException as e:
             logger.error(f"Ошибка при отправке данных в Telegram: {e}")
             return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": f"Ошибка при отправке сообщения в Telegram: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        # 7. Возвращаем успешный ответ
+        # 6. Возвращаем успешный ответ с данными формы
         return Response(serializer.data, status=status.HTTP_201_CREATED)
