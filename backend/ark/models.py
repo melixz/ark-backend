@@ -55,7 +55,7 @@ class ImageBase(models.Model):
                     img_format = "JPEG"
 
                 if img.mode in ("RGBA", "LA") or (
-                        img.mode == "P" and "transparency" in img.info
+                    img.mode == "P" and "transparency" in img.info
                 ):
                     if img_format != "WEBP":
                         img = img.convert("RGBA")
@@ -365,7 +365,10 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
-        unique_together = ("complex", "path")  # Уникальность в пределах комплекса и пути
+        unique_together = (
+            "complex",
+            "path",
+        )  # Уникальность в пределах комплекса и пути
 
     def generate_sequential_path(self):
         """Генерация уникального пути на основе категории и последовательного номера внутри комплекса."""
@@ -375,7 +378,7 @@ class Apartment(models.Model):
 
         # Проверяем, что сгенерированный путь уникален внутри данного комплекса и категории
         while Apartment.objects.filter(
-                complex=self.complex, category=self.category, path=new_path
+            complex=self.complex, category=self.category, path=new_path
         ).exists():
             apartment_count += 1
             new_path = f"{self.category}-{apartment_count}"
@@ -504,36 +507,62 @@ class PlotLand(models.Model):
     )
     gas = models.CharField(
         max_length=40,
-        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
+        ],
         verbose_name="Газ",
         default="нет",
     )
     electricity = models.CharField(
         max_length=40,
-        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
+        ],
         verbose_name="Свет",
         default="нет",
     )
     water = models.CharField(
         max_length=40,
-        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
+        ],
         verbose_name="Вода",
         default="нет",
     )
     sewage = models.CharField(
         max_length=40,
-        choices=[("да", "Да"), ("нет", "Нет"), ("Есть возможность подключения", "Есть возможность подключения")],
+        choices=[
+            ("да", "Да"),
+            ("нет", "Нет"),
+            ("Есть возможность подключения", "Есть возможность подключения"),
+        ],
         verbose_name="Стоки",
         default="нет",
     )
     developed = models.BooleanField(default=False, verbose_name="Разработан")
     title = models.CharField(max_length=255, verbose_name="Заголовок участка")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
-    image_1 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True)
-    image_2 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True)
-    image_3 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True)
-    image_4 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True)
-    image_5 = models.ImageField(upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True)
+    image_1 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
+    )
+    image_2 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True
+    )
+    image_3 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True
+    )
+    image_4 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True
+    )
+    image_5 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Участок"
@@ -547,7 +576,9 @@ class PlotLand(models.Model):
         new_path = f"{self.land_type}-{land_count}"
 
         # Проверяем, что сгенерированный путь уникален внутри данной застройки и типа участка
-        while PlotLand.objects.filter(plot=self.plot, land_type=self.land_type, path=new_path).exists():
+        while PlotLand.objects.filter(
+            plot=self.plot, land_type=self.land_type, path=new_path
+        ).exists():
             land_count += 1
             new_path = f"{self.land_type}-{land_count}"
 
@@ -687,7 +718,9 @@ class DynamicFormSubmission(models.Model):
     """Модель для хранения отправок динамических форм."""
 
     name = models.CharField(max_length=255, verbose_name="Название формы")
-    data = models.JSONField(verbose_name="Данные формы")
+    data = models.JSONField(
+        verbose_name="Данные формы"
+    )  # Поле для хранения данных формы в виде JSON
     submitted_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отправки")
 
     class Meta:

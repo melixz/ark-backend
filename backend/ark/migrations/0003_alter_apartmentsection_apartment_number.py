@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("ark", "0002_alter_apartment_path_alter_complex_path_and_more"),
     ]

@@ -4,42 +4,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ark', '0006_alter_apartment_unique_together_and_more'),
+        ("ark", "0006_alter_apartment_unique_together_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='apartment',
-            name='desk',
-            field=models.TextField(blank=True, null=True, verbose_name='Описание'),
+            model_name="apartment",
+            name="desk",
+            field=models.TextField(blank=True, null=True, verbose_name="Описание"),
         ),
         migrations.AddField(
-            model_name='apartment',
-            name='title',
-            field=models.CharField(default='', max_length=255, verbose_name='Заголовок квартиры'),
+            model_name="apartment",
+            name="title",
+            field=models.CharField(
+                default="", max_length=255, verbose_name="Заголовок квартиры"
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='complex',
-            name='title',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Заголовок'),
+            model_name="complex",
+            name="title",
+            field=models.CharField(
+                blank=True, max_length=255, null=True, verbose_name="Заголовок"
+            ),
         ),
         migrations.AddField(
-            model_name='plot',
-            name='title',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Заголовок'),
+            model_name="plot",
+            name="title",
+            field=models.CharField(
+                blank=True, max_length=255, null=True, verbose_name="Заголовок"
+            ),
         ),
         migrations.AddField(
-            model_name='plotland',
-            name='desk',
-            field=models.TextField(blank=True, null=True, verbose_name='Описание'),
+            model_name="plotland",
+            name="desk",
+            field=models.TextField(blank=True, null=True, verbose_name="Описание"),
         ),
         migrations.AddField(
-            model_name='plotland',
-            name='title',
-            field=models.CharField(default='', max_length=255, verbose_name='Заголовок участка'),
+            model_name="plotland",
+            name="title",
+            field=models.CharField(
+                default="", max_length=255, verbose_name="Заголовок участка"
+            ),
             preserve_default=False,
         ),
     ]

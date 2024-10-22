@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("ark", "0004_alter_apartmentimage_image_type_alter_complex_name_and_more"),
     ]
