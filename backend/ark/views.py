@@ -1,6 +1,5 @@
 import logging
 import requests
-import datetime
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -98,9 +97,6 @@ class DynamicFormSubmissionView(APIView):
             "phone": data.get("phone", ""),  # Телефон клиента
             "email": data.get("email", ""),  # Email клиента
             "url": request.META.get("HTTP_REFERER", "Неизвестно"),  # Источник
-            "time": datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),  # Время отправки заявки
         }
 
         logger.debug(f"Отправляем данные в CRM: {crm_data}")
