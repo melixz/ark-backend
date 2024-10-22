@@ -7,7 +7,7 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from drf_yasg.utils import swagger_auto_schema
 from django.conf import settings
 from django.core.cache import cache
-from .models import City
+from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 
 
@@ -69,31 +69,41 @@ class FullDataAPIView(ListAPIView):
 
 class DynamicFormSubmissionView(APIView):
     """
-    API-представление для приема отправок динамических форм и отправки на CRM и Telegram.
+    API-представление для приема отправок динамических форм, отправки данных на CRM и уведомлений в Telegram.
     """
 
-    def post(self, request):
+    @swagger_auto_schema(
+        operation_description="Прием данных динамической формы, отправка в CRM и Telegram.",
+        responses={status.HTTP_201_CREATED: DynamicFormSubmissionSerializer},
+    )
+    def post(self, request, format=None):
         data = request.data
 
-        # 1. Сериализация данных и сохранение отправки формы в базу данных
-        serializer = DynamicFormSubmissionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()  # Сохраняем данные без присваивания переменной
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # 1. Сохранение данных формы в базу данных
+        form_submission = DynamicFormSubmission(
+            name="Dynamic Form Submission",  # Можно настроить для динамической передачи названия формы
+            data=data,  # Данные формы сохраняем как JSON
+        )
+        form_submission.save()
 
-        # 2. Подготовка данных для отправки на CRM API
+        # Сериализация данных для ответа
+        serializer = DynamicFormSubmissionSerializer(form_submission)
+
+        # 2. Подготовка данных для отправки в CRM API
         crm_api_url = "https://ark.yucrm.ru/api/orders/post"
-        crm_api_token = settings.CRM_API_TOKEN  # Получаем токен из .env
+        crm_api_token = settings.CRM_API_TOKEN  # Токен API для CRM, хранимый в .env
 
         crm_data = {
             "oauth_token": crm_api_token,
-            "name": data.get("name", "Не указано"),
-            "phone": data.get("phone", ""),
-            "email": data.get("email", ""),
+            "name": data.get("name", "Не указано"),  # Получаем имя клиента
+            "phone": data.get("phone", ""),  # Телефон клиента
+            "email": data.get("email", ""),  # Email клиента
+            "message": data.get("message", ""),  # Сообщение клиента, если есть
+            "referrer": request.META.get("HTTP_REFERER", "Неизвестно"),  # Источник
+            "ip": request.META.get("REMOTE_ADDR", "127.0.0.1"),  # IP-адрес клиента
         }
 
-        # Проверка наличия обязательных полей
+        # Проверка обязательных полей
         if not crm_data["name"] or not crm_data["phone"] or not crm_data["email"]:
             return Response(
                 {
@@ -106,6 +116,7 @@ class DynamicFormSubmissionView(APIView):
             "Content-Type": "application/json",
         }
 
+        # 3. Отправка данных на CRM
         try:
             crm_response = requests.post(crm_api_url, json=crm_data, headers=headers)
             if crm_response.status_code == 200:
@@ -120,11 +131,10 @@ class DynamicFormSubmissionView(APIView):
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # 3. Получение ID заявки из CRM
+        # 4. Получение ID заявки из CRM
         application_id = crm_response_data.get("result", {}).get("id", "Неизвестный ID")
 
-        # 4. Шаблон для сообщения в Телеграм
-        # Включаем информацию о заявке, данные клиента и ссылку
+        # 5. Подготовка сообщения для Telegram
         telegram_message = f"""
         Внимание!
         Поступила новая заявка с сайта arkcrimea.ru.
@@ -132,10 +142,10 @@ class DynamicFormSubmissionView(APIView):
         Имя: {crm_data['name']}
         Телефон: {crm_data['phone']}
         Почта: {crm_data['email']}
-        Цель: город, ЖК или район, тип квартир либо участки в сотках
+        Ссылка: {crm_data['referrer']}
         """
 
-        # 5. Отправка сообщения в Телеграм
+        # 6. Отправка сообщения в Telegram
         bot_token = settings.TELEGRAM_BOT_TOKEN
         chat_id = settings.TELEGRAM_CHAT_ID
 
@@ -146,7 +156,7 @@ class DynamicFormSubmissionView(APIView):
             telegram_response = requests.post(telegram_url, data=telegram_data)
             if telegram_response.status_code != 200:
                 return Response(
-                    {"error": "Ошибка при отправке сообщения в Телеграм"},
+                    {"error": "Ошибка при отправке сообщения в Telegram"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
         except requests.exceptions.RequestException as e:
@@ -154,5 +164,5 @@ class DynamicFormSubmissionView(APIView):
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # 6. Возвращение успешного ответа
+        # 7. Возвращаем успешный ответ
         return Response(serializer.data, status=status.HTTP_201_CREATED)
