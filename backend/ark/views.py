@@ -96,7 +96,9 @@ class DynamicFormSubmissionView(APIView):
             "name": data.get("name", "Не указано"),  # Получаем имя клиента
             "phone": data.get("phone", ""),  # Телефон клиента
             "email": data.get("email", ""),  # Email клиента
-            "url": request.META.get("HTTP_REFERER", "Неизвестно"),  # Источник
+            "url": data.get(
+                "referrer", "Неизвестно"
+            ),  # Получаем переданную ссылку с фронтенда
         }
 
         logger.debug(f"Отправляем данные в CRM: {crm_data}")
