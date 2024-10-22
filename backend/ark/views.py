@@ -1,3 +1,4 @@
+import logging
 import requests
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -9,6 +10,8 @@ from django.conf import settings
 from django.core.cache import cache
 from .models import City, DynamicFormSubmission
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
+
+logger = logging.getLogger(__name__)
 
 
 # Кастомные классы для ограничения скорости запросов
@@ -72,12 +75,11 @@ class DynamicFormSubmissionView(APIView):
     API-представление для приема отправок динамических форм, отправки данных на CRM и уведомлений в Telegram.
     """
 
-    @swagger_auto_schema(
-        operation_description="Прием данных динамической формы, отправка в CRM и Telegram.",
-        responses={status.HTTP_201_CREATED: DynamicFormSubmissionSerializer},
-    )
     def post(self, request, format=None):
         data = request.data
+
+        # Логируем начало работы
+        logger.info("Начало обработки формы")
 
         # 1. Сохранение данных формы в базу данных
         form_submission = DynamicFormSubmission(
@@ -85,6 +87,9 @@ class DynamicFormSubmissionView(APIView):
             data=data,  # Данные формы сохраняем как JSON
         )
         form_submission.save()
+
+        # Логируем успешное сохранение формы
+        logger.info("Форма успешно сохранена в базе данных")
 
         # Сериализация данных для ответа
         serializer = DynamicFormSubmissionSerializer(form_submission)
@@ -103,36 +108,26 @@ class DynamicFormSubmissionView(APIView):
             "ip": request.META.get("REMOTE_ADDR", "127.0.0.1"),  # IP-адрес клиента
         }
 
-        # Проверка обязательных полей
-        if not crm_data["name"] or not crm_data["phone"] or not crm_data["email"]:
-            return Response(
-                {
-                    "error": "Необходимо указать хотя бы одно из полей: name, phone или email"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        headers = {
-            "Content-Type": "application/json",
-        }
+        # Логируем данные для CRM
+        logger.info(f"Данные для отправки в CRM: {crm_data}")
 
         # 3. Отправка данных на CRM
         try:
-            crm_response = requests.post(crm_api_url, json=crm_data, headers=headers)
-            if crm_response.status_code == 200:
-                crm_response_data = crm_response.json()
-            else:
-                return Response(
-                    {"error": "Ошибка при отправке данных на CRM"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+            crm_response = requests.post(crm_api_url, json=crm_data)
+            crm_response.raise_for_status()
+            crm_response_data = crm_response.json()
+            logger.info(f"Ответ CRM: {crm_response_data}")
         except requests.exceptions.RequestException as e:
+            logger.error(f"Ошибка при отправке данных в CRM: {e}")
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         # 4. Получение ID заявки из CRM
         application_id = crm_response_data.get("result", {}).get("id", "Неизвестный ID")
+
+        # Логируем полученный ID заявки
+        logger.info(f"ID заявки из CRM: {application_id}")
 
         # 5. Подготовка сообщения для Telegram
         telegram_message = f"""
@@ -145,6 +140,9 @@ class DynamicFormSubmissionView(APIView):
         Ссылка: {crm_data['referrer']}
         """
 
+        # Логируем сообщение для Telegram
+        logger.info(f"Сообщение для Telegram: {telegram_message}")
+
         # 6. Отправка сообщения в Telegram
         bot_token = settings.TELEGRAM_BOT_TOKEN
         chat_id = settings.TELEGRAM_CHAT_ID
@@ -154,15 +152,14 @@ class DynamicFormSubmissionView(APIView):
 
         try:
             telegram_response = requests.post(telegram_url, data=telegram_data)
-            if telegram_response.status_code != 200:
-                return Response(
-                    {"error": "Ошибка при отправке сообщения в Telegram"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+            telegram_response.raise_for_status()
+            logger.info("Сообщение успешно отправлено в Telegram")
         except requests.exceptions.RequestException as e:
+            logger.error(f"Ошибка при отправке сообщения в Telegram: {e}")
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
         # 7. Возвращаем успешный ответ
+        logger.info("Форма успешно обработана и отправлена в CRM и Telegram")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
