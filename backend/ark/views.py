@@ -134,15 +134,15 @@ class DynamicFormSubmissionView(APIView):
             )
 
         # 4. Подготовка сообщения для Telegram
-        telegram_message = f"""
-        Внимание!
-        Поступила новая заявка с сайта arkcrimea.ru.
-        ID заявки: {application_id}
-        Имя: {crm_data['name']}
-        Телефон: {crm_data['phone']}
-        Почта: {crm_data['email']}
-        Ссылка: {crm_data['url']}
-        """
+        telegram_message = (
+            "Внимание!\n"
+            "Поступила новая заявка с сайта arkcrimea.ru.\n"
+            f"ID заявки: {application_id}\n"
+            f"Имя: {crm_data['name']}\n"
+            f"Телефон: {crm_data['phone']}\n"
+            f"Почта: {crm_data['email']}\n"
+            f"Ссылка: {crm_data['url']}\n"
+        )
 
         logger.debug(f"Отправляем сообщение в Telegram: {telegram_message}")
 
