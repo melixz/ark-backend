@@ -329,6 +329,8 @@ class PlotSection(models.Model):
 
 
 class Apartment(models.Model):
+    """Модель квартиры в жилом комплексе."""
+
     CATEGORY_CHOICES = [
         ("studio", "Студия"),
         ("one_room", "Однокомнатная"),
@@ -476,6 +478,8 @@ class ApartmentSection(models.Model):
 
 
 class PlotLand(models.Model):
+    """Модель земельного участка в застройке."""
+
     LAND_TYPE_CHOICES = [
         ("SNT", "СНТ"),
         ("IJS", "ИЖС"),
@@ -551,6 +555,21 @@ class PlotLand(models.Model):
     developed = models.BooleanField(default=False, verbose_name="Разработан")
     title = models.CharField(max_length=255, verbose_name="Заголовок участка")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
+    image_1 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
+    )
+    image_2 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True
+    )
+    image_3 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True
+    )
+    image_4 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True
+    )
+    image_5 = models.ImageField(
+        upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Участок"
