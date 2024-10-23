@@ -1,5 +1,7 @@
 import logging
 import requests
+from django.db.models import Case, When
+from django.forms import IntegerField
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +10,7 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from drf_yasg.utils import swagger_auto_schema
 from django.conf import settings
 from django.core.cache import cache
-from .models import City, DynamicFormSubmission
+from .models import City, DynamicFormSubmission, PlotLand, Apartment
 from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
 
 logger = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ class FullDataAPIView(ListAPIView):
         data = cache.get(cache_key)
 
         if not data:
-            # Оптимизированные запросы с использованием prefetch_related
+            # Оптимизированные запросы с использованием prefetch_related и кастомной сортировки
             new_cities = City.objects.filter(new_title__isnull=False).prefetch_related(
                 "complexes__apartments__sections",
                 "complexes__images",
@@ -56,16 +58,40 @@ class FullDataAPIView(ListAPIView):
                 "plots__lands__images",
             )
 
+            # Сортировка квартир
+            apartments_sorted = Apartment.objects.annotate(
+                order=Case(
+                    When(category="studio", then=0),
+                    When(category="one_room", then=1),
+                    When(category="two_room", then=2),
+                    When(category="three_room", then=3),
+                    default=100,
+                    output_field=IntegerField(),
+                )
+            ).order_by("order")
+
+            # Сортировка участков
+            lands_sorted = PlotLand.objects.annotate(
+                order=Case(
+                    When(land_type="SNT", then=0),
+                    When(land_type="IJS", then=1),
+                    default=100,
+                    output_field=IntegerField(),
+                )
+            ).order_by("order")
+
             response_data = {
                 "new": new_cities,
                 "plots": plot_cities,
+                "sorted_apartments": apartments_sorted,
+                "sorted_lands": lands_sorted,
             }
 
             serializer = FullResponseSerializer(
                 response_data, context={"request": request}
             )
             data = serializer.data
-            cache.set(cache_key, data, 60 * 15)  # Кэшируем на 15 минут
+            cache.set(cache_key, data, 60 * 15)
 
         return Response(data, status=status.HTTP_200_OK)
 

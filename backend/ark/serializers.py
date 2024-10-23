@@ -136,7 +136,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
         model = Apartment
         fields = [
             "category",
-            "path",  # Удалено переопределение `path`
+            "path",
             "images",
             "slider",
             "sections",
@@ -144,7 +144,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
             "desk",
             "floor_count",
         ]
-        read_only_fields = ["path"]  # Сделать поле `path` только для чтения
+        read_only_fields = ["path"]
 
     def get_images_by_type(self, obj, image_type):
         images = obj.images.filter(image_type=image_type)
@@ -156,6 +156,14 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
     def get_slider(self, obj):
         return self.get_images_by_type(obj, "slider_image")
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        sorted_sections = sorted(
+            representation["sections"], key=lambda x: x["category"]
+        )
+        representation["sections"] = sorted_sections
+        return representation
 
 
 # Сериализатор для Complex
@@ -207,7 +215,7 @@ class PlotLandSerializer(serializers.ModelSerializer):
         model = PlotLand
         fields = [
             "land_type",
-            "path",  # Теперь поле `path` не переопределяется
+            "path",
             "land_type_display",
             "area",
             "price",
@@ -233,6 +241,14 @@ class PlotLandSerializer(serializers.ModelSerializer):
 
     def get_slider(self, obj):
         return self.get_images_by_type(obj, "slider_image")
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        sorted_sections = sorted(
+            representation["sections"], key=lambda x: x["land_type"]
+        )
+        representation["sections"] = sorted_sections
+        return representation
 
 
 # Сериализатор для Plot

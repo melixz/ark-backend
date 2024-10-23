@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image
+from django.db.models import When, Case
 from slugify import slugify
 
 
@@ -328,8 +329,6 @@ class PlotSection(models.Model):
 
 
 class Apartment(models.Model):
-    """Модель квартиры в жилом комплексе."""
-
     CATEGORY_CHOICES = [
         ("studio", "Студия"),
         ("one_room", "Однокомнатная"),
@@ -365,10 +364,16 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
-        unique_together = (
-            "complex",
-            "path",
-        )  # Уникальность в пределах комплекса и пути
+        ordering = [
+            Case(
+                When(category="studio", then=0),
+                When(category="one_room", then=1),
+                When(category="two_room", then=2),
+                When(category="three_room", then=3),
+                default=100,
+                output_field=models.IntegerField(),
+            )
+        ]
 
     def generate_sequential_path(self):
         """Генерация уникального пути на основе категории и последовательного номера внутри комплекса."""
@@ -471,8 +476,6 @@ class ApartmentSection(models.Model):
 
 
 class PlotLand(models.Model):
-    """Модель земельного участка в застройке."""
-
     LAND_TYPE_CHOICES = [
         ("SNT", "СНТ"),
         ("IJS", "ИЖС"),
@@ -548,26 +551,18 @@ class PlotLand(models.Model):
     developed = models.BooleanField(default=False, verbose_name="Разработан")
     title = models.CharField(max_length=255, verbose_name="Заголовок участка")
     desk = models.TextField(verbose_name="Описание", blank=True, null=True)
-    image_1 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 1", blank=True, null=True
-    )
-    image_2 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 2", blank=True, null=True
-    )
-    image_3 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 3", blank=True, null=True
-    )
-    image_4 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 4", blank=True, null=True
-    )
-    image_5 = models.ImageField(
-        upload_to="plots/lands/", verbose_name="Изображение 5", blank=True, null=True
-    )
 
     class Meta:
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
-        unique_together = ("plot", "path")
+        ordering = [
+            Case(
+                When(land_type="SNT", then=0),
+                When(land_type="IJS", then=1),
+                default=100,
+                output_field=models.IntegerField(),
+            )
+        ]
 
     def generate_sequential_path(self):
         """Генерация уникального пути на основе последовательного номера для каждого типа участка в пределах одной застройки."""
