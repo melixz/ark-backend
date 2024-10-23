@@ -366,6 +366,7 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
+        unique_together = ("complex", "path")
         ordering = [
             Case(
                 When(category="studio", then=0),
@@ -574,6 +575,7 @@ class PlotLand(models.Model):
     class Meta:
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
+        unique_together = ("plot", "path")
         ordering = [
             Case(
                 When(land_type="SNT", then=0),
