@@ -4,7 +4,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image
-from django.db.models import When, Case
 from slugify import slugify
 
 
@@ -366,17 +365,10 @@ class Apartment(models.Model):
     class Meta:
         verbose_name = "Квартира"
         verbose_name_plural = "Квартиры"
-        unique_together = ("complex", "path")
-        ordering = [
-            Case(
-                When(category="studio", then=0),
-                When(category="one_room", then=1),
-                When(category="two_room", then=2),
-                When(category="three_room", then=3),
-                default=100,
-                output_field=models.IntegerField(),
-            )
-        ]
+        unique_together = (
+            "complex",
+            "path",
+        )  # Уникальность в пределах комплекса и пути
 
     def generate_sequential_path(self):
         """Генерация уникального пути на основе категории и последовательного номера внутри комплекса."""
@@ -576,14 +568,6 @@ class PlotLand(models.Model):
         verbose_name = "Участок"
         verbose_name_plural = "Участки"
         unique_together = ("plot", "path")
-        ordering = [
-            Case(
-                When(land_type="SNT", then=0),
-                When(land_type="IJS", then=1),
-                default=100,
-                output_field=models.IntegerField(),
-            )
-        ]
 
     def generate_sequential_path(self):
         """Генерация уникального пути на основе последовательного номера для каждого типа участка в пределах одной застройки."""
