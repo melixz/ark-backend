@@ -1,21 +1,11 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import (
-    City,
-    Complex,
-    Plot,
-    ComplexImage,
-    PlotImage,
-    Apartment,
-    ApartmentImage,
-    ApartmentSection,
-    PlotLand,
-    PlotLandImage,
-    NewSection,
-    PlotSection,
-    PlotLandSection,
-    DynamicFormSubmission,
-)
+from .models.city import City, NewSection
+from .models.complex import Complex, ComplexImage
+from .models.plot import Plot, PlotImage, PlotSection
+from .models.land import PlotLand, PlotLandImage, PlotLandSection
+from .models.apartment import Apartment, ApartmentImage, ApartmentSection
+from .models.dynamic_form import DynamicFormSubmission
 
 # Инлайны для изображений и секций
 

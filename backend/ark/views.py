@@ -8,8 +8,10 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from drf_yasg.utils import swagger_auto_schema
 from django.conf import settings
 from django.core.cache import cache
-from .models import City, DynamicFormSubmission
-from .serializers import FullResponseSerializer, DynamicFormSubmissionSerializer
+from .models.city import City
+from .models.dynamic_form import DynamicFormSubmission
+from .serializers.full_response import FullResponseSerializer
+from .serializers.dynamic_form import DynamicFormSubmissionSerializer
 
 logger = logging.getLogger(__name__)
 
